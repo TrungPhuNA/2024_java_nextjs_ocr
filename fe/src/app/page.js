@@ -3,8 +3,9 @@
 
 export default function Page() {
     return (
-        <div className={'bg-green'}>
+        <div className={'bg-green p-4'}>
             <h1>Chào Phú ĐZ</h1>
+
         </div>
     );
 }
