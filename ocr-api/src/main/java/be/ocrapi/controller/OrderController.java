@@ -22,7 +22,7 @@ public class OrderController {
     @Autowired
     private OrderServiceInterface orderService;
 
-    @GetMapping("{id}")
+    @GetMapping("show/{id}")
     public BaseResponse<?> findOne(@PathVariable Integer id) {
         try {
             return BaseResponse.ofSucceeded(orderService.findById(id));
@@ -35,7 +35,7 @@ public class OrderController {
         }
     }
 
-    @GetMapping
+    @GetMapping("list")
     public BaseResponse<?> findAll(
             @RequestParam(name = "page", required = false, defaultValue = "1") String page,
             @RequestParam(name = "page_size", required = false, defaultValue = "20") String page_size
@@ -56,7 +56,7 @@ public class OrderController {
         }
     }
 
-    @PostMapping
+    @PostMapping("store")
     public BaseResponse<?> save(@RequestBody Order order) {
         try {
             return BaseResponse.ofSucceeded(orderService.save(order));
@@ -69,7 +69,7 @@ public class OrderController {
         }
     }
 
-    @PutMapping
+    @PutMapping("update/{id}")
     public BaseResponse<?> update(@RequestBody Order order) {
         try {
             return BaseResponse.ofSucceeded(orderService.update(order));
@@ -82,7 +82,7 @@ public class OrderController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("delete/{id}")
     public void delete(@RequestBody Order order) {
         orderService.delete(order);
     }

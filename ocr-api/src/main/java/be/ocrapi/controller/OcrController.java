@@ -1,6 +1,10 @@
 package be.ocrapi.controller;
 
+import be.ocrapi.common.BaseResponse;
+import be.ocrapi.common.BusinessErrorCode;
+import be.ocrapi.common.BusinessException;
 import be.ocrapi.model.OcrResult;
+import be.ocrapi.model.Order;
 import be.ocrapi.service.OcrService;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.TesseractException;
@@ -18,8 +22,23 @@ public class OcrController {
     @Autowired
     private OcrService ocrService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<OcrResult> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
-        return ResponseEntity.ok(ocrService.ocr(file));
+//    @PostMapping("/upload")
+//    public ResponseEntity<OcrResult> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
+//        return ResponseEntity.ok(ocrService.ocr(file));
+//    }
+
+    @PostMapping("upload")
+    public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
+        try {
+            var ocr = ocrService.ocr(file);
+            log.debug("[OCR CONTROLLER]------>error create", ocr.getResult());
+            return BaseResponse.ofSucceeded(ocr.getResult());
+        } catch (Exception e) {
+            log.debug("[OCR CONTROLLER]------>error create", e);
+            String message = e.getMessage();
+            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
+            log.error("[OCR CONTROLLER]------>create", error);
+            return BaseResponse.ofFailed(error);
+        }
     }
 }
