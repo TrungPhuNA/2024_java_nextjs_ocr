@@ -25,8 +25,8 @@ public class Order {
     @Column(name = "discount")
     private Integer discount;
 
-    @Column(name = "category_id")
-    private Integer category_id;
+//    @Column(name = "category_id")
+//    private Integer category_id;
 
     @Column(name = "total_discount")
     private Integer total_discount;
@@ -52,7 +52,7 @@ public class Order {
     @Column(name = "receiver_address")
     private String receiver_address;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "order_id")
-    private List<Transaction> orders = new ArrayList<>();
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "order_id")
+//    private List<Transaction> orders = new ArrayList<>();
 }

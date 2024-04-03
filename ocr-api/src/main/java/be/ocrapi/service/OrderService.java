@@ -3,6 +3,9 @@ package be.ocrapi.service;
 import be.ocrapi.model.Order;
 import be.ocrapi.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +22,14 @@ public class OrderService implements OrderServiceInterface {
     }
 
     @Override
-    public Optional<Order> findOrder(Integer id) {
+    public Optional<Order> findById(Integer id) {
         return orderRepository.findById(id);
     }
 
     @Override
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public Page<Order> findAll(int page, int page_size) {
+        Pageable pageable = PageRequest.of(page, page_size);
+        return orderRepository.findAll(pageable);
     }
 
     @Override

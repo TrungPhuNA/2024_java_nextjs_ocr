@@ -1,8 +1,12 @@
 package be.ocrapi.service;
 
+import be.ocrapi.model.Order;
 import be.ocrapi.model.User;
 import be.ocrapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +23,14 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
-    public Optional<User> findUser(Integer id) {
+    public Optional<User> findById(Integer id) {
         return userRepository.findById(id);
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public Page<User> findAll(int page, int page_size) {
+        Pageable pageable = PageRequest.of(page, page_size);
+        return userRepository.findAll(pageable);
     }
 
     @Override
