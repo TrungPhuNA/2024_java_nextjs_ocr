@@ -1,5 +1,6 @@
 package be.ocrapi.common;
 
+import com.dslplatform.json.CompiledJson;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
@@ -18,7 +19,7 @@ public class BaseResponse<T> {
     private Metadata meta = new Metadata();
     private String status;
     private String message;
-//    @CompiledJson
+    @CompiledJson
     BaseResponse(T data, Metadata meta, String status, String message) {
         this.data = data;
         this.meta = meta;
@@ -46,7 +47,7 @@ public class BaseResponse<T> {
     public static <T> BaseResponse<List<T>> ofSucceeded(Page<T> data) {
         BaseResponse<List<T>> response = new BaseResponse<>();
         response.data = data.getContent();
-        response.meta.code = Metadata.OK_CODE;
+        response.status = "success";
         response.meta.page = data.getNumber();
         response.meta.size = data.getSize();
         response.meta.page_size = data.getSize();
@@ -100,7 +101,7 @@ public class BaseResponse<T> {
 
         public Metadata() {
         }
-//        @CompiledJson
+        @CompiledJson
         public Metadata(String code, Integer page, Integer size, Long total, String message, List<FieldViolation> errors) {
             this.code = code;
             this.page = page;
