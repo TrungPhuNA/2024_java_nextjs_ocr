@@ -24,8 +24,11 @@ public class Order {
     @Column(name = "user_id")
     private Integer user_id;
 
-    @Column(name = "discount")
-    private Integer discount;
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "code")
+    private String code;
 
 
     @Column(name = "total_discount")
@@ -59,7 +62,10 @@ public class Order {
     private Date updated_at;
 
     @Column(name = "payment_type")
-    private int payment_type;
+    private Integer payment_type;
+
+    @Column(name = "category_id")
+    private Integer category_id = 0;
 
 
 

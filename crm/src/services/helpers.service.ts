@@ -1,51 +1,42 @@
-import moment from "moment";
 
-export const getItem = ( key : any) =>
-{
-	return localStorage.getItem( key ) || null;
+import moment from 'moment';
+
+export const getItem = (key: any) => {
+	return localStorage.getItem(key) || null;
 }
 
-export const setItem = ( key: any, value: any) =>
-{
-	localStorage.setItem( key, value );
+export const setItem = (key: any, value: any) => {
+	localStorage.setItem(key, value);
 }
 
-export const removeItem = ( key : any) =>
-{
-	localStorage.removeItem( key );
+export const removeItem = (key: any) => {
+	localStorage.removeItem(key);
 }
 
-export const buildFilter = ( values : any) =>
-{
+export const buildFilter = (values: any) => {
 
 	let params = {};
-	if ( values )
-	{
+	if (values) {
 		delete values.total;
 		delete values.total_pages;
 		delete values.count;
-		let arrCondition = Object.entries( values );
+		let arrCondition = Object.entries(values);
 
-		params = arrCondition.reduce( ( param, item ) =>
-		{
-			if ( item[ 1 ] != null )
-			{
-				param = { ...param, ...buildItemParam( item[ 0 ], item[ 1 ], param ) }
+		params = arrCondition.reduce((param, item) => {
+			if (item[1] != null) {
+				param = { ...param, ...buildItemParam(item[0], item[1], param) }
 			}
 			return param;
-		}, {} );
+		}, {});
 	}
 	return params;
 }
 
-export const buildItemParam = ( key: any, value: any, params: any ) =>
-{
-	if ( key == 'page' && !value )
-	{
-		params[ 'page' ] = value;
-	} else if ( value )
-	{
-		params[ `${ key }` ] = value;
+export const buildItemParam = (key: any, value: any, params: any) => {
+	if (key == 'page' && !value) {
+		params['page'] = value;
+	} else if (value) {
+		params[`${key}`] = value;
 	}
 	return params;
 }
@@ -62,36 +53,36 @@ export const validateMessages = {
 	},
 };
 
-export const resetForm = ( form: any ) =>
-{
+export const resetForm = (form: any) => {
 	form.resetFields();
 }
 
-export const onFieldsChange = ( e: any, form: any, ee = null ) =>
-{
-	if ( e.length > 0 )
-	{
-		let value = typeof e[ 0 ].value === 'string' ? e[ 0 ].value : e[ 0 ].value;
-		if ( e[ 0 ].name[ 0 ] === 'name' && value != '' )
-		{
+export const onFieldsChange = (e: any, form: any, ee = null) => {
+	if (e.length > 0) {
+		let value = typeof e[0].value === 'string' ? e[0].value : e[0].value;
+		if (e[0].name[0] === 'name' && value != '') {
 			// let slug = toSlug( value );
-			form.setFieldsValue( { slug: value } );
+			form.setFieldsValue({ slug: value });
 		}
 		let fieldValue = {
-			[ String( e[ 0 ].name[ 0 ] ) ]: value
+			[String(e[0].name[0])]: value
 		}
-		form.setFieldsValue( fieldValue );
+		form.setFieldsValue(fieldValue);
 	}
 }
 
+export const setField = (value: any, name: any, form: any, setForm: any) => {
+	form[`${name}`] = value
+	setForm({
+		...form
+	});
+}
 
-export const onErrorImage = ( e: any ) =>
-{
+export const onErrorImage = (e: any) => {
 	// e.currentTarget.src = DEFAULT_IMAGE;
 }
 
-export const onErrorUser = ( e: any ) =>
-{
+export const onErrorUser = (e: any) => {
 	// e.currentTarget.src = DEFAULT_IMG;
 }
 // }
@@ -110,12 +101,12 @@ export const VALIDATE_FORM = {
 	},
 };
 
-export const formatTime = (value: any, format: any): any =>  {
-	if(value) {
-		if(format) return moment(value).format(format);
+export const formatTime = (value: any, format: any): any => {
+	if (value) {
+		if (format) return moment(value).format(format);
 		return moment(value)
 	}
-	
+
 	return null;
 }
 

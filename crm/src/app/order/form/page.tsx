@@ -7,46 +7,10 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Product } from "@/types/product";
 import Link from "next/link";
 import { ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
-import { useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { formatMoney, setField } from "@/services/helpers.service";
+import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 
-const productData: Product[] = [
-	{
-		image: "/images/product/product-02.png",
-		name: "Apple Watch Series 7",
-		category: "Electronics",
-		price: 296,
-		quantity: 296,
-		sold: 22,
-		profit: 45,
-	},
-	{
-		image: "/images/product/product-02.png",
-		name: "Macbook Pro M1",
-		category: "Electronics",
-		quantity: 296,
-		price: 546,
-		sold: 12,
-		profit: 125,
-	},
-	{
-		image: "/images/product/product-03.png",
-		name: "Dell Inspiron 15",
-		category: "Electronics",
-		quantity: 296,
-		price: 443,
-		sold: 64,
-		profit: 247,
-	},
-	{
-		image: "/images/product/product-04.png",
-		name: "HP Probook 450",
-		category: "Electronics",
-		quantity: 296,
-		price: 499,
-		sold: 72,
-		profit: 103,
-	},
-];
 const INIT_TRAN: any = {
 	name: '',
 	price: '',
@@ -57,39 +21,59 @@ const INIT_TRAN: any = {
 	user_id: 2,
 	quantity: '',
 	total_price: '',
-}
+};
+
+const INIT_ORDER: any = {
+	name: '',
+	node: '',
+	receiver_name: '',
+	receiver_email: '',
+	receiver_phone: '',
+	receiver_address: '',
+	code: '',
+	total_discount: 0,
+	payment_type: 0,
+	category_id: null,
+	status: "",
+	user_id: 0,
+	total_price: 0,
+};
+
+
 
 const OrderForm: React.FC = () => {
 
 	const [file, setFile] = useState(null);
-	const [data, setData] = useState({
-		total_price: '',
-		total_discount: '',
-		discount: 0,
-		status: '',
-	});
-	const [transaction, setTransaction]: any = useState(null);
+	const [data, setData]: any = useState(INIT_ORDER);
+	const [transaction, setTransaction]: any = useState([INIT_TRAN]);
+	const [categories, setCategories]: any = useState([
+		{
+			id: 1,
+			name: 'Xem phim',
+		},
 
+		{
+			id: 2,
+			name: 'Mua hàng hóa',
+		},
+
+		{
+			id: 3,
+			name: 'Đồ uống',
+		},
+
+	]);
 
 	const [title, setTitle] = useState('Tạo mới');
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
 
+	const router = useRouter()
+
+
 	useEffect(() => {
 		let id = Number(params.get('id') || 0);
-		setTransaction([
-			{
-				name: '',
-				price: '',
-				order_id: 0,
-				product_id: 0,
-				status: 2,
-				discount: 0,
-				user_id: 2,
-				quantity: '',
-				total_price: '',
-			}
-		])
+
 		setId(id);
 		if (id) {
 			setTitle('Cập nhật');
@@ -100,7 +84,6 @@ const OrderForm: React.FC = () => {
 	const getData = async (id: any) => {
 		const response: any = await ORDER_SERVICE.show(id);
 		if (response?.status == 'success') {
-			console.log(response);
 			setData(response.data || null);
 			let trans = response.data.transactions || [INIT_TRAN];
 			setTransaction(trans)
@@ -143,13 +126,53 @@ const OrderForm: React.FC = () => {
 	const submit = async (e: any) => {
 		e.preventDefault();
 		let response: any;
-		let body 
-		if(id) {
-
+		let bodyData: any = data;
+		bodyData.transactions = transaction;
+		bodyData.total_price = transaction.reduce((newTotal: any, item: any) => {
+            newTotal += Number(item.total_price);
+			return newTotal;
+		}, 0)
+		if (id) {
+			response =  await ORDER_SERVICE.update(id, bodyData);
+		} else {
+			response =  await ORDER_SERVICE.store(bodyData);
+		}
+		if(response?.status == 'success') {
+			router.push('/order');
 		}
 	}
 
+	const resetForm = () => {
+		setData({
+			name: '',
+			node: '',
+			receiver_name: '',
+			receiver_email: '',
+			receiver_phone: '',
+			receiver_address: '',
+			code: '',
+			total_discount: 0,
+			payment_type: 0,
+			category_id: null,
+			status: "",
+			user_id: 0,
+			total_price: 0,
+		});
+		setTransaction([{
+			name: '',
+			price: '',
+			order_id: 0,
+			product_id: 0,
+			status: 2,
+			discount: 0,
+			user_id: 2,
+			quantity: '',
+			total_price: '',
+		}])
+	}
+
 	const genTotalPrice: any = (index: any) => {
+		console.log(index);
 		return Number(transaction[index].quantity) * Number(transaction[index].price)
 	}
 
@@ -159,14 +182,114 @@ const OrderForm: React.FC = () => {
 			<Breadcrumb pageName={title} subName="Order" />
 			<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 				<div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
-					<h3 className="font-medium text-black dark:text-white text-xl">
-						{title}
+					<h3 className="font-medium text-black dark:text-white text-2xl">
+						{/* {title} */}
 					</h3>
 				</div>
 				<div className="flex flex-col gap-5.5 p-6.5">
 					<form>
+						<div className="md:grid md:grid-cols-2 md:gap-4">
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Tên đơn hàng
+								</label>
+								<input
+									type="text"
+									placeholder="Tên đơn hàng"
+									defaultValue={data.name}
+									onChange={e => {
+										setField(e?.target?.value, 'name', data, setData);
+									}}
+									className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
+								/>
+							</div>
+							<div className="mb-5">
+								<SelectGroupTwo
+									title={'Phân loại'}
+									options={categories}
+									key_obj={'category_id'}
+									value={data.category_id}
+									form={data}
+									setForm={setData}
+								/>
+							</div>
+						</div>
+						<div className="md:grid md:grid-cols-2 md:gap-4">
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Tên khách hàng
+								</label>
+								<input
+									type="text"
+									placeholder="Tên khách hàng"
+									defaultValue={data.receiver_name}
+									onChange={e => {
+										setField(e?.target?.value, 'receiver_name', data, setData);
+									}}
+									className="w-full rounded-lg border-[1.5px] border-primary 
+									bg-transparent px-5 py-3 text-black outline-none transition 
+									focus:border-primary active:border-primary disabled:cursor-default 
+									disabled:bg-whiter dark:bg-form-input dark:text-white text-bold"
+								/>
+							</div>
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Số ĐT
+								</label>
+								<input
+									type="text"
+									placeholder="Số ĐT"
+									defaultValue={data.receiver_phone}
+									onChange={e => {
+										setField(e?.target?.value, 'receiver_phone', data, setData);
+									}}
+									className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
+								/>
+							</div>
+						</div>
+						<div className="md:grid md:grid-cols-2 md:gap-4">
+							<div className="mb-5">
+								<SelectGroupTwo
+									title={'Trạng thái'}
+									options={[
+										{
+											id: 1,
+											name: 'Chưa thanh toán'
+										},
+										{
+											id: 2,
+											name: 'Đã thanh toán'
+										}
+									]}
+									key_obj={'status'}
+									value={data.status}
+									form={data}
+									setForm={setData}
+								/>
+
+							</div>
+							<div className="mb-5">
+								<SelectGroupTwo
+									title={'Phương thức thanh toán'}
+									options={[
+										{
+											id: 1,
+											name: 'Online'
+										},
+										{
+											id: 2,
+											name: 'Tiền mặt'
+										}
+									]}
+									key_obj={'payment_type'}
+									value={data.payment_type}
+									form={data}
+									setForm={setData}
+								/>
+							</div>
+						</div>
 						{!id && <div className="mb-5">
-							<label className="mb-3 block text-sm font-medium text-black dark:text-white">
+							<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
 								Choose file
 							</label>
 							<input
@@ -223,7 +346,7 @@ const OrderForm: React.FC = () => {
 									<div className="col-span-2 px-2">
 										<input
 											type="text"
-											placeholder="Active Input"
+											placeholder="Quantity"
 											defaultValue={product.quantity}
 											onChange={e => {
 												if (e?.target?.value) {
@@ -253,7 +376,7 @@ const OrderForm: React.FC = () => {
 									</div>
 									<div className="col-span-1 flex items-center justify-center">
 										<p className="text-sm  text-center text-black dark:text-white">
-											<b>{genTotalPrice(key)} đ</b>
+											<b>{formatMoney(transaction[key].total_price || 0) }</b>
 										</p>
 									</div>
 								</div>
@@ -263,7 +386,18 @@ const OrderForm: React.FC = () => {
 							rounded-md bg-success px-20 py-2 text-center 
 							font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
 								onClick={(e) => {
-									transaction.push(INIT_TRAN)
+									let obj = {
+										name: '',
+										price: '',
+										order_id: 0,
+										product_id: 0,
+										status: 2,
+										discount: 0,
+										user_id: 2,
+										quantity: '',
+										total_price: '',
+									}
+									transaction.push(obj);
 									setTransaction([...transaction]);
 								}}
 							>Thêm</div>
@@ -275,7 +409,7 @@ const OrderForm: React.FC = () => {
 									<p className="font-medium text-xl">Tổng tiền</p>
 								</div>
 								<div className="col-span-2">
-									<p className="font-medium text-center text-xl">123123</p>
+									<p className="font-medium text-center text-xl">{formatMoney(data.total_price)}</p>
 								</div>
 							</div>
 						</div>

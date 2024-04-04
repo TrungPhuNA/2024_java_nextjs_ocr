@@ -10,6 +10,6 @@ public interface OrderServiceInterface {
     Optional<Order> findById(Integer id);
     Page<Order> findAll(int page, int page_size);
     Order save(OrderRequest order);
-    Order update(Order order);
+    Order update(int id, OrderRequest order);
     void delete(Order order);
 }

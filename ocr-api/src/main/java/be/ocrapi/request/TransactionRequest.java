@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 public class TransactionRequest {
-    private Integer id;
 
     private String name;
 
@@ -25,4 +26,6 @@ public class TransactionRequest {
     private Integer quantity;
 
     private Integer total_price;
+
+    private Date updated_at = new Date();
 }
