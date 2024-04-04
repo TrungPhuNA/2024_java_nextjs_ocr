@@ -5,6 +5,7 @@ import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
 import be.ocrapi.model.Order;
 import be.ocrapi.model.User;
+import be.ocrapi.request.UserRequest;
 import be.ocrapi.service.UserService;
 import be.ocrapi.service.UserServiceInterface;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class UserController {
     }
 
     @PostMapping
-    public BaseResponse<?> save(@RequestBody User data) {
+    public BaseResponse<?> save(@RequestBody UserRequest data) {
         try {
             return BaseResponse.ofSucceeded(userService.save(data));
         } catch (Exception e) {
@@ -75,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping
-    public BaseResponse<?> update(@RequestBody User data) {
+    public BaseResponse<?> update(@RequestBody UserRequest data) {
         try {
             return BaseResponse.ofSucceeded(userService.update(data));
         } catch (Exception e) {

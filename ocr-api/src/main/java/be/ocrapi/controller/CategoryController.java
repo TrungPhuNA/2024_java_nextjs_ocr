@@ -6,6 +6,7 @@ import be.ocrapi.common.BusinessException;
 import be.ocrapi.model.Category;
 import be.ocrapi.model.Order;
 import be.ocrapi.model.User;
+import be.ocrapi.request.CategoryRequest;
 import be.ocrapi.service.CategoryServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class CategoryController {
     @Autowired
     private CategoryServiceInterface categoryService;
 
-    @GetMapping("{id}")
+    @GetMapping("show/{id}")
     public BaseResponse<?> findOne(@PathVariable Integer id) {
         try {
             return BaseResponse.ofSucceeded(categoryService.findById(id));
@@ -36,7 +37,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping
+    @GetMapping("list")
     public BaseResponse<?> findAll(
             @RequestParam(name = "page", required = false, defaultValue = "1") String page,
             @RequestParam(name = "page_size", required = false, defaultValue = "20") String page_size
@@ -57,8 +58,8 @@ public class CategoryController {
         }
     }
 
-    @PostMapping
-    public BaseResponse<?> save(@RequestBody Category data) {
+    @PostMapping("store")
+    public BaseResponse<?> save(@RequestBody CategoryRequest data) {
         try {
             return BaseResponse.ofSucceeded(categoryService.save(data));
         } catch (Exception e) {
@@ -70,10 +71,10 @@ public class CategoryController {
         }
     }
 
-    @PutMapping
-    public BaseResponse<?> update(@RequestBody Category data) {
+    @PutMapping("update/{id}")
+    public BaseResponse<?> update(@PathVariable Integer id, @RequestBody CategoryRequest data) {
         try {
-            return BaseResponse.ofSucceeded(categoryService.update(data));
+            return BaseResponse.ofSucceeded(categoryService.update(id, data));
         } catch (Exception e) {
             log.debug("[Category CONTROLLER]------>error update", e);
             String message = e.getMessage();
@@ -83,8 +84,8 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping
-    public void delete(@RequestBody Category data) {
-        categoryService.delete(data);
+    @DeleteMapping("delete/{id}")
+    public void delete(@PathVariable Integer id) {
+        categoryService.delete(id);
     }
 }
