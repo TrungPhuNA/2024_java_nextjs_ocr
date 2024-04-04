@@ -1451,6 +1451,10 @@ body{
   --tw-bg-opacity: 1;
   background-color: rgb(28 36 52 / var(--tw-bg-opacity));
 }
+.bg-cyan-500{
+  --tw-bg-opacity: 1;
+  background-color: rgb(6 182 212 / var(--tw-bg-opacity));
+}
 .bg-danger{
   --tw-bg-opacity: 1;
   background-color: rgb(211 64 83 / var(--tw-bg-opacity));
@@ -1607,6 +1611,10 @@ body{
 .px-2\.5{
   padding-left: 0.625rem;
   padding-right: 0.625rem;
+}
+.px-20{
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
 .px-26{
   padding-left: 6.5rem;

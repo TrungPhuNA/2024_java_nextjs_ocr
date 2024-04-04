@@ -4,6 +4,7 @@ import be.ocrapi.common.BaseResponse;
 import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
 import be.ocrapi.model.Order;
+import be.ocrapi.request.OrderRequest;
 import be.ocrapi.service.OrderServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class OrderController {
     }
 
     @PostMapping("store")
-    public BaseResponse<?> save(@RequestBody Order order) {
+    public BaseResponse<?> save(@RequestBody OrderRequest order) {
         try {
             return BaseResponse.ofSucceeded(orderService.save(order));
         } catch (Exception e) {

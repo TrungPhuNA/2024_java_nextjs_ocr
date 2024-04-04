@@ -4,7 +4,7 @@ import { getItem } from './helpers.service';
 import { WEB_VALUE } from './constant';
 
 const axiosClient = axios.create( {
-	baseURL: WEB_VALUE.API,
+	baseURL: WEB_VALUE,
 	headers: {
 		'Content-Type': 'application/json',
 		'Authorization': 'Bearer ' + getItem( 'access_token' )
@@ -59,8 +59,7 @@ axiosClient.interceptors.response.use(
 
 export const postMethod = async ( path, data ) =>
 {
-	await timeDelay( 1000 )
-	return await axiosClient.post( `${ WEB_VALUE.API }/${ path }`, data )
+	return await axiosClient.post( `/${ path }`, data )
 		.then( response => response )
 		.catch( error =>
 		{
@@ -73,8 +72,7 @@ export const postMethod = async ( path, data ) =>
 
 export const getMethod = async ( path, params ) =>
 {
-	await timeDelay( 1000 )
-	return await axiosClient.get( `${ WEB_VALUE.API }/${ path }`, { params: params } )
+	return await axiosClient.get( `/${ path }`, { params: params } )
 		.then( response =>
 		{
 
@@ -91,8 +89,7 @@ export const getMethod = async ( path, params ) =>
 
 export const putMethod = async ( path, data ) =>
 {
-	await timeDelay( 1000 )
-	return await axiosClient.put( `${ WEB_VALUE.API }/${ path }`, data )
+	return await axiosClient.put( `/${ path }`, data )
 		.then( response => response )
 		.catch( error =>
 		{
@@ -105,8 +102,7 @@ export const putMethod = async ( path, data ) =>
 
 export const deleteMethod = async ( path ) =>
 {
-	await timeDelay( 1000 )
-	return await axiosClient.delete( `${ WEB_VALUE.API }/${ path }` )
+	return await axiosClient.delete( `/${ path }` )
 		.then( response => response )
 		.catch( error =>
 		{
@@ -121,7 +117,7 @@ export const deleteMethod = async ( path ) =>
 export const postImage = ( path, data ) =>
 {
 
-	return axios.post( `${ WEB_VALUE.API }/${ path }`, data, { headers: { 'Accept': 'multipart/form-data' } } )
+	return axios.post( `/${ path }`, data, { headers: { 'Accept': 'multipart/form-data' } } )
 		.then( response => response?.data )
 		.catch( error =>
 		{
@@ -132,7 +128,7 @@ export const uploadFile = async ( file ) =>
 	let avatar = null;
 	const formData = new FormData();
 	formData.append( 'file', file );
-	const res = await axios.post( `${ WEB_VALUE.API }/upload/file`,
+	const res = await axios.post( `/upload/file`,
 		formData, { headers: { 'Accept': 'multipart/form-data' } } );
 	let data = res.data;
 	if ( data?.status === 'success' )

@@ -1,10 +1,12 @@
 package be.ocrapi.model;
 
+import be.ocrapi.request.OrderRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -25,8 +27,6 @@ public class Order {
     @Column(name = "discount")
     private Integer discount;
 
-//    @Column(name = "category_id")
-//    private Integer category_id;
 
     @Column(name = "total_discount")
     private Integer total_discount;
@@ -52,7 +52,18 @@ public class Order {
     @Column(name = "receiver_address")
     private String receiver_address;
 
-//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JoinColumn(name = "order_id")
-//    private List<Transaction> orders = new ArrayList<>();
+    @Column(name = "created_at")
+    private Date created_at;
+
+    @Column(name = "updated_at")
+    private Date updated_at;
+
+    @Column(name = "payment_type")
+    private int payment_type;
+
+
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id")
+    private List<Transaction> transactions;
 }

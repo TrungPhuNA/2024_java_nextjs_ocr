@@ -1,3 +1,4 @@
 {
+  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/order/form/page": "app/order/form/page.js"
 }
