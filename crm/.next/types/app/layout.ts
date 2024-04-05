@@ -1,4 +1,4 @@
-// File: C:\Users\letx1\Desktop\do-an\2024_java_nextjs_ocr\crm\src\app\layout.tsx
+// File: /Users/trungphuna/Documents/work/web/khodoan/2024/2024_java_nextjs_ocr/crm/src/app/layout.tsx
 import * as entry from '../../../src/app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

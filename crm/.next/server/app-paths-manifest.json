@@ -1,3 +1,7 @@
 {
-  "/order/form/page": "app/order/form/page.js"
+  "/not-found": "app/not-found.js",
+  "/page": "app/page.js",
+  "/order/form/page": "app/order/form/page.js",
+  "/order/page": "app/order/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
 }
