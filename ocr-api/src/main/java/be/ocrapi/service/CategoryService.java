@@ -3,6 +3,7 @@ package be.ocrapi.service;
 import be.ocrapi.model.Category;
 import be.ocrapi.model.Order;
 import be.ocrapi.repository.CategoryRepository;
+import be.ocrapi.request.CategoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +18,7 @@ public class CategoryService implements CategoryServiceInterface {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Override
-    public Category save(Category category) {
-        return categoryRepository.save(category);
-    }
+
 
     @Override
     public Optional<Category> findById(Integer id) {
@@ -34,12 +32,25 @@ public class CategoryService implements CategoryServiceInterface {
     }
 
     @Override
-    public Category update(Category category) {
-        return categoryRepository.save(category);
+    public Category save(CategoryRequest order) {
+        Category o = new Category();
+        o.setName(order.getName());
+        return categoryRepository.save(o);
     }
 
     @Override
-    public void delete(Category category) {
-        categoryRepository.delete(category);
+    public Category update(int id, CategoryRequest order) {
+        var c = categoryRepository.getById(id);
+        if(c != null) {
+            c.setName(order.getName());
+            return categoryRepository.save(c);
+        }
+        throw new RuntimeException("Cập nhật thất bại");
+    }
+
+
+    @Override
+    public void delete(int id) {
+        categoryRepository.deleteById(id);
     }
 }

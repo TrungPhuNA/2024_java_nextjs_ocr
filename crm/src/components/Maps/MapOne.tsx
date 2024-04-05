@@ -41,7 +41,7 @@ const MapOne: React.FC = () => {
     });
 
     return () => {
-      mapOne.destroy();
+    //   mapOne.destroy();
     };
   }, []);
 

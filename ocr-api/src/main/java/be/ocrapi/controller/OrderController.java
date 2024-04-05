@@ -4,13 +4,19 @@ import be.ocrapi.common.BaseResponse;
 import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
 import be.ocrapi.model.Order;
+import be.ocrapi.model.Transaction;
+import be.ocrapi.request.OrderRequest;
+import be.ocrapi.request.TransactionRequest;
 import be.ocrapi.service.OrderServiceInterface;
+import be.ocrapi.service.TransactionInterface;
+import be.ocrapi.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +27,8 @@ import java.util.Optional;
 public class OrderController {
     @Autowired
     private OrderServiceInterface orderService;
+    @Autowired
+    private TransactionInterface transactionService;
 
     @GetMapping("show/{id}")
     public BaseResponse<?> findOne(@PathVariable Integer id) {
@@ -57,10 +65,22 @@ public class OrderController {
     }
 
     @PostMapping("store")
-    public BaseResponse<?> save(@RequestBody Order order) {
+    public BaseResponse<?> save(@RequestBody OrderRequest order) {
         try {
-            return BaseResponse.ofSucceeded(orderService.save(order));
+            var newOrder = orderService.save(order);
+            if(newOrder != null) {
+                List<Transaction> t = new ArrayList<Transaction>();
+                for(TransactionRequest item :order.getTransactions()) {
+                    item.setOrder_id(newOrder.getId());
+                    Transaction newT = transactionService.save(item);
+                    t.add(newT);
+                }
+                newOrder.setTransactions(t);
+            }
+            return BaseResponse.ofSucceeded(newOrder);
         } catch (Exception e) {
+            System.out.print("[ORDER CONTROLLER]------>error create-----> " +e.getMessage() );
+            System.out.print("[ORDER CONTROLLER]------>error create-----> " +e.getCause() );
             log.debug("[ORDER CONTROLLER]------>error create", e);
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
@@ -70,9 +90,21 @@ public class OrderController {
     }
 
     @PutMapping("update/{id}")
-    public BaseResponse<?> update(@RequestBody Order order) {
+    public BaseResponse<?> update(@PathVariable Integer id, @RequestBody OrderRequest order) {
         try {
-            return BaseResponse.ofSucceeded(orderService.update(order));
+            var newOrder = orderService.update(id, order);
+            if(newOrder != null) {
+                System.out.println(id);
+                transactionService.deleteByOrderIds(id);
+                List<Transaction> t = new ArrayList<Transaction>();
+                for(TransactionRequest item :order.getTransactions()) {
+                    item.setOrder_id(newOrder.getId());
+                    Transaction newT = transactionService.save(item);
+                    t.add(newT);
+                }
+                newOrder.setTransactions(t);
+            }
+            return BaseResponse.ofSucceeded(newOrder);
         } catch (Exception e) {
             log.debug("[ORDER CONTROLLER]------>error update", e);
             String message = e.getMessage();

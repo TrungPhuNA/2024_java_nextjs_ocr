@@ -5,6 +5,7 @@ import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
 import be.ocrapi.model.Category;
 import be.ocrapi.model.User;
+import be.ocrapi.request.UserRequest;
 import be.ocrapi.service.CategoryServiceInterface;
 import be.ocrapi.service.UserService;
 import be.ocrapi.service.UserServiceInterface;
@@ -33,8 +34,34 @@ public class AuthController {
         }
     }
 
-    @PostMapping
-    public BaseResponse<?> save(@RequestBody User data) {
+    @PostMapping("register")
+    public BaseResponse<?> save(@RequestBody UserRequest data) {
+        try {
+            return BaseResponse.ofSucceeded(userService.save(data));
+        } catch (Exception e) {
+            log.debug("[USER CONTROLLER]------>error create", e);
+            String message = e.getMessage();
+            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
+            log.error("[USER CONTROLLER]------>create", error);
+            return BaseResponse.ofFailed(error);
+        }
+    }
+
+    @PostMapping("login")
+    public BaseResponse<?> login(@RequestBody UserRequest data) {
+        try {
+            return BaseResponse.ofSucceeded(userService.login(data));
+        } catch (Exception e) {
+            log.debug("[AUth CONTROLLER]------>error login", e);
+            String message = e.getMessage();
+            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
+            log.error("[USER CONTROLLER]------>create", error);
+            return BaseResponse.ofFailed(error);
+        }
+    }
+
+    @PutMapping("profile")
+    public BaseResponse<?> update(@RequestBody UserRequest data) {
         try {
             return BaseResponse.ofSucceeded(userService.save(data));
         } catch (Exception e) {

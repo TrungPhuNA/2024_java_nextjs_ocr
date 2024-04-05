@@ -1,7 +1,7 @@
 
 
 export const STATIC_URL_IMAGE=process.env.NEXT_PUBLIC_API + 'upload/';
-export const WEB_VALUE=process.env.NEXT_PUBLIC_API;
+export const WEB_VALUE=process.env.NEXT_PUBLIC_API || 'http://localhost:3010';
 export const URL_API = {
 	AUTH: 'auth',
 	ORDER: 'order',
