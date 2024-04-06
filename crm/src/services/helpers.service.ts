@@ -2,7 +2,8 @@
 import moment from 'moment';
 
 export const getItem = (key: any) => {
-	return localStorage.getItem(key) || null;
+	let value: any = localStorage.getItem(key) ;
+	return value && JSON.parse(value) || null;
 }
 
 export const setItem = (key: any, value: any) => {
@@ -72,10 +73,15 @@ export const onFieldsChange = (e: any, form: any, ee = null) => {
 }
 
 export const setField = (value: any, name: any, form: any, setForm: any) => {
-	form[`${name}`] = value
+	form[name] = value;
+	
 	setForm({
-		...form
+		...form,
 	});
+}
+
+export const timeDelay = async (delay: number) => {
+	return new Promise(res => setTimeout(res, delay))
 }
 
 export const onErrorImage = (e: any) => {

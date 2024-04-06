@@ -13,9 +13,9 @@ const SelectGroupTwo: React.FC = (props: any) => {
 
 	return (
 		<div>
-			<label className="mb-3 block text-xl text-sm font-medium text-black dark:text-white">
+			{props.title && <label className="mb-3 block text-xl text-sm font-medium text-black dark:text-white">
 				{props.title || 'Select Option'}
-			</label>
+			</label>}
 
 			<div className="relative z-20 bg-white dark:bg-form-input">
 				{/* <span className="absolute left-4 top-1/2 z-30 -translate-y-1/2">

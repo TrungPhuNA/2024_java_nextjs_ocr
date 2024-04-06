@@ -1,6 +1,6 @@
 // @ts-nocheck
 import axios from 'axios';
-import { getItem } from './helpers.service';
+import { getItem, timeDelay } from './helpers.service';
 import { WEB_VALUE } from './constant';
 
 const axiosClient = axios.create( {
