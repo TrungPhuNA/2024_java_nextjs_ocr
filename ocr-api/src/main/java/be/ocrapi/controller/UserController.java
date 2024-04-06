@@ -75,18 +75,18 @@ public class UserController {
         }
     }
 
-    @PutMapping
-    public BaseResponse<?> update(@RequestBody UserRequest data) {
-        try {
-            return BaseResponse.ofSucceeded(userService.update(data));
-        } catch (Exception e) {
-            log.debug("[USER CONTROLLER]------>error update", e);
-            String message = e.getMessage();
-            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
-            log.error("[USER CONTROLLER]------>update", error);
-            return BaseResponse.ofFailed(error);
-        }
-    }
+//    @PutMapping
+//    public BaseResponse<?> update(@RequestBody UserRequest data) {
+//        try {
+//            return BaseResponse.ofSucceeded(userService.update(data));
+//        } catch (Exception e) {
+//            log.debug("[USER CONTROLLER]------>error update", e);
+//            String message = e.getMessage();
+//            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
+//            log.error("[USER CONTROLLER]------>update", error);
+//            return BaseResponse.ofFailed(error);
+//        }
+//    }
 
     @DeleteMapping
     public void delete(@RequestBody User order) {

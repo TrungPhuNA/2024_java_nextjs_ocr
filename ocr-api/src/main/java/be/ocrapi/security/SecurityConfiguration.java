@@ -18,9 +18,8 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {"/api/v1/**"};
-//    private final JwtAuthenticationFilter jwtAuthFilter;
-//    private final AuthenticationProvider authenticationProvider;
-//    private final LogoutHandler logoutHandler;
+    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

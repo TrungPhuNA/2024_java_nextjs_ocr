@@ -21,10 +21,10 @@ public class AuthController {
     @Autowired
     private UserServiceInterface userService;
 
-    @GetMapping("profile")
-    public BaseResponse<?> findOne() {
+    @GetMapping("profile/{id}")
+    public BaseResponse<?> findOne(@PathVariable Integer id) {
         try {
-            return BaseResponse.ofSucceeded(null);
+            return BaseResponse.ofSucceeded(userService.findById(id));
         } catch (Exception e) {
             log.debug("[USER CONTROLLER]------>error findOne", e);
             String message = e.getMessage();
@@ -60,10 +60,10 @@ public class AuthController {
         }
     }
 
-    @PutMapping("profile")
-    public BaseResponse<?> update(@RequestBody UserRequest data) {
+    @PutMapping("profile/{id}")
+    public BaseResponse<?> update(@PathVariable Integer id, @RequestBody UserRequest data) {
         try {
-            return BaseResponse.ofSucceeded(userService.save(data));
+            return BaseResponse.ofSucceeded(userService.update(id,data));
         } catch (Exception e) {
             log.debug("[USER CONTROLLER]------>error create", e);
             String message = e.getMessage();

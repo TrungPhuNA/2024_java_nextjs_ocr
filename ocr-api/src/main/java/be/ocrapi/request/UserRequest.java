@@ -1,5 +1,6 @@
 package be.ocrapi.request;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,8 @@ public class UserRequest {
     private String phone;
 
     private String avatar;
+
+    private String access_token;
+
+    private String refresh_token;
 }

@@ -12,6 +12,7 @@ import { Product } from "@/types/product";
 import { INIT_PAGING, WEB_VALUE } from "@/services/constant";
 import { ORDER_SERVICE } from "@/services/api.service";
 import { formatMoney, formatTime } from "@/services/helpers.service";
+import { PagingPage } from "@/components/common/paging";
 
 const productData: Product[] = [
 	{
@@ -137,6 +138,13 @@ const OrderList: React.FC = () => {
 					}
 
 					)}
+					<div className="mt-3 py-5">
+						<PagingPage paging={paging}
+						 setPaging={setPaging} 
+						 onPageChange={(e: any) => {
+							getDataList({page: e, page_size: paging.page_size})
+						 }}/>
+					</div>
 				</div>
 			</div>
 		</DefaultLayout>

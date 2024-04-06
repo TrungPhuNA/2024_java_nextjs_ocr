@@ -48,7 +48,7 @@ public class BaseResponse<T> {
         BaseResponse<List<T>> response = new BaseResponse<>();
         response.data = data.getContent();
         response.status = "success";
-        response.meta.page = data.getNumber();
+        response.meta.page = data.getNumber() + 1;
         response.meta.size = data.getSize();
         response.meta.page_size = data.getSize();
         response.meta.total = data.getTotalElements();
@@ -104,7 +104,7 @@ public class BaseResponse<T> {
         @CompiledJson
         public Metadata(String code, Integer page, Integer size, Long total, String message, List<FieldViolation> errors) {
             this.code = code;
-            this.page = page;
+            this.page = page + 1;
             this.size = size;
             this.page_size = size;
             this.total = total;

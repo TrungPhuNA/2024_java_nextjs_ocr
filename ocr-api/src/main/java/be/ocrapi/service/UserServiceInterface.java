@@ -15,6 +15,6 @@ public interface UserServiceInterface {
     Page<User> findAll(int page, int page_size);
 
     User save(UserRequest user);
-    User update(UserRequest user);
+    User update(int id, UserRequest user);
     void delete(User user);
 }

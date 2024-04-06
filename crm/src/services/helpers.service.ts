@@ -113,3 +113,13 @@ export const formatTime = (value: any, format: any): any => {
 export const formatMoney = (money: any) => {
 	return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(money)
 }
+
+export const range = (start: any, end: any) => {
+	let length = end - start + 1;
+	console.log(length);
+	/*
+		Create an array of certain length and set the elements within it from
+	  start value to end value.
+	*/
+	return Array.from({ length }, (_, idx) => idx + start);
+};

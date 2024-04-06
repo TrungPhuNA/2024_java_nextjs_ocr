@@ -28,6 +28,7 @@ public class UserService implements UserServiceInterface{
     @Autowired
     private UserRepository userRepository;
 
+
     @Autowired
     private  PasswordEncoder passwordEncoder;
     @Autowired
@@ -69,6 +70,9 @@ public class UserService implements UserServiceInterface{
 
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
+        user.setAccess_token(jwtToken);
+        user.setRefresh_token(refreshToken);
+        userRepository.save(user);
         log.debug("token=========> " + jwtToken);
 
         return new LoginResponse(jwtToken, refreshToken, user);
@@ -87,8 +91,8 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
-    public User update(UserRequest user) {
-        User u = userRepository.findUserByEmail(user.getEmail());
+    public User update(int id, UserRequest user) {
+        User u = userRepository.getById(id);
         u = setData(user, u);
         return userRepository.save(u);
     }
