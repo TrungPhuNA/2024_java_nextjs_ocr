@@ -6,10 +6,11 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 import { Product } from "@/types/product";
 import Link from "next/link";
-import { ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
+import { CATEGORY_SERVICE, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { formatMoney, setField } from "@/services/helpers.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
+import Loader from "@/components/common/Loader";
 
 const INIT_TRAN: any = {
 	name: '',
@@ -44,6 +45,7 @@ const INIT_ORDER: any = {
 const OrderForm: React.FC = () => {
 
 	const [file, setFile] = useState(null);
+	const [loading, setLoading] = useState(false);
 	const [data, setData]: any = useState(INIT_ORDER);
 	const [transaction, setTransaction]: any = useState([INIT_TRAN]);
 	const [categories, setCategories]: any = useState([
@@ -79,14 +81,29 @@ const OrderForm: React.FC = () => {
 			setTitle('Cập nhật');
 			getData(id)
 		}
+
+		getCategory();	
+
 	}, [params.get('id')]);
 
+
 	const getData = async (id: any) => {
+		setLoading(true);
+
 		const response: any = await ORDER_SERVICE.show(id);
+		setLoading(false);
+
 		if (response?.status == 'success') {
 			setData(response.data || null);
 			let trans = response.data.transactions || [INIT_TRAN];
 			setTransaction(trans)
+		}
+	}
+
+	const getCategory = async () => {
+		const response: any = await CATEGORY_SERVICE.getList({page: 1, page_size: 100});
+		if (response?.status == 'success') {
+			setCategories(response.data || null);
 		}
 	}
 
@@ -131,13 +148,18 @@ const OrderForm: React.FC = () => {
 		bodyData.total_price = transaction.reduce((newTotal: any, item: any) => {
             newTotal += Number(item.total_price);
 			return newTotal;
-		}, 0)
+		}, 0);
+		setLoading(true);
+
 		if (id) {
 			response =  await ORDER_SERVICE.update(id, bodyData);
 		} else {
 			response =  await ORDER_SERVICE.store(bodyData);
 		}
+		setLoading(false);
+
 		if(response?.status == 'success') {
+			resetForm()
 			router.push('/order');
 		}
 	}
@@ -186,6 +208,8 @@ const OrderForm: React.FC = () => {
 						{/* {title} */}
 					</h3>
 				</div>
+				{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
+
 				<div className="flex flex-col gap-5.5 p-6.5">
 					<form>
 						<div className="md:grid md:grid-cols-2 md:gap-4">

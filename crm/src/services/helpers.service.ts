@@ -7,7 +7,7 @@ export const getItem = (key: any) => {
 }
 
 export const setItem = (key: any, value: any) => {
-	localStorage.setItem(key, value);
+	localStorage.setItem(key, JSON.stringify(value));
 }
 
 export const removeItem = (key: any) => {
@@ -122,7 +122,6 @@ export const formatMoney = (money: any) => {
 
 export const range = (start: any, end: any) => {
 	let length = end - start + 1;
-	console.log(length);
 	/*
 		Create an array of certain length and set the elements within it from
 	  start value to end value.

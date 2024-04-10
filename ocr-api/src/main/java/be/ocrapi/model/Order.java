@@ -72,4 +72,8 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
     private List<Transaction> transactions;
+
+//    @ManyToOne()
+//    @JoinColumn(name = "category_id")
+//    private Category category;
 }

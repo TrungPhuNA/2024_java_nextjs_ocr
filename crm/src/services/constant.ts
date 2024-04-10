@@ -5,7 +5,8 @@ export const WEB_VALUE=process.env.NEXT_PUBLIC_API || 'http://localhost:3010';
 export const URL_API = {
 	AUTH: 'auth',
 	ORDER: 'order',
-	UPLOAD: 'upload'
+	UPLOAD: 'upload',
+	CATEGORY: 'category'
 };
 
 

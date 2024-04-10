@@ -11,4 +11,5 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CategoryRequest {
     private String name;
+    private Integer status;
 }

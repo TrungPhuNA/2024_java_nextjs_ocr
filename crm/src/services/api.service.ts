@@ -30,6 +30,33 @@ export const ORDER_SERVICE = {
 	},
 };
 
+export const CATEGORY_SERVICE = {
+	async getList(filters: any) {
+		await timeDelay(1000)
+
+		const params = buildFilter(filters);
+		return await getMethod(`${URL_API.CATEGORY}/list`, params);
+	},
+	async store(data: any) {
+		await timeDelay(1000)
+
+		return await postMethod(`${URL_API.CATEGORY}/store`, data);
+	},
+	async show(id: any) {
+		await timeDelay(1000)
+
+		return await getMethod(`${URL_API.CATEGORY}/show/` + id, {});
+	},
+	async update(id: any, data: any) {
+		await timeDelay(1000)
+		return await putMethod(`${URL_API.CATEGORY}/update/` + id, data);
+	},
+	async delete(id: any) {
+		await timeDelay(1000)
+		return await deleteMethod(`${URL_API.CATEGORY}/delete/` + id);
+	},
+};
+
 export const AUTH_SERVICE = {
 	async register(data: any) {
 		await timeDelay(1000)

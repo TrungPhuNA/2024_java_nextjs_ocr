@@ -12,6 +12,11 @@ export default function DefaultLayout({
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [auth, setAuth] = useState(getItem('access_token') ?? false);
 
+	useEffect(() => {
+		if(!auth && !window.location.pathname.includes('auth')) {
+			window.location.href='/auth/signin'
+		}
+	}, [])
 	
 	return (
 		<>

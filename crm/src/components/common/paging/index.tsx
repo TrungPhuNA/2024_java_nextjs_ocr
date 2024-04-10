@@ -9,9 +9,8 @@ export const PagingPage = (props: any) => {
 	const [paginationMemo, setPaginationMemo]: any = useState([]);
 
 	useEffect(() => {
-		if (page) {
+		if (page && total) {
 			let data = paginationFunc(total, page_size, 1, page) || [];
-			console.log(paginationFunc(total, page_size, 1, page));
 			setPaginationMemo(data);
 		}
 	}, [page, total]);
@@ -106,9 +105,9 @@ export const PagingPage = (props: any) => {
 					totals: <b>{total} results</b>
 				</p>
 			</div>
-			<div>
+			{paginationMemo?.length > 0 && <div>
 				<nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-					<a href="javascript:void(0)" onClick={
+					{paginationMemo?.length > 1 && <button onClick={
 						() => {
 							if (page > 1) {
 								onPrevious()
@@ -119,23 +118,23 @@ export const PagingPage = (props: any) => {
 						<svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 							<path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
 						</svg>
-					</a>
+					</button>}
 					{
-						paginationMemo?.length > 1 && paginationMemo.map((item: any, key: number) => {
-							return <a href="javascript:void(0)"
+						paginationMemo?.length > 0 && paginationMemo.map((item: any, key: number) => {
+							return <button
 								className={`
 								relative inline-flex items-center px-4 py-2 
 								text-sm font-semibold  focus:z-20 
-								${page == item ? 
-									'bg-indigo-600 text-white focus-visible:outline-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2' : 
-									`text-gray-900 ring-1 ring-inset  ring-gray-300 hover:bg-gray-50 focus:outline-offset-0`}
+								${page == item ?
+										'bg-indigo-600 text-white focus-visible:outline-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2' :
+										`text-gray-900 ring-1 ring-inset  ring-gray-300 hover:bg-gray-50 focus:outline-offset-0`}
 								`}
 								key={key}
 								onClick={() => {
 									if (page != item) {
 										props.onPageChange(item);
 									}
-								}}>{item}</a>
+								}}>{item}</button>
 						})
 					}
 					{/* className="relative z-10 inline-flex items-center 
@@ -143,7 +142,7 @@ export const PagingPage = (props: any) => {
 							focus:z-20  
 							 
 							" */}
-					<a href="javascript:void(0)"
+					{paginationMemo?.length > 1 && <button
 						onClick={() => {
 							if (page < lastPage) {
 								onNext()
@@ -155,11 +154,12 @@ export const PagingPage = (props: any) => {
 						hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
 						<span className="sr-only">Next</span>
 						<svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-							<path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+							<path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
 						</svg>
-					</a>
+					</button>}
 				</nav>
-			</div>
+			</div>}
+
 		</div>
 	</div>
 

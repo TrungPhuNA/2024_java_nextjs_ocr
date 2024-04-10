@@ -7,6 +7,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { setField } from "@/services/helpers.service";
 import { AUTH_SERVICE } from "@/services/api.service";
+import Loader from "@/components/common/Loader";
 
 
 const SignUp: React.FC = () => {
@@ -71,7 +72,10 @@ const SignUp: React.FC = () => {
 			setError(objError);
 			return;
 		}
+		setLoading(true);
 		const response: any = await AUTH_SERVICE.register(form);
+		setLoading(false);
+
 		if (response?.status == 'success') {
 			setErrorForm('');
 			window.location.href = '/auth/signin';
@@ -85,6 +89,8 @@ const SignUp: React.FC = () => {
 	return (
 		<DefaultLayout>
 			<Breadcrumb pageName="Sign Up" is_hide={true} />
+			{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
+
 			<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 				<div className="flex flex-wrap items-center">
 					<div className="hidden w-full xl:block xl:w-1/2">

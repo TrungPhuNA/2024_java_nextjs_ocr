@@ -35,6 +35,7 @@ public class CategoryService implements CategoryServiceInterface {
     public Category save(CategoryRequest order) {
         Category o = new Category();
         o.setName(order.getName());
+        o.setStatus(order.getStatus());
         return categoryRepository.save(o);
     }
 

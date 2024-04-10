@@ -6,6 +6,7 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { setField, setItem } from "@/services/helpers.service";
 import { AUTH_SERVICE } from "@/services/api.service";
+import Loader from "@/components/common/Loader";
 
 
 
@@ -55,7 +56,7 @@ const SignIn: React.FC = () => {
 			setItem('user', response?.data?.user);
 			setItem('access_token', response?.data?.access_token);
 			setErrorForm('');
-			// window.location.href = '/';
+			window.location.href = '/';
 		} else {
 			setErrorForm(response?.message || 'Lỗi khi đăng nhập')
 		}
@@ -64,6 +65,8 @@ const SignIn: React.FC = () => {
 	return (
 		<DefaultLayout>
 			<Breadcrumb pageName="Sign In" is_hide={true} />
+			{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
+
 			<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 				<div className="flex flex-wrap items-center">
 					<div className="hidden w-full xl:block xl:w-1/2">
