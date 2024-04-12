@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 @CrossOrigin("*")
 @RestController
@@ -30,14 +31,13 @@ public class OcrController {
     @PostMapping("upload")
     public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
         try {
-            var ocr = ocrService.ocr(file);
+            var ocr = ocrService.ocrV2(file);
             log.debug("[OCR CONTROLLER]------>error create", ocr.getResult());
             return BaseResponse.ofSucceeded(ocr.getResult());
         } catch (Exception e) {
-            log.debug("[OCR CONTROLLER]------>error create", e);
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
-            log.error("[OCR CONTROLLER]------>create", error);
+            log.error("[OCR CONTROLLER]------>create" + message);
             return BaseResponse.ofFailed(error);
         }
     }

@@ -5,6 +5,9 @@ import be.ocrapi.model.Transaction;
 import be.ocrapi.repository.OrderRepository;
 import be.ocrapi.request.OrderRequest;
 import be.ocrapi.request.TransactionRequest;
+import be.ocrapi.response.OrderResponse;
+import be.ocrapi.response.StatisticResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,11 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@Slf4j
 public class OrderService implements OrderServiceInterface {
     @Autowired
     private OrderRepository orderRepository;
@@ -85,6 +87,35 @@ public class OrderService implements OrderServiceInterface {
             return orderRepository.save(d);
         }
         throw new RuntimeException("Cập nhật thất bại");
+    }
+
+    @Override
+    public StatisticResponse getStatistic() {
+        List<OrderResponse> total = new ArrayList<>();
+        List<OrderResponse> price = new ArrayList<>();
+        Integer total_order = 0;
+        Integer total_price = 0;
+        for (int i = 1; i <= 4 ; i++) {
+            var totalStatus = orderRepository.countOrderByStatus(i);
+            if(totalStatus == null) {
+                totalStatus = 0;
+            }
+            total_order += totalStatus;
+            System.err.println("count totalStatus=======> "+ i + "----> "+totalStatus);
+            OrderResponse totalItem = new OrderResponse(i, totalStatus, 0);
+            var totalPrice = orderRepository.sumPriceOrderByStatus(i);
+            if(totalPrice == null) {
+                totalPrice = 0 ;
+            }
+            total_price += totalPrice;
+            System.err.println("count price=======> "+ i + "----> "+totalPrice);
+            OrderResponse priceByStatus = new OrderResponse(i, 0, totalPrice);
+
+            total.add(totalItem);
+            price.add(priceByStatus);
+        }
+        StatisticResponse statistic = new StatisticResponse(total,  total_order, total_price, price);
+        return statistic;
     }
 
     @Override

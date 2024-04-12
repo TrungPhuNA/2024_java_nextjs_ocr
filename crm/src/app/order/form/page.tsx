@@ -82,9 +82,66 @@ const OrderForm: React.FC = () => {
 			getData(id)
 		}
 
-		getCategory();	
+		getCategory();
+		check();
 
 	}, [params.get('id')]);
+
+	const check = () => {
+		let data = `Coffee Kem Sen Trang\nDuong So 2 - KDC 135 - TT. Ben Luc\nHOA DO'N THANH TOAN\nHE:\n0006\nNgay\n13/09/2017 Gio:\n12:24:54\nBAN:\nA 1\nTEN HANG\nSL\nD.GIA\nT.TIEN\nYaourt Nha Dam\n1\n25,000\n25,000\nChanh Day\n20,000\n20,000\nKem Socola\n22,000\n22,000\nKem Vanila\n22,000\n22,000\nKem Sau Rieng\n22,000\n22,000\nKem Dura\n1\n22,000\n22,000\nNuoc Ep Oi\n28,000\n28,000\nNuoc Ep Thom\n1\n28,000\n28,000\nDura\nT.CONG\n8\n189,000\nGIAM % HD (-20%)\n-37,800\nTIEN MAT\n151,200\nMot tram nam muoi mot ngan hai tram\ndong./.`
+		let newData = data.split('\n');
+		console.log(newData);
+		let obj = {
+			name: newData[0],
+			node: '',
+			receiver_name: '',
+			receiver_email: '',
+			receiver_phone: '',
+			receiver_address: '',
+			code: '',
+			total_discount: 0,
+			payment_type: 0,
+			category_id: null,
+			status: "",
+			user_id: 0,
+			total_price: 0,
+		};
+
+		let objData = newData.reduce((newItem: any, item: any, index) => {
+			if (item.includes(',')) item = item.replace(',', '')
+			if (item.match(/^[0-9]+$/g) && index > 8) {
+				newItem.push({
+					value: item,
+					index: index
+				})
+			}
+			return newItem;
+		}, []);
+		let numberValue = objData?.length % 4;
+		console.log(numberValue);
+		objData.splice(-numberValue, numberValue);
+		console.log(objData);
+		let newTrans = newData.reduce((newItem: any, item: any, index) => {
+			console.log("index -------> ", index);
+			let i = objData.findIndex((item: any) => item.index == index);
+			if(i >= 0) {
+				let trs = {
+					name: '',
+					price: '',
+					order_id: 0,
+					product_id: 0,
+					status: 2,
+					discount: 0,
+					user_id: 2,
+					quantity: '',
+					total_price: '',
+				}
+			} 
+			
+			return newItem;
+		}, []);
+		setData(obj)
+	}
 
 
 	const getData = async (id: any) => {
@@ -101,7 +158,7 @@ const OrderForm: React.FC = () => {
 	}
 
 	const getCategory = async () => {
-		const response: any = await CATEGORY_SERVICE.getList({page: 1, page_size: 100});
+		const response: any = await CATEGORY_SERVICE.getList({ page: 1, page_size: 100 });
 		if (response?.status == 'success') {
 			setCategories(response.data || null);
 		}
@@ -109,34 +166,13 @@ const OrderForm: React.FC = () => {
 
 	const changeFile = async (e: any) => {
 		e.preventDefault();
-		let data = `4- m
-		@ . “
-		"J Cofơee Kem Sen Tráng
-		' ……o—gMJ m…… … m……
-		’ HÓA ac… THANH TOÁN
-		HD 0005
-		_ N ấy 13/0913m7 mo «2 za 54
-		; sầu: A 1
-		YIN HANG IL & mA ! neu
-		Yanư\ Nhu Dam \ 25000 25000
-		Chanh DIY 1 20000 20000
-		Kem sau… 1 22000 22000
-		Kem VunHa 1 22000 22000
-		Kem sủ Rvâng 1 22000 22000
-		Kem Dưa 1 22000 22000
-		Nước Ep Ôl 1 28000 28 000
-		…… Ép Thơm 1 26,000 moon
-		Dua_
-		r.ẹọne e 1ae.uoo
-		efAM % HĐ (-zom .a1_eou
-		TIEN MẬT 151.200
-		Mot năm năm mươi môt ngàn ha năm
-		đóng /
-		
-		`
+		// "Coffee Kem Sen Trang\nDuong So 2 - KDC 135 - TT. Ben Luc\nHOA DO'N THANH TOAN\nHE:\n0006\nNgay\n13/09/2017 Gio:\n12:24:54\nBAN:\nA 1\nTEN HANG\nSL\nD.GIA\nT.TIEN\nYaourt Nha Dam\n1\n25,000\n25,000\nChanh Day\n20,000\n20,000\nKem Socola\n22,000\n22,000\nKem Vanila\n22,000\n22,000\nKem Sau Rieng\n22,000\n22,000\nKem Dura\n1\n22,000\n22,000\nNuoc Ep Oi\n28,000\n28,000\nNuoc Ep Thom\n1\n28,000\n28,000\nDura\nT.CONG\n8\n189,000\nGIAM % HD (-20%)\n-37,800\nTIEN MAT\n151,200\nMot tram nam muoi mot ngan hai tram\ndong./."
+
 		if (e.target.files) {
-			const response = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
-			console.log(response?.data);
+			// const response: any = await UPLOAD_SERVICE.upload_ocrV2(e.target.files[0]);
+			// if(response?.TextResult) {
+			// 	let data = response?.TextResult?.split('\n')
+			// }
 		}
 	}
 
@@ -146,19 +182,19 @@ const OrderForm: React.FC = () => {
 		let bodyData: any = data;
 		bodyData.transactions = transaction;
 		bodyData.total_price = transaction.reduce((newTotal: any, item: any) => {
-            newTotal += Number(item.total_price);
+			newTotal += Number(item.total_price);
 			return newTotal;
 		}, 0);
 		setLoading(true);
 
 		if (id) {
-			response =  await ORDER_SERVICE.update(id, bodyData);
+			response = await ORDER_SERVICE.update(id, bodyData);
 		} else {
-			response =  await ORDER_SERVICE.store(bodyData);
+			response = await ORDER_SERVICE.store(bodyData);
 		}
 		setLoading(false);
 
-		if(response?.status == 'success') {
+		if (response?.status == 'success') {
 			resetForm()
 			router.push('/order');
 		}
@@ -400,7 +436,7 @@ const OrderForm: React.FC = () => {
 									</div>
 									<div className="col-span-1 flex items-center justify-center">
 										<p className="text-sm  text-center text-black dark:text-white">
-											<b>{formatMoney(transaction[key].total_price || 0) }</b>
+											<b>{formatMoney(transaction[key].total_price || 0)}</b>
 										</p>
 									</div>
 								</div>
