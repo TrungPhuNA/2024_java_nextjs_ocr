@@ -1,8 +1,8 @@
 package be.ocrapi.service;
 
 import be.ocrapi.model.OcrResult;
-import com.cloudmersive.client.ImageOcrApi;
-import com.cloudmersive.client.model.ImageToTextResponse;
+// import com.cloudmersive.client.ImageOcrApi;
+// import com.cloudmersive.client.model.ImageToTextResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
@@ -23,11 +23,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import com.cloudmersive.client.invoker.ApiClient;
-import com.cloudmersive.client.invoker.ApiException;
-import com.cloudmersive.client.invoker.Configuration;
-import com.cloudmersive.client.invoker.auth.*;
-import com.cloudmersive.client.ConvertDocumentApi;
+// import com.cloudmersive.client.invoker.ApiClient;
+// import com.cloudmersive.client.invoker.ApiException;
+// import com.cloudmersive.client.invoker.Configuration;
+// import com.cloudmersive.client.invoker.auth.*;
+// import com.cloudmersive.client.ConvertDocumentApi;
 
 @Service
 @Slf4j
