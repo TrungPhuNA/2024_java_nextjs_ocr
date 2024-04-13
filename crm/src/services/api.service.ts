@@ -93,12 +93,14 @@ export const UPLOAD_SERVICE = {
 			formData.append('file', file);
 			const res = await axios.post(`${WEB_VALUE}/ocr/upload`,
 				formData, { headers: { 'Accept': 'multipart/form-data, *' } });
-			let data = res.data;
-			return data;
+				
+				return res?.data;
+
+			
 		} catch (error) {
 			return {
 				status: 'error',
-				data: error
+				message: error
 			}
 		}
 	},

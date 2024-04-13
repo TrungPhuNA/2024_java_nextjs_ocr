@@ -38,6 +38,7 @@ const INIT_ORDER: any = {
 	status: "",
 	user_id: 0,
 	total_price: 0,
+	price: 0,
 };
 
 
@@ -67,80 +68,103 @@ const OrderForm: React.FC = () => {
 	]);
 
 	const [title, setTitle] = useState('Tạo mới');
+	const [errorFile, setErrorFile] = useState('');
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
 
 	const router = useRouter()
-
-
 	useEffect(() => {
-		let id = Number(params.get('id') || 0);
+		check();
+		// getCategory();
+	}, [])
 
-		setId(id);
-		if (id) {
-			setTitle('Cập nhật');
-			getData(id)
+	// useEffect(() => {
+	// 	let id = Number(params.get('id') || 0);
+
+	// 	setId(id);
+	// 	if (id) {
+	// 		setTitle('Cập nhật');
+	// 		getData(id)
+	// 	}
+
+	// 	// 
+
+
+	// }, [params.get('id')]);
+
+
+
+	const check = async (data: any) => {
+		if (data) {
+			let newData = data.split('\n');
+			console.log("OCR------------> ", newData);
+			let orderObj = {
+				name: newData[0],
+				node: '',
+				receiver_name: '',
+				receiver_email: '',
+				receiver_phone: '',
+				receiver_address: '',
+				code: '',
+				total_discount: 0,
+				payment_type: 0,
+				category_id: null,
+				status: "",
+				user_id: 0,
+				total_price: 0,
+			};
+			let newIndexData = newData.reduce((newItem: any, item: any, index) => {
+				if (item.includes(',')) item = item.replace(/,/g, '');
+				if (item.match(/^\-?[0-9 ]+$/g) && index > 10) {
+					if (item.includes(' ')) {
+						item.split(' ')?.forEach((e: any) => {
+							newItem.push({
+								value: e,
+								index: index
+							});
+						});
+					} else {
+						newItem.push({
+							value: item,
+							index: index
+						})
+					}
+
+				}
+				return newItem;
+			}, []);
+			console.log("Thông tin giá ocr------> ", newIndexData);
+			if (newIndexData?.length > 0) {
+				let lastValue = newIndexData[newIndexData?.length - 1]?.value;
+				let discountValue = newIndexData.find((item: any) => item.value?.startsWith('-'))?.value || newIndexData[newIndexData?.length - 2]?.value || null;
+				orderObj.total_price = Number(lastValue || 0);
+				orderObj.total_discount = Number(discountValue?.replace("-", "") || 0);
+				if (lastValue) {
+					newIndexData = newIndexData.filter((item: any, index: any) => index < newIndexData?.length - 4);
+				}
+				console.log("Giá trị chi tiết đơn hàng------> ", newIndexData);
+
+				let groupTransData = newIndexData.reduce((newItem: any, item: any, index: number) => {
+					if (index > 0 && index % 3 == 0) {
+						let indexQuantity = newIndexData[index - 3]?.index || null;
+						newItem.push({
+							...INIT_TRAN,
+							name: indexQuantity != null && newData[indexQuantity - 1] || '',
+							quantity: newIndexData[index - 3]?.value || '',
+							price: newIndexData[index - 2]?.value || '',
+							total_price: newIndexData[index - 1]?.value || '',
+						});
+					}
+					return newItem
+				}, []);
+
+				console.log("newTransaction OCR----------> ", groupTransData);
+
+				setTransaction(groupTransData);
+			}
+			setData(orderObj);
 		}
 
-		getCategory();
-		check();
-
-	}, [params.get('id')]);
-
-	const check = () => {
-		let data = `Coffee Kem Sen Trang\nDuong So 2 - KDC 135 - TT. Ben Luc\nHOA DO'N THANH TOAN\nHE:\n0006\nNgay\n13/09/2017 Gio:\n12:24:54\nBAN:\nA 1\nTEN HANG\nSL\nD.GIA\nT.TIEN\nYaourt Nha Dam\n1\n25,000\n25,000\nChanh Day\n20,000\n20,000\nKem Socola\n22,000\n22,000\nKem Vanila\n22,000\n22,000\nKem Sau Rieng\n22,000\n22,000\nKem Dura\n1\n22,000\n22,000\nNuoc Ep Oi\n28,000\n28,000\nNuoc Ep Thom\n1\n28,000\n28,000\nDura\nT.CONG\n8\n189,000\nGIAM % HD (-20%)\n-37,800\nTIEN MAT\n151,200\nMot tram nam muoi mot ngan hai tram\ndong./.`
-		let newData = data.split('\n');
-		console.log(newData);
-		let obj = {
-			name: newData[0],
-			node: '',
-			receiver_name: '',
-			receiver_email: '',
-			receiver_phone: '',
-			receiver_address: '',
-			code: '',
-			total_discount: 0,
-			payment_type: 0,
-			category_id: null,
-			status: "",
-			user_id: 0,
-			total_price: 0,
-		};
-
-		let objData = newData.reduce((newItem: any, item: any, index) => {
-			if (item.includes(',')) item = item.replace(',', '')
-			if (item.match(/^[0-9]+$/g) && index > 8) {
-				newItem.push({
-					value: item,
-					index: index
-				})
-			}
-			return newItem;
-		}, []);
-		let numberValue = objData?.length % 4;
-		console.log(numberValue);
-		objData.splice(-numberValue, numberValue);
-		console.log(objData);
-		let newTrans = newData.reduce((newItem: any, item: any, index) => {
-			console.log("index -------> ", index);
-			let i = objData.findIndex((item: any) => item.index == index);
-			if(i >= 0) {
-				let trs = {
-					name: '',
-					price: '',
-					order_id: 0,
-					product_id: 0,
-					status: 2,
-					discount: 0,
-					user_id: 2,
-					quantity: '',
-					total_price: '',
-				}
-			} 
-			
-			return newItem;
-		}, []);
-		setData(obj)
 	}
 
 
@@ -169,10 +193,12 @@ const OrderForm: React.FC = () => {
 		// "Coffee Kem Sen Trang\nDuong So 2 - KDC 135 - TT. Ben Luc\nHOA DO'N THANH TOAN\nHE:\n0006\nNgay\n13/09/2017 Gio:\n12:24:54\nBAN:\nA 1\nTEN HANG\nSL\nD.GIA\nT.TIEN\nYaourt Nha Dam\n1\n25,000\n25,000\nChanh Day\n20,000\n20,000\nKem Socola\n22,000\n22,000\nKem Vanila\n22,000\n22,000\nKem Sau Rieng\n22,000\n22,000\nKem Dura\n1\n22,000\n22,000\nNuoc Ep Oi\n28,000\n28,000\nNuoc Ep Thom\n1\n28,000\n28,000\nDura\nT.CONG\n8\n189,000\nGIAM % HD (-20%)\n-37,800\nTIEN MAT\n151,200\nMot tram nam muoi mot ngan hai tram\ndong./."
 
 		if (e.target.files) {
-			// const response: any = await UPLOAD_SERVICE.upload_ocrV2(e.target.files[0]);
-			// if(response?.TextResult) {
-			// 	let data = response?.TextResult?.split('\n')
-			// }
+			const response: any = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
+			if(response?.status == "success" && response?.data?.textResult) {
+				check(response?.data?.textResult)
+			} else {
+				setErrorFile("Have an error to upload file")
+			}
 		}
 	}
 
@@ -366,6 +392,7 @@ const OrderForm: React.FC = () => {
 								dark:focus:border-primary"
 								onChange={(e) => changeFile(e)}
 							/>
+							{errorFile != '' && <span className="text-red text-xl mt-3">{errorFile}</span>}
 						</div>}
 						<div className="mb-5">
 							<h3 className="font-medium text-xl text-black dark:text-white mb-3">
@@ -467,6 +494,22 @@ const OrderForm: React.FC = () => {
 							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
 								<div className="col-span-6">
 									<p className="font-medium text-xl">Tổng tiền</p>
+								</div>
+								<div className="col-span-2">
+									<p className="font-medium text-center text-xl">{formatMoney(data.total_price + (data?.total_discount || 0))}</p>
+								</div>
+							</div>
+							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+								<div className="col-span-6">
+									<p className="font-medium text-xl">Discount</p>
+								</div>
+								<div className="col-span-2">
+									<p className="font-medium text-center text-xl">-{formatMoney(data.total_discount)}</p>
+								</div>
+							</div>
+							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+								<div className="col-span-6">
+									<p className="font-medium text-xl">Thanh toán</p>
 								</div>
 								<div className="col-span-2">
 									<p className="font-medium text-center text-xl">{formatMoney(data.total_price)}</p>

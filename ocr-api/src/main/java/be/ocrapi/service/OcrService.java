@@ -1,16 +1,22 @@
 package be.ocrapi.service;
 
+import be.ocrapi.common.BaseResponse;
 import be.ocrapi.model.OcrResult;
 // import com.cloudmersive.client.ImageOcrApi;
 // import com.cloudmersive.client.model.ImageToTextResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -34,6 +40,8 @@ import java.util.List;
 public class OcrService {
     @Autowired
     private Tesseract tesseract;
+    @Value("${api.upload.token}")
+    private  String token;
 
 
 
@@ -82,26 +90,51 @@ public class OcrService {
 
     public OcrResult ocrV2(MultipartFile file) throws IOException, TesseractException {
         try {
+            String uploadUrl = "https://testapi.cloudmersive.com/ocr/image/toText";
+            System.out.println("token key----------> "+token);
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             File newFile = convert(file);
-            headers.set("Apikey", "expkey:bsP9d6LJ5KCHSIDtuGaonZ+43Sxxt/j0HTRa+YR53CEPeYEnqN8PoNBQHFiphGgL15KExeqTg6v+J1f+AHvqnY4tEpCnpuQVkIJUy8RZaqIjWdR+Ya7Q78K7CG2ePLl/");
+
+            headers.set("Apikey", token);
             headers.set("accept", "application/json");
 
+            // Create the request body with the file
+            FileSystemResource resource = new FileSystemResource(newFile);
             MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", newFile);
+            body.add("file", resource);
+
             log.error("file--------> ", body);
 
-            HttpEntity<MultiValueMap<String, Object>> requestEntity= new HttpEntity<>(body, headers);
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
             RestTemplate restTemplate = new RestTemplate();
-            String result = restTemplate.postForEntity("https://testapi.cloudmersive.com/ocr/image/toText", requestEntity,
-                    String.class).getBody().toString();
+            // Make the HTTP POST request
+            ResponseEntity<String> response = restTemplate.postForEntity(uploadUrl, requestEntity, String.class);
+            log.debug("response-------> ", response);
+//             Handle the response
+            if (response.getStatusCode().is2xxSuccessful()) {
+                String data = response.getBody();
+                System.out.println("File uploaded successfully!");
+                log.debug("response-------> ", data);
+                
+                if(data != null) {
+                    Gson gson = new Gson();
+                    OcrResult myObject = gson.fromJson(data, OcrResult.class);
+                    return myObject;
+                }
 
-            System.out.println(result);
-            OcrResult o = new OcrResult();
-            o.setResult(result);
-            return o;
+            } else {
+                System.err.println("Failed to upload file. Status code: " + response.getStatusCode());
+            }
+//
+//            String result = restTemplate.postForEntity( uploadUrl, requestEntity,
+//                    String.class).getBody().toString();
+
+//            System.out.println(result);
+
+//            o.setResult(result);
         } catch (Exception e) {
             System.err.println("error-----------> " + e.getMessage());
             e.printStackTrace();

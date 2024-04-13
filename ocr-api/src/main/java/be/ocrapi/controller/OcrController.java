@@ -32,8 +32,7 @@ public class OcrController {
     public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
         try {
             var ocr = ocrService.ocrV2(file);
-            log.debug("[OCR CONTROLLER]------>error create", ocr.getResult());
-            return BaseResponse.ofSucceeded(ocr.getResult());
+            return BaseResponse.ofSucceeded(ocr);
         } catch (Exception e) {
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
