@@ -38,6 +38,7 @@ const INIT_ORDER: any = {
 	status: "",
 	user_id: 0,
 	total_price: 0,
+	price: 0,
 };
 
 
@@ -69,8 +70,13 @@ const OrderForm: React.FC = () => {
 	const [title, setTitle] = useState('Tạo mới');
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
+	const [errorFile, setErrorFile] = useState('');
 
-	const router = useRouter()
+	const router = useRouter();
+	const [error, setError] = useState({
+		name: '',
+		category_id: '',
+	});
 
 
 	useEffect(() => {
@@ -101,42 +107,94 @@ const OrderForm: React.FC = () => {
 	}
 
 	const getCategory = async () => {
-		const response: any = await CATEGORY_SERVICE.getList({page: 1, page_size: 100});
+		const response: any = await CATEGORY_SERVICE.getList({ page: 1, page_size: 100 });
 		if (response?.status == 'success') {
 			setCategories(response.data || null);
 		}
 	}
 
+	const check = async (data: any) => {
+		if (data) {
+			let newData = data.split('\n');
+			console.log("OCR------------> ", newData);
+			let orderObj = {
+				name: newData[0],
+				node: '',
+				receiver_name: '',
+				receiver_email: '',
+				receiver_phone: '',
+				receiver_address: '',
+				code: '',
+				total_discount: 0,
+				payment_type: 0,
+				category_id: null,
+				status: "",
+				user_id: 0,
+				total_price: 0,
+			};
+			let newIndexData = newData.reduce((newItem: any, item: any, index: any) => {
+				if (item.includes(',')) item = item.replace(/,/g, '');
+				if (item.match(/^\-?[0-9 ]+$/g) && index > 10) {
+					if (item.includes(' ')) {
+						item.split(' ')?.forEach((e: any) => {
+							newItem.push({
+								value: e,
+								index: index
+							});
+						});
+					} else {
+						newItem.push({
+							value: item,
+							index: index
+						})
+					}
+
+				}
+				return newItem;
+			}, []);
+			console.log("Thông tin giá ocr------> ", newIndexData);
+			if (newIndexData?.length > 0) {
+				let lastValue = newIndexData[newIndexData?.length - 1]?.value;
+				let discountValue = newIndexData.find((item: any) => item.value?.startsWith('-'))?.value || newIndexData[newIndexData?.length - 2]?.value || null;
+				orderObj.total_price = Number(lastValue || 0);
+				orderObj.total_discount = Number(discountValue?.replace("-", "") || 0);
+				if (lastValue) {
+					newIndexData = newIndexData.filter((item: any, index: any) => index < newIndexData?.length - 4);
+				}
+				console.log("Giá trị chi tiết đơn hàng------> ", newIndexData);
+
+				let groupTransData = newIndexData.reduce((newItem: any, item: any, index: number) => {
+					if (index > 0 && index % 3 == 0) {
+						let indexQuantity = newIndexData[index - 3]?.index || null;
+						newItem.push({
+							...INIT_TRAN,
+							name: indexQuantity != null && newData[indexQuantity - 1] || '',
+							quantity: newIndexData[index - 3]?.value || '',
+							price: newIndexData[index - 2]?.value || '',
+							total_price: newIndexData[index - 1]?.value || '',
+						});
+					}
+					return newItem
+				}, []);
+
+				console.log("newTransaction OCR----------> ", groupTransData);
+
+				setTransaction(groupTransData);
+			}
+			setData(orderObj);
+		}
+	}
+
 	const changeFile = async (e: any) => {
 		e.preventDefault();
-		let data = `4- m
-		@ . “
-		"J Cofơee Kem Sen Tráng
-		' ……o—gMJ m…… … m……
-		’ HÓA ac… THANH TOÁN
-		HD 0005
-		_ N ấy 13/0913m7 mo «2 za 54
-		; sầu: A 1
-		YIN HANG IL & mA ! neu
-		Yanư\ Nhu Dam \ 25000 25000
-		Chanh DIY 1 20000 20000
-		Kem sau… 1 22000 22000
-		Kem VunHa 1 22000 22000
-		Kem sủ Rvâng 1 22000 22000
-		Kem Dưa 1 22000 22000
-		Nước Ep Ôl 1 28000 28 000
-		…… Ép Thơm 1 26,000 moon
-		Dua_
-		r.ẹọne e 1ae.uoo
-		efAM % HĐ (-zom .a1_eou
-		TIEN MẬT 151.200
-		Mot năm năm mươi môt ngàn ha năm
-		đóng /
-		
-		`
+
 		if (e.target.files) {
-			const response = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
-			console.log("   ================== CONTENT FILE: ==================",response?.data);
+			const response: any = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
+			if (response?.status == "success" && response?.data?.textResult) {
+				check(response?.data?.textResult)
+			} else {
+				setErrorFile("Have an error to upload file")
+			}
 		}
 	}
 
@@ -146,19 +204,35 @@ const OrderForm: React.FC = () => {
 		let bodyData: any = data;
 		bodyData.transactions = transaction;
 		bodyData.total_price = transaction.reduce((newTotal: any, item: any) => {
-            newTotal += Number(item.total_price);
+			newTotal += Number(item.total_price);
 			return newTotal;
 		}, 0);
+		let count = 0;
+		let objError = {
+			name: '',
+			category_id: ''
+		}
+		if (!bodyData.name || bodyData.name == '') {
+			objError.name = 'Tên đơn hàng không được để trống.'
+			count++;
+		}
+
+		
+		if (count > 0) {
+			setError(objError);
+			return;
+		}
+
 		setLoading(true);
 
 		if (id) {
-			response =  await ORDER_SERVICE.update(id, bodyData);
+			response = await ORDER_SERVICE.update(id, bodyData);
 		} else {
-			response =  await ORDER_SERVICE.store(bodyData);
+			response = await ORDER_SERVICE.store(bodyData);
 		}
 		setLoading(false);
 
-		if(response?.status == 'success') {
+		if (response?.status == 'success') {
 			resetForm()
 			router.push('/order');
 		}
@@ -224,8 +298,10 @@ const OrderForm: React.FC = () => {
 									onChange={e => {
 										setField(e?.target?.value, 'name', data, setData);
 									}}
-									className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
+									className={`"w-full rounded-lg border-[1.5px] ${error.name != '' ? 'border-red' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 								/>
+								{error.name != '' && <span className="text-red text-xl mt-3">{error.name}</span>}
+
 							</div>
 							<div className="mb-5">
 								<SelectGroupTwo
@@ -374,9 +450,10 @@ const OrderForm: React.FC = () => {
 											defaultValue={product.quantity}
 											onChange={e => {
 												if (e?.target?.value) {
-													transaction[key].quantity = Number(e?.target?.value);
-													transaction[key].total_price = Number(e?.target?.value) * Number(product.price || 0);
-													setTransaction(transaction);
+													let newTransaction = transaction;
+													newTransaction[key].quantity = Number(e?.target?.value);
+													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].price || 0);
+													setTransaction(newTransaction);
 												}
 
 											}}
@@ -400,7 +477,7 @@ const OrderForm: React.FC = () => {
 									</div>
 									<div className="col-span-1 flex items-center justify-center">
 										<p className="text-sm  text-center text-black dark:text-white">
-											<b>{formatMoney(transaction[key].total_price || 0) }</b>
+											<b>{formatMoney(transaction[key].total_price || 0)}</b>
 										</p>
 									</div>
 								</div>

@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getItem } from "@/services/helpers.service";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
+
+  const user = getItem('user');
 
   // close on click outside
   useEffect(() => {
@@ -44,9 +47,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+		  		{user?.name || user?.email || ''}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">Admin</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -161,7 +164,13 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <Link href={'/auth/signin'} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <p  className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+			onClick={() => {
+				localStorage.removeItem("access_token");
+				localStorage.removeItem("user");
+				window.location.href = '/auth/signin'
+			}}
+		>
           <svg
             className="fill-current"
             width="22"
@@ -180,7 +189,7 @@ const DropdownUser = () => {
             />
           </svg>
           Log Out
-        </Link>
+        </p>
       </div>
       {/* <!-- Dropdown End --> */}
     </div>

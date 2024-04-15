@@ -65,15 +65,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 				}`}
 		>
 			{/* <!-- SIDEBAR HEADER --> */}
-			<div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-				<Link href="/">
-					<Image
-						width={176}
-						height={32}
-						src={"/images/logo/logo.svg"}
-						alt="Logo"
-						priority
-					/>
+			<div className="flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5">
+				<Link href="/" className="text-3xl text-center text-bodydark1">
+					CRM System
 				</Link>
 
 				<button
@@ -119,7 +113,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 											<Link
 												href="#"
 												className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === "/" ||
-														pathname.includes("dashboard")) &&
+													pathname.includes("dashboard")) &&
 													"bg-graydark dark:bg-meta-4"
 													}`}
 												onClick={(e) => {
