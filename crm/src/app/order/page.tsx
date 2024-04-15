@@ -9,7 +9,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Product } from "@/types/product";
 import { INIT_PAGING, WEB_VALUE } from "@/services/constant";
 import { ORDER_SERVICE } from "@/services/api.service";
-import { formatMoney, formatTime } from "@/services/helpers.service";
+import {formatMoney, formatTime, getItem} from "@/services/helpers.service";
 import { PagingPage } from "@/components/common/paging";
 import Loader from "@/components/common/Loader";
 
@@ -21,8 +21,6 @@ const OrderList: React.FC = () => {
 	const [dataList, setDataList] = useState([]);
 	const [paging, setPaging] = useState(INIT_PAGING);
 	const [loading, setLoading] = useState(false);
-
-
 
 	useEffect(() => {
 		getDataList({ ...paging })
@@ -72,8 +70,8 @@ const OrderList: React.FC = () => {
 					{dataList?.length > 0 && dataList.map((item: any, key) => {
 						return (
 							<div key={key}
-								className="grid grid-cols-6 border-t 
-							border-stroke px-4 py-4.5 dark:border-strokedark 
+								className="grid grid-cols-6 border-t
+							border-stroke px-4 py-4.5 dark:border-strokedark
 							sm:grid-cols-8 md:px-6 2xl:px-7.5"
 							>
 
@@ -98,8 +96,8 @@ const OrderList: React.FC = () => {
 									<p className="text-sm text-black dark:text-white">{formatTime(item.created_at, 'DD/MM/yyyy HH:mm')}</p>
 								</div>
 								<div className="col-span-1 flex items-center">
-									<Link href={'/order/form?id=' + item.id} className="inline-flex items-center justify-center 
-								rounded-md bg-cyan-500 px-5 py-2 text-center 
+									<Link href={'/order/form?id=' + item.id} className="inline-flex items-center justify-center
+								rounded-md bg-cyan-500 px-5 py-2 text-center
 								font-medium text-white hover:bg-opacity-90">Edit</Link>
 								</div>
 							</div>

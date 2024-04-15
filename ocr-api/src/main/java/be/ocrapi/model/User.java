@@ -41,6 +41,9 @@ public class User implements UserDetails {
     @Column(name = "refresh_token")
     private String refresh_token;
 
+    @Column(name = "user_type")
+    private String user_type;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

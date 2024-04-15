@@ -18,6 +18,7 @@ const SignUp: React.FC = () => {
 		name: '',
 		phone: '',
 		cf_password: '',
+		user_type: 'NHANVIEN'
 	});
 
 	const [loading, setLoading] = useState(false);

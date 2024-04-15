@@ -46,6 +46,7 @@ public class UserService implements UserServiceInterface{
         d.setName(u.getName());
         d.setEmail(u.getEmail());
         d.setPhone(u.getPhone());
+        d.setUser_type(u.getUser_type());
         d.setGender(u.getGender());
         return d;
     }
