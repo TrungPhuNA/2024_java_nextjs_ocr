@@ -11,6 +11,7 @@ import be.ocrapi.service.UserService;
 import be.ocrapi.service.UserServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin("*")
@@ -21,10 +22,11 @@ public class AuthController {
     @Autowired
     private UserServiceInterface userService;
 
-    @GetMapping("profile/{id}")
-    public BaseResponse<?> findOne(@PathVariable Integer id) {
+    @GetMapping("profile")
+    public BaseResponse<?> findOne(@RequestHeader(HttpHeaders.AUTHORIZATION) String author) {
         try {
-            return BaseResponse.ofSucceeded(userService.findById(id));
+            String access_token = author.replace("Bearer ", "");
+            return BaseResponse.ofSucceeded(userService.findByAccessToken(access_token));
         } catch (Exception e) {
             log.debug("[USER CONTROLLER]------>error findOne", e);
             String message = e.getMessage();

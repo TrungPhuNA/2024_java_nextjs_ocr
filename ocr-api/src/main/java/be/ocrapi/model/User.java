@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String gender;
 
     @Column(name = "access_token")
-    private String access_token;
+    private String accessToken;
 
     @Column(name = "refresh_token")
     private String refresh_token;

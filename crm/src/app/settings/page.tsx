@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { useEffect, useState } from "react";
-import { getItem, setField } from "@/services/helpers.service";
+import { getItem, setField, setItem } from "@/services/helpers.service";
 import { AUTH_SERVICE } from "@/services/api.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 import Link from "next/link";
@@ -32,7 +32,26 @@ const Settings = () => {
 				avatar: user.avatar,
 			})
 		}
-	}, [])
+		getDetail()
+	}, []);
+
+	const getDetail = async () => {
+		setLoading(true);
+		const response = await AUTH_SERVICE.show();
+		setLoading(false);
+		if(response?.status == "success") {
+			let data = response?.data;
+			setForm({
+				email: data.email,
+				phone: data.phone,
+				gender: data.gender,
+				name: data.name,
+				avatar: data.avatar,
+			})
+		}
+
+	}
+
 
 	const [loading, setLoading] = useState(false);
 
@@ -69,6 +88,15 @@ const Settings = () => {
 		const response: any = await AUTH_SERVICE.update(1, form);
 		setLoading(false)
 		if (response?.status == 'success') {
+			let data = {
+				email: response?.data.email,
+				id: response?.data.id,
+				phone: response?.data.phone,
+				gender: response?.data.gender,
+				name: response?.data.name,
+				avatar: response?.data.avatar,
+			}
+			setItem('user', data);
 			setErrorForm('');
 		} else {
 			setErrorForm(response?.message || 'Lỗi khi đăng ký')
@@ -88,6 +116,7 @@ const Settings = () => {
 						</div>
 						<div className="p-7">
 							<form >
+								{errorForm != '' && <p className="text-red mb-2">{errorForm}</p>}
 								<div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
 									<div className="w-full sm:w-1/2">
 										<label

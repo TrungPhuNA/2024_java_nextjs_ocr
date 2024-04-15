@@ -56,6 +56,11 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
+    public Optional<User> findByAccessToken(String access_token) {
+        return userRepository.findUserByAccessToken(access_token);
+    }
+
+    @Override
     public LoginResponse login(UserRequest data) {
         log.debug("email=====> " + data.getEmail());
         authenticationManager.authenticate(
@@ -70,7 +75,7 @@ public class UserService implements UserServiceInterface{
 
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
-        user.setAccess_token(jwtToken);
+        user.setAccessToken(jwtToken);
         user.setRefresh_token(refreshToken);
         userRepository.save(user);
         log.debug("token=========> " + jwtToken);

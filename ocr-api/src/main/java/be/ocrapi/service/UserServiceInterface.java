@@ -11,6 +11,8 @@ import java.util.Optional;
 
 public interface UserServiceInterface {
     Optional<User> findById(Integer id);
+
+    Optional<User> findByAccessToken(String access_token);
     LoginResponse login(UserRequest data);
     Page<User> findAll(int page, int page_size);
 
