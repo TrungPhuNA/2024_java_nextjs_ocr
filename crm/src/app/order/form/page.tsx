@@ -189,7 +189,9 @@ const OrderForm: React.FC = () => {
 		e.preventDefault();
 
 		if (e.target.files) {
+			setLoading(true)
 			const response: any = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
+			setLoading(false);
 			if (response?.status == "success" && response?.data?.textResult) {
 				check(response?.data?.textResult)
 			} else {
@@ -300,7 +302,7 @@ const OrderForm: React.FC = () => {
 									onChange={e => {
 										setField(e?.target?.value, 'name', data, setData);
 									}}
-									className={`"w-full rounded-lg border-[1.5px] ${error.name != '' ? 'border-red' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.name != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 								/>
 								{error.name != '' && <span className="text-red text-xl mt-3">{error.name}</span>}
 
@@ -408,6 +410,7 @@ const OrderForm: React.FC = () => {
 								dark:focus:border-primary"
 								onChange={(e) => changeFile(e)}
 							/>
+								{errorFile != '' && <span className="text-red text-xl mt-3">{errorFile}</span>}
 						</div>}
 						<div className="mb-5">
 							<h3 className="font-medium text-xl text-black dark:text-white mb-3">
