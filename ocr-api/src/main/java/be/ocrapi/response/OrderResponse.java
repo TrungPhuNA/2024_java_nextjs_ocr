@@ -16,4 +16,5 @@ public class OrderResponse {
     private Integer status;
     private Integer total;
     private Integer price;
+    private String date;
 }

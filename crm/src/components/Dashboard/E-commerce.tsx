@@ -9,35 +9,49 @@ import CardDataStats from "../CardDataStats";
 import MapOne from "../Maps/MapOne";
 import { ORDER_SERVICE } from "@/services/api.service";
 import { formatMoney } from "@/services/helpers.service";
+import moment from "moment";
+import Loader from "../common/Loader";
 
 const ECommerce: React.FC = () => {
 	const [data, setData] = useState({
 		total_order: 0,
 		total_price: 0,
 		total_category: 0,
-		order: null,
-		price: null
+		group_by_status: null,
+		group_by_day: null,
 
 	});
+	const [params, setParams]: any = useState({
+		month: null,
+	});
+
 	const [loading, setLoading] = useState(false);
-
-
+	const [change, setChange] = useState(false);
 
 	useEffect(() => {
+		if(params.month) {
+			setData({...data, group_by_day: null, group_by_status: null})
+		}
 		getDataList()
-	}, []);
+	}, [params.month]);
 
 	const getDataList = async () => {
 		setLoading(true);
-		const response: any = await ORDER_SERVICE.statistic();
+		setChange(true)
+		if (!params?.month) {
+			setParams({ month: moment().month() + 1 })
+		}
+		const response: any = await ORDER_SERVICE.statistic(params);
 		setLoading(false);
 		if (response?.status == 'success') {
-
 			setData(response.data || []);
 		}
+		
 	}
 	return (
 		<>
+			{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
+
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 2xl:gap-7.5">
 
 				<CardDataStats title="Total Order" total={data?.total_order + ""}>
@@ -104,9 +118,18 @@ const ECommerce: React.FC = () => {
 				</CardDataStats>
 			</div>
 
-			{/* <div className="mt-4 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-				<ChartOne />
-			</div> */}
+			<div className="mt-4 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
+				{data.group_by_day?.length > 0 && <ChartOne
+					data={data.group_by_day} setParams={setParams}
+					loading={change}
+					setLoading={setChange}
+					params={params} />}
+				{data?.group_by_status && <ChartThree 
+					data={data.group_by_status} setParams={setParams}
+					loading={change}
+					setLoading={setChange}
+					params={params}/>}
+			</div>
 		</>
 	);
 };

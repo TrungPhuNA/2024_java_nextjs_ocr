@@ -16,7 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -93,9 +96,36 @@ public class OrderService implements OrderServiceInterface {
     }
 
     @Override
-    public StatisticResponse getStatistic() {
-        List<OrderResponse> total = new ArrayList<>();
+    public StatisticResponse getStatistic(String month) {
+        Calendar calendar = Calendar.getInstance();
+        int monthValue = 0;
+        if(month == null) monthValue = calendar.get(Calendar.MONTH) + 1;
+        else  monthValue = Integer.parseInt(month);
+        int year = calendar.get(Calendar.YEAR);
+        System.out.println("Month: "+ monthValue + "------year: "+ year);
+        LocalDate date = LocalDate.of(year, monthValue, 1);
+        List<String> dateList = new ArrayList<>();
+
+        while (date.getMonthValue() == monthValue) {
+            dateList.add(date.toString()); // Add the formatted date to the list
+            date = date.plusDays(1); // Move to the next day
+        }
+
+
         List<OrderResponse> price = new ArrayList<>();
+        List<OrderResponse> group_by_date = new ArrayList<>();
+
+
+        // Print the list of dates
+        System.out.println("List of dates for the month " + year + "-" + monthValue + ":" +dateList.get(0) + dateList.get(dateList.size() - 1));
+        for (String formattedDate : dateList) {
+            System.out.println(formattedDate);
+            OrderResponse o = new OrderResponse(0,0,0,formattedDate);
+            Integer o_price =  orderRepository.sumTotalPriceByDate(formattedDate, formattedDate);
+            if(o_price != null) o.setPrice(o_price);
+            group_by_date.add(o);
+        }
+
         Integer total_order = 0;
         Integer total_price = 0;
         Long total_category = categoryRepository.count();
@@ -106,19 +136,16 @@ public class OrderService implements OrderServiceInterface {
             }
             total_order += totalStatus;
             System.err.println("count totalStatus=======> "+ i + "----> "+totalStatus);
-            OrderResponse totalItem = new OrderResponse(i, totalStatus, 0);
             var totalPrice = orderRepository.sumPriceOrderByStatus(i);
             if(totalPrice == null) {
                 totalPrice = 0 ;
             }
             total_price += totalPrice;
             System.err.println("count price=======> "+ i + "----> "+totalPrice);
-            OrderResponse priceByStatus = new OrderResponse(i, 0, totalPrice);
-
-            total.add(totalItem);
+            OrderResponse priceByStatus = new OrderResponse(i, totalStatus, totalPrice, null);
             price.add(priceByStatus);
         }
-        StatisticResponse statistic = new StatisticResponse(total,  total_order, total_price, total_category, price);
+        StatisticResponse statistic = new StatisticResponse(total_order, total_price, total_category, price, group_by_date);
         return statistic;
     }
 

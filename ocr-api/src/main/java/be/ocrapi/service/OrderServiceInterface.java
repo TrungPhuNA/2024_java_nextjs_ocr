@@ -12,6 +12,6 @@ public interface OrderServiceInterface {
     Page<Order> findAll(int page, int page_size);
     Order save(OrderRequest order);
     Order update(int id, OrderRequest order);
-    StatisticResponse getStatistic();
+    StatisticResponse getStatistic(String month);
     void delete(Order order);
 }

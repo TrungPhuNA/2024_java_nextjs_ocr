@@ -10,10 +10,10 @@ export const ORDER_SERVICE = {
 		const params = buildFilter(filters);
 		return await getMethod(`${URL_API.ORDER}/list`, params);
 	},
-	async statistic() {
+	async statistic(filters: any) {
 		await timeDelay(1000)
-
-		return await getMethod(`${URL_API.ORDER}/statistic`, {});
+		const params = buildFilter(filters);
+		return await getMethod(`${URL_API.ORDER}/statistic`, params);
 	},
 	async store(data: any) {
 		await timeDelay(1000)

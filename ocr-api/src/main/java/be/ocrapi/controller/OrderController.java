@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,9 +33,12 @@ public class OrderController {
     private TransactionInterface transactionService;
 
     @GetMapping("statistic")
-    public BaseResponse<?> statistic() {
+    public BaseResponse<?> statistic(
+            @RequestParam(name = "month", required = false) String month
+    ) {
         try {
-            return BaseResponse.ofSucceeded(orderService.getStatistic());
+
+            return BaseResponse.ofSucceeded(orderService.getStatistic(month));
         } catch (Exception e) {
             log.debug("[ORDER CONTROLLER]------>error statistic", e);
             String message = e.getMessage();
