@@ -2,6 +2,7 @@ package be.ocrapi.service;
 
 import be.ocrapi.model.Order;
 import be.ocrapi.model.Transaction;
+import be.ocrapi.repository.CategoryRepository;
 import be.ocrapi.repository.OrderRepository;
 import be.ocrapi.request.OrderRequest;
 import be.ocrapi.request.TransactionRequest;
@@ -22,6 +23,8 @@ import java.util.*;
 public class OrderService implements OrderServiceInterface {
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
 //    private String genCode() {
 //
@@ -95,6 +98,7 @@ public class OrderService implements OrderServiceInterface {
         List<OrderResponse> price = new ArrayList<>();
         Integer total_order = 0;
         Integer total_price = 0;
+        Long total_category = categoryRepository.count();
         for (int i = 1; i <= 4 ; i++) {
             var totalStatus = orderRepository.countOrderByStatus(i);
             if(totalStatus == null) {
@@ -114,7 +118,7 @@ public class OrderService implements OrderServiceInterface {
             total.add(totalItem);
             price.add(priceByStatus);
         }
-        StatisticResponse statistic = new StatisticResponse(total,  total_order, total_price, price);
+        StatisticResponse statistic = new StatisticResponse(total,  total_order, total_price, total_category, price);
         return statistic;
     }
 

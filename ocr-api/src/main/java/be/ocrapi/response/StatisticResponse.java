@@ -17,5 +17,6 @@ public class StatisticResponse {
     private List<OrderResponse> order;
     private Integer total_order;
     private Integer total_price;
+    private Long total_category;
     private List<OrderResponse> price ;
 }
