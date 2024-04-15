@@ -217,7 +217,7 @@ const OrderForm: React.FC = () => {
 			count++;
 		}
 
-		
+
 		if (count > 0) {
 			setError(objError);
 			return;
@@ -271,6 +271,8 @@ const OrderForm: React.FC = () => {
 		console.log(index);
 		return Number(transaction[index].quantity) * Number(transaction[index].price)
 	}
+
+	console.log("transaction------> ", transaction);
 
 
 	return (
@@ -450,10 +452,15 @@ const OrderForm: React.FC = () => {
 											defaultValue={product.quantity}
 											onChange={e => {
 												if (e?.target?.value) {
-													let newTransaction = transaction;
+													let newTransaction = [...transaction];
 													newTransaction[key].quantity = Number(e?.target?.value);
 													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].price || 0);
 													setTransaction(newTransaction);
+													let total_price = newTransaction.reduce((newTotal: any, item: any) => {
+														newTotal += item.total_price;
+														return newTotal
+													}, 0);
+													setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
 												}
 
 											}}
@@ -467,8 +474,13 @@ const OrderForm: React.FC = () => {
 											defaultValue={product.price}
 											onChange={e => {
 												if (e?.target?.value) {
-													transaction[key].price = e?.target?.value ? Number(e?.target?.value) : '';
-													transaction[key].total_price = Number(e?.target?.value) * Number(product.quantity || 0);
+													let newTransaction = [...transaction];
+													newTransaction[key].price = Number(e?.target?.value);
+													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].quantity || 0);
+													let total_price = newTransaction.reduce((newTotal: any, item: any) => {
+														newTotal += item.total_price;
+													}, 0);
+													setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
 												}
 												setTransaction(transaction);
 											}}
@@ -508,6 +520,24 @@ const OrderForm: React.FC = () => {
 							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
 								<div className="col-span-6">
 									<p className="font-medium text-xl">Tổng tiền</p>
+								</div>
+								<div className="col-span-2">
+									<p className="font-medium text-center text-xl">{formatMoney(data.total_price + (data?.total_discount || 0))}</p>
+								</div>
+							</div>
+
+							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+								<div className="col-span-6">
+									<p className="font-medium text-xl">Discount</p>
+								</div>
+								<div className="col-span-2">
+									<p className="font-medium text-center text-xl">-{formatMoney(data.total_discount)}</p>
+								</div>
+							</div>
+
+							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
+								<div className="col-span-6">
+									<p className="font-medium text-xl">Thanh toán</p>
 								</div>
 								<div className="col-span-2">
 									<p className="font-medium text-center text-xl">{formatMoney(data.total_price)}</p>
