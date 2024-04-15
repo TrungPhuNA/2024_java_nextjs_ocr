@@ -10,6 +10,11 @@ export const ORDER_SERVICE = {
 		const params = buildFilter(filters);
 		return await getMethod(`${URL_API.ORDER}/list`, params);
 	},
+	async statistic() {
+		await timeDelay(1000)
+
+		return await getMethod(`${URL_API.ORDER}/statistic`, {});
+	},
 	async store(data: any) {
 		await timeDelay(1000)
 
@@ -88,7 +93,27 @@ export const UPLOAD_SERVICE = {
 			formData.append('file', file);
 			const res = await axios.post(`${WEB_VALUE}/ocr/upload`,
 				formData, { headers: { 'Accept': 'multipart/form-data, *' } });
-			let data = res.data;
+				
+				return res?.data;
+
+			
+		} catch (error) {
+			return {
+				status: 'error',
+				message: error
+			}
+		}
+	},
+	async upload_ocrV2(file: any) {
+		try {
+			const formData = new FormData();
+			formData.append('file', file);
+			const res = await axios.post(`https://testapi.cloudmersive.com/ocr/image/toText`,
+				formData, { headers: { 
+					'Accept': 'application/json',
+					"Apikey" : "expkey:bsP9d6LJ5KCHSIDtuGaonZ+43Sxxt/j0HTRa+YR53CEPeYEnqN8PoNBQHFiphGgL15KExeqTg6v+J1f+AHvqnTdQTfOAJZWkdEMrrKfoz66NAeM+vVCubDNAHydifmkC"
+				 } });
+			let data = res;
 			return data;
 		} catch (error) {
 			return {
@@ -97,4 +122,5 @@ export const UPLOAD_SERVICE = {
 			}
 		}
 	}
+
 };

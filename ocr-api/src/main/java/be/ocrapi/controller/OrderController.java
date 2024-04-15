@@ -30,6 +30,18 @@ public class OrderController {
     @Autowired
     private TransactionInterface transactionService;
 
+    @GetMapping("statistic")
+    public BaseResponse<?> statistic() {
+        try {
+            return BaseResponse.ofSucceeded(orderService.getStatistic());
+        } catch (Exception e) {
+            log.debug("[ORDER CONTROLLER]------>error statistic", e);
+            String message = e.getMessage();
+            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
+            log.error("[ORDER CONTROLLER]------>statistic", error);
+            return BaseResponse.ofFailed(error);
+        }
+    }
     @GetMapping("show/{id}")
     public BaseResponse<?> findOne(@PathVariable Integer id) {
         try {
