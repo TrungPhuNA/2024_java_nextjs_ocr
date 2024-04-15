@@ -16,6 +16,7 @@ public class OcrApiApplication {
 	Tesseract getTesseract(){
 		Tesseract tesseract = new Tesseract();
 		tesseract.setDatapath("./tessdata");
+//		tesseract.setHocr(true);
 		return tesseract;
 	}
 

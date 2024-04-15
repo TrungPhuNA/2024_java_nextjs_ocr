@@ -3,17 +3,16 @@ package be.ocrapi.controller;
 import be.ocrapi.common.BaseResponse;
 import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
-import be.ocrapi.model.OcrResult;
-import be.ocrapi.model.Order;
 import be.ocrapi.service.OcrService;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/ocr")
@@ -21,11 +20,6 @@ import java.io.IOException;
 public class OcrController {
     @Autowired
     private OcrService ocrService;
-
-//    @PostMapping("/upload")
-//    public ResponseEntity<OcrResult> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
-//        return ResponseEntity.ok(ocrService.ocr(file));
-//    }
 
     @PostMapping("upload")
     public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) throws IOException, TesseractException {
@@ -40,5 +34,20 @@ public class OcrController {
             log.error("[OCR CONTROLLER]------>create", error);
             return BaseResponse.ofFailed(error);
         }
+    }
+
+    @PostMapping("/upload/v2")
+    public String[] recognizeText(@RequestParam("file") MultipartFile file) throws IOException {
+        var response = ocrService.recognizeText(file.getInputStream());
+        var data = response.split("\n");
+        for(var i = 1 ; i < data.length ; i ++) {
+            var item = data[i].split(" ");
+            System.out.print("===== CHEKC LENGHT  =====" + item.length);
+            if (item.length == 5) {
+                System.out.print("===== SẢN PHẨM =====");
+                System.out.print("===== SẢN PHẨM =====" +  item[0]);
+            }
+        }
+        return data;
     }
 }

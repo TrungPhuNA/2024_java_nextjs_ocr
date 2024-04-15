@@ -82,7 +82,7 @@ const OrderForm: React.FC = () => {
 			getData(id)
 		}
 
-		getCategory();	
+		getCategory();
 
 	}, [params.get('id')]);
 
@@ -136,7 +136,7 @@ const OrderForm: React.FC = () => {
 		`
 		if (e.target.files) {
 			const response = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
-			console.log(response?.data);
+			console.log("   ================== CONTENT FILE: ==================",response?.data);
 		}
 	}
 
@@ -250,9 +250,9 @@ const OrderForm: React.FC = () => {
 									onChange={e => {
 										setField(e?.target?.value, 'receiver_name', data, setData);
 									}}
-									className="w-full rounded-lg border-[1.5px] border-primary 
-									bg-transparent px-5 py-3 text-black outline-none transition 
-									focus:border-primary active:border-primary disabled:cursor-default 
+									className="w-full rounded-lg border-[1.5px] border-primary
+									bg-transparent px-5 py-3 text-black outline-none transition
+									focus:border-primary active:border-primary disabled:cursor-default
 									disabled:bg-whiter dark:bg-form-input dark:text-white text-bold"
 								/>
 							</div>
@@ -318,15 +318,15 @@ const OrderForm: React.FC = () => {
 							</label>
 							<input
 								type="file"
-								className="w-full cursor-pointer rounded-lg border-[1.5px] 
-								border-stroke bg-transparent outline-none transition 
-								file:mr-5 file:border-collapse file:cursor-pointer 
-								file:border-0 file:border-r file:border-solid 
-								file:border-stroke file:bg-whiter file:px-5 
-								file:py-3 file:hover:bg-primary file:hover:bg-opacity-10 
-								focus:border-primary active:border-primary disabled:cursor-default 
-								disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input 
-								dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white 
+								className="w-full cursor-pointer rounded-lg border-[1.5px]
+								border-stroke bg-transparent outline-none transition
+								file:mr-5 file:border-collapse file:cursor-pointer
+								file:border-0 file:border-r file:border-solid
+								file:border-stroke file:bg-whiter file:px-5
+								file:py-3 file:hover:bg-primary file:hover:bg-opacity-10
+								focus:border-primary active:border-primary disabled:cursor-default
+								disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input
+								dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white
 								dark:focus:border-primary"
 								onChange={(e) => changeFile(e)}
 							/>
@@ -406,8 +406,8 @@ const OrderForm: React.FC = () => {
 								</div>
 							))}
 
-							<div className="inline-flex items-center justify-center 
-							rounded-md bg-success px-20 py-2 text-center 
+							<div className="inline-flex items-center justify-center
+							rounded-md bg-success px-20 py-2 text-center
 							font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
 								onClick={(e) => {
 									let obj = {
@@ -439,8 +439,8 @@ const OrderForm: React.FC = () => {
 						</div>
 						<div className="flex justify-center">
 							<Link href={'/order'} className="inline-flex items-center justify-center rounded-md bg-gray mr-3 px-10 py-4 text-center font-medium hover:bg-gray-900 lg:px-8 xl:px-10">Cancel</Link>
-							<button className="inline-flex items-center justify-center 
-							rounded-md bg-primary px-10 py-4 text-center 
+							<button className="inline-flex items-center justify-center
+							rounded-md bg-primary px-10 py-4 text-center
 							font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
 								onClick={(e) => submit(e)}
 							>Submit</button>
