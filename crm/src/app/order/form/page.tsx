@@ -8,7 +8,7 @@ import { Product } from "@/types/product";
 import Link from "next/link";
 import { CATEGORY_SERVICE, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { formatMoney, setField } from "@/services/helpers.service";
+import {formatMoney, getItem, setField} from "@/services/helpers.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 import Loader from "@/components/common/Loader";
 
@@ -71,7 +71,7 @@ const OrderForm: React.FC = () => {
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
 	const [errorFile, setErrorFile] = useState('');
-
+	const user = getItem('user');
 	const router = useRouter();
 	const [error, setError] = useState({
 		name: '',
@@ -352,26 +352,28 @@ const OrderForm: React.FC = () => {
 							</div>
 						</div>
 						<div className="md:grid md:grid-cols-2 md:gap-4">
-							<div className="mb-5">
-								<SelectGroupTwo
-									title={'Trạng thái'}
-									options={[
-										{
-											id: 1,
-											name: 'Chưa thanh toán'
-										},
-										{
-											id: 2,
-											name: 'Đã thanh toán'
-										}
-									]}
-									key_obj={'status'}
-									value={data.status}
-									form={data}
-									setForm={setData}
-								/>
+							{ user.user_type == 'QUANLY' && (
+								<div className="mb-5">
+									<SelectGroupTwo
+										title={'Trạng thái'}
+										options={[
+											{
+												id: 1,
+												name: 'Chưa thanh toán'
+											},
+											{
+												id: 2,
+												name: 'Đã thanh toán'
+											}
+										]}
+										key_obj={'status'}
+										value={data.status}
+										form={data}
+										setForm={setData}
+									/>
 
-							</div>
+								</div>
+							)}
 							<div className="mb-5">
 								<SelectGroupTwo
 									title={'Phương thức thanh toán'}
