@@ -2,7 +2,7 @@
 import moment from 'moment';
 
 export const getItem = (key: any) => {
-	let value: any = localStorage.getItem(key) ;
+	let value: any = localStorage.getItem(key);
 	return value && JSON.parse(value) || null;
 }
 
@@ -74,7 +74,7 @@ export const onFieldsChange = (e: any, form: any, ee = null) => {
 
 export const setField = (value: any, name: any, form: any, setForm: any) => {
 	form[name] = value;
-	
+
 	setForm({
 		...form,
 	});
@@ -133,12 +133,18 @@ import { URL, WEB_VALUE } from './constant';
 
 
 
-export const buildImage = ( img: any, is_user = false ) =>
-	{
-		if ( img )
-		{
-			return `${WEB_VALUE}/api/v1/ocr/file/`+ img;
-	
-		}
-		return null
+export const buildImage = (img: any, is_user = false) => {
+	if (img) {
+		return `${WEB_VALUE}/api/v1/ocr/file/` + img;
+
 	}
+	return null
+}
+
+export const checkTextOrder = (text:any) => {
+	text = text.trim()
+	let regex = /^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\.\| ]+$/g
+	let start = text.slice(0, 1);
+	let end = text.substr(-3).trim();
+	return start.match(regex) && end.match(/^[\d ]+$/g) && true || false;
+}

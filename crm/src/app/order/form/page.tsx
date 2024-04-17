@@ -8,7 +8,7 @@ import { Product } from "@/types/product";
 import Link from "next/link";
 import { CATEGORY_SERVICE, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import {formatMoney, getItem, setField} from "@/services/helpers.service";
+import {checkTextOrder, formatMoney, getItem, setField} from "@/services/helpers.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 import Loader from "@/components/common/Loader";
 
@@ -90,6 +90,7 @@ const OrderForm: React.FC = () => {
 		}
 
 		getCategory();
+		check(null)
 
 	}, [params.get('id')]);
 
@@ -115,75 +116,162 @@ const OrderForm: React.FC = () => {
 	}
 
 	const check = async (data: any) => {
-		if (data) {
-			let newData = data.split('\n');
-			console.log("OCR------------> ", newData);
-			let orderObj = {
-				name: newData[0],
-				node: '',
-				receiver_name: '',
-				receiver_email: '',
-				receiver_phone: '',
-				receiver_address: '',
-				code: '',
-				total_discount: 0,
-				payment_type: 0,
-				category_id: null,
-				status: "",
-				user_id: 0,
-				total_price: 0,
-			};
-			let newIndexData = newData.reduce((newItem: any, item: any, index: any) => {
-				if (item.includes(',')) item = item.replace(/,/g, '');
-				if (item.match(/^\-?[0-9 ]+$/g) && index > 10) {
-					if (item.includes(' ')) {
-						item.split(' ')?.forEach((e: any) => {
-							newItem.push({
-								value: e,
-								index: index
-							});
-						});
-					} else {
-						newItem.push({
-							value: item,
-							index: index
-						})
-					}
+		let a = [
+            "E u",
+            "| S h",
+            "4 Coffee Kem Sen Trắng",
+            "Ể Đường Số 2 - KDC 135 - TT. Bền Lức",
+            "ị HÓA ĐƠN THANH TOÁN",
+            "HÐ: 0006",
+            "§ Ngây 13/09/2017 Giờ: 122454",
+            "kễ BẠN: A1",
+            "TÊN HÀNG s ĐGIÁ T.IÊN",
+            "Yaourt Nha Đam. s 25000 25000",
+            "Chanh Dây | 20,000 20,000",
+            "Kem Socola 1 22.000 22000",
+            "Kem Vanlia A 22,000 22000",
+            "Kem Sàu Riêng 1 22000 22,000",
+            "Kem Dừa 1 22000 22000",
+            "Nước Ép Ôi 1 28000 28000",
+            "Nước Ép Thơm 1 28000 28,000",
+            "Dữa",
+            "T.cộNG 8 188000",
+            "GIẢM % HÐ (-20%) -37,800",
+            "TIÊN MẶT 151/200",
+            "MMột trăm năm mươi mót ngàn hai trăm",
+            "đồng./"
+        ];
 
-				}
-				return newItem;
-			}, []);
-			console.log("Thông tin giá ocr------> ", newIndexData);
-			if (newIndexData?.length > 0) {
-				let lastValue = newIndexData[newIndexData?.length - 1]?.value;
-				let discountValue = newIndexData.find((item: any) => item.value?.startsWith('-'))?.value || newIndexData[newIndexData?.length - 2]?.value || null;
-				orderObj.total_price = Number(lastValue || 0);
-				orderObj.total_discount = Number(discountValue?.replace("-", "") || 0);
-				if (lastValue) {
-					newIndexData = newIndexData.filter((item: any, index: any) => index < newIndexData?.length - 4);
-				}
-				console.log("Giá trị chi tiết đơn hàng------> ", newIndexData);
+		let orderObj = {
+			name: "",
+			node: '',
+			receiver_name: '',
+			receiver_email: '',
+			receiver_phone: '',
+			receiver_address: '',
+			code: '',
+			total_discount: 0,
+			payment_type: 0,
+			category_id: null,
+			status: "",
+			user_id: 0,
+			total_price: 0,
+		};
+		
+		let dataMap = a.map((newItem: any) => {
+			newItem = newItem.replace(/,/g, '');
+			newItem = newItem.replace(/\//g, '');
+			newItem = newItem.replace(/%/g, '');
+			newItem = newItem.replace(/\-/g, '');
+			newItem = newItem.replace(/\(/g, '');
+			newItem = newItem.replace(/\)/g, '');
+			newItem = newItem.replace(/_/g, '');
+			newItem = newItem.replace(/  /g, '');
+			newItem = newItem.replace("Đ", '');
+			
+			return newItem.trim();
 
-				let groupTransData = newIndexData.reduce((newItem: any, item: any, index: number) => {
-					if (index > 0 && index % 3 == 0) {
-						let indexQuantity = newIndexData[index - 3]?.index || null;
-						newItem.push({
-							...INIT_TRAN,
-							name: indexQuantity != null && newData[indexQuantity - 1] || '',
-							quantity: newIndexData[index - 3]?.value || '',
-							price: newIndexData[index - 2]?.value || '',
-							total_price: newIndexData[index - 1]?.value || '',
-						});
-					}
-					return newItem
-				}, []);
+		});
+		console.log('dataMap---------> ', dataMap);
+		
 
-				console.log("newTransaction OCR----------> ", groupTransData);
+		let regex = /^[a-z0-9A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\.\| ]+$/g
+		dataMap = dataMap.filter((item: any) => item.match(regex));
+		// console.log('dataMap sau khi lọc regex---------> ', dataMap);
+		dataMap = dataMap.filter((item: any) => checkTextOrder(item));
+		// console.log('dataMap sau khi lọc regexStartText---------> ', dataMap);
+		let valueDiscountOrTotal = 0;
 
-				setTransaction(groupTransData);
+		let transactionData = dataMap?.reduce((newTrs: any, item: any, index: any) => {
+			console.log(item);
+			let arr = item.split(" ");
+			console.log(arr);
+			let numberArr = arr.filter((e: any) => e.match(/[\d]+/g));
+			let textArr = arr.filter((e: any) => !e.match(/[\d]+/g));
+			if(index < dataMap?.length - 2) {
+				let totalPrice = Number(numberArr[numberArr?.length - 1]?.replace('.', '') || 0);
+				let price = Number(numberArr[numberArr?.length - 2]?.replace('.', '') || 0);
+				let quantity = price && totalPrice/price;
+				let tranObj = {
+					...INIT_TRAN,
+					name: textArr.join(' ') || '',
+					quantity: quantity || '',
+					price: price || '',
+					total_price: totalPrice || '',
+				};
+				newTrs.push(tranObj);
+			} else {
+				if(index == dataMap?.length - 1) orderObj.total_price = Number(numberArr[numberArr?.length - 1] || 0);
+				else valueDiscountOrTotal = Number(numberArr[numberArr?.length - 1] || 0)
 			}
-			setData(orderObj);
+			return newTrs;
+		}, []);
+
+		console.log("new Trans--------> ", transactionData);
+		console.log("Sau build tran tính order-------> ",orderObj.total_price, valueDiscountOrTotal);
+		if(valueDiscountOrTotal > orderObj.total_price) {
+			orderObj.total_discount = valueDiscountOrTotal - orderObj.total_price
+		} else {
+			orderObj.total_discount = valueDiscountOrTotal;
 		}
+
+		setTransaction(transactionData);
+		setData(orderObj);
+		// if (data) {
+		// 	let newData = data.split('\n');
+		// 	console.log("OCR------------> ", newData);
+			
+		// 	let newIndexData = newData.reduce((newItem: any, item: any, index: any) => {
+		// 		if (item.includes(',')) item = item.replace(/,/g, '');
+		// 		if (item.match(/^\-?[0-9 ]+$/g) && index > 10) {
+		// 			if (item.includes(' ')) {
+		// 				item.split(' ')?.forEach((e: any) => {
+		// 					newItem.push({
+		// 						value: e,
+		// 						index: index
+		// 					});
+		// 				});
+		// 			} else {
+		// 				newItem.push({
+		// 					value: item,
+		// 					index: index
+		// 				})
+		// 			}
+
+		// 		}
+		// 		return newItem;
+		// 	}, []);
+		// 	console.log("Thông tin giá ocr------> ", newIndexData);
+		// 	if (newIndexData?.length > 0) {
+		// 		let lastValue = newIndexData[newIndexData?.length - 1]?.value;
+		// 		let discountValue = newIndexData.find((item: any) => item.value?.startsWith('-'))?.value || newIndexData[newIndexData?.length - 2]?.value || null;
+		// 		orderObj.total_price = Number(lastValue || 0);
+		// 		orderObj.total_discount = Number(discountValue?.replace("-", "") || 0);
+		// 		if (lastValue) {
+		// 			newIndexData = newIndexData.filter((item: any, index: any) => index < newIndexData?.length - 4);
+		// 		}
+		// 		console.log("Giá trị chi tiết đơn hàng------> ", newIndexData);
+
+		// 		let groupTransData = newIndexData.reduce((newItem: any, item: any, index: number) => {
+		// 			if (index > 0 && index % 3 == 0) {
+		// 				let indexQuantity = newIndexData[index - 3]?.index || null;
+		// 				newItem.push({
+		// 					...INIT_TRAN,
+		// 					name: indexQuantity != null && newData[indexQuantity - 1] || '',
+		// 					quantity: newIndexData[index - 3]?.value || '',
+		// 					price: newIndexData[index - 2]?.value || '',
+		// 					total_price: newIndexData[index - 1]?.value || '',
+		// 				});
+		// 			}
+		// 			return newItem
+		// 		}, []);
+
+		// 		console.log("newTransaction OCR----------> ", groupTransData);
+
+		// 		setTransaction(groupTransData);
+		// 	}
+		// 	setData(orderObj);
+		// }
 	}
 
 	const changeFile = async (e: any) => {
@@ -276,7 +364,6 @@ const OrderForm: React.FC = () => {
 		return Number(transaction[index].quantity) * Number(transaction[index].price)
 	}
 
-	console.log("transaction------> ", transaction);
 
 
 	return (
