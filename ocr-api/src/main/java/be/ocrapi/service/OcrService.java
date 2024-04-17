@@ -43,8 +43,8 @@ public class OcrService {
             File convFile = convert(file);
             String text = tesseract.doOCR(convFile);
             OcrResult ocrResult = new OcrResult();
-//            ocrResult.setResult(text.split("\n"));
-            ocrResult.setFileName(convFile.getPath());
+            ocrResult.setResult(text.split("\n"));
+            ocrResult.setFileName("uploads/" + file.getOriginalFilename());
             System.out.print(ocrResult);
             return ocrResult;
         } catch (Exception e) {
