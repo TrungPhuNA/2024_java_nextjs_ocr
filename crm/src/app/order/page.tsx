@@ -9,7 +9,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Product } from "@/types/product";
 import { INIT_PAGING, WEB_VALUE } from "@/services/constant";
 import { ORDER_SERVICE } from "@/services/api.service";
-import {formatMoney, formatTime, getItem} from "@/services/helpers.service";
+import {buildImage, formatMoney, formatTime, getItem} from "@/services/helpers.service";
 import { PagingPage } from "@/components/common/paging";
 import Loader from "@/components/common/Loader";
 
@@ -53,10 +53,13 @@ const OrderList: React.FC = () => {
 						<div className="col-span-2 flex items-center">
 							<p className="font-medium">Code</p>
 						</div>
+						<div className="col-span-1 flex items-center">
+							<p className="font-medium">Image</p>
+						</div>
 						<div className="col-span-2 hidden items-center sm:flex">
 							<p className="font-medium">Tổng giá</p>
 						</div>
-						<div className="col-span-2 flex items-center">
+						<div className="col-span-1 flex items-center">
 							<p className="font-medium">Trạng thái</p>
 						</div>
 						<div className="col-span-1 flex items-center">
@@ -82,12 +85,17 @@ const OrderList: React.FC = () => {
 										</p>
 									</div>
 								</div>
+								<div className="col-span-1 flex items-center">
+									<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+										<img src={buildImage(item.image) || "/images/image_faildoad.png"} width={80} height={80}/>
+									</div>
+								</div>
 								<div className="col-span-2 hidden items-center sm:flex">
 									<p className="text-sm text-black dark:text-white">
 										{formatMoney(item.total_price)}
 									</p>
 								</div>
-								<div className="col-span-2 flex items-center">
+								<div className="col-span-1 flex items-center">
 									<p className="text-sm text-black dark:text-white">
 										{item.status > 1 ? 'Đã thanh toán' : 'Chưa thanh toán'}
 									</p>

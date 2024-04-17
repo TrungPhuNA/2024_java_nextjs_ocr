@@ -128,3 +128,17 @@ export const range = (start: any, end: any) => {
 	*/
 	return Array.from({ length }, (_, idx) => idx + start);
 };
+
+import { URL, WEB_VALUE } from './constant';
+
+
+
+export const buildImage = ( img: any, is_user = false ) =>
+	{
+		if ( img )
+		{
+			return `${WEB_VALUE}/api/v1/ocr/file/`+ img;
+	
+		}
+		return null
+	}

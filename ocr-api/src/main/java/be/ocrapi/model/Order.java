@@ -67,6 +67,9 @@ public class Order {
     @Column(name = "category_id")
     private Integer category_id = 0;
 
+    @Column(name = "image", nullable = true)
+    private String image;
+
 
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

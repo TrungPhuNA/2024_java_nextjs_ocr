@@ -36,6 +36,7 @@ const INIT_ORDER: any = {
 	payment_type: 0,
 	category_id: null,
 	status: "",
+	image: null,
 	user_id: 0,
 	total_price: 0,
 	price: 0,
@@ -192,8 +193,9 @@ const OrderForm: React.FC = () => {
 			setLoading(true)
 			const response: any = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
 			setLoading(false);
-			if (response?.status == "success" && response?.data?.textResult) {
-				check(response?.data?.textResult)
+			if (response?.status == "success" && response?.data?.result) {
+				check(response?.data?.result);
+				setData({...data, image: response?.data?.fileName})
 			} else {
 				setErrorFile("Have an error to upload file")
 			}

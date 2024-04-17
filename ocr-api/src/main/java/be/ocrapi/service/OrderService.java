@@ -57,6 +57,9 @@ public class OrderService implements OrderServiceInterface {
        if(o.getCode() == "" || o.getCode() == null) {
            newData.setCode(makeCode(15));
        }
+       if(o.getImage() != null) {
+           newData.setImage(o.getImage());
+       }
         newData.setStatus(o.getStatus());
         newData.setReceiver_phone(o.getReceiver_phone());
         newData.setReceiver_email(o.getReceiver_email());

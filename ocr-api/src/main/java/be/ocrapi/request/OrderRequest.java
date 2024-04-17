@@ -21,6 +21,7 @@ public class OrderRequest {
     private Integer category_id;
     private String code;
     private String name;
+    private String image;
     private String node;
     private Integer status;
     private String receiver_name;
