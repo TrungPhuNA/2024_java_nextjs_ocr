@@ -90,7 +90,6 @@ const OrderForm: React.FC = () => {
 		}
 
 		getCategory();
-		check(null)
 
 	}, [params.get('id')]);
 
@@ -116,107 +115,85 @@ const OrderForm: React.FC = () => {
 	}
 
 	const check = async (data: any) => {
-		let a = [
-            "E u",
-            "| S h",
-            "4 Coffee Kem Sen Trắng",
-            "Ể Đường Số 2 - KDC 135 - TT. Bền Lức",
-            "ị HÓA ĐƠN THANH TOÁN",
-            "HÐ: 0006",
-            "§ Ngây 13/09/2017 Giờ: 122454",
-            "kễ BẠN: A1",
-            "TÊN HÀNG s ĐGIÁ T.IÊN",
-            "Yaourt Nha Đam. s 25000 25000",
-            "Chanh Dây | 20,000 20,000",
-            "Kem Socola 1 22.000 22000",
-            "Kem Vanlia A 22,000 22000",
-            "Kem Sàu Riêng 1 22000 22,000",
-            "Kem Dừa 1 22000 22000",
-            "Nước Ép Ôi 1 28000 28000",
-            "Nước Ép Thơm 1 28000 28,000",
-            "Dữa",
-            "T.cộNG 8 188000",
-            "GIẢM % HÐ (-20%) -37,800",
-            "TIÊN MẶT 151/200",
-            "MMột trăm năm mươi mót ngàn hai trăm",
-            "đồng./"
-        ];
-
-		let orderObj = {
-			name: "",
-			node: '',
-			receiver_name: '',
-			receiver_email: '',
-			receiver_phone: '',
-			receiver_address: '',
-			code: '',
-			total_discount: 0,
-			payment_type: 0,
-			category_id: null,
-			status: "",
-			user_id: 0,
-			total_price: 0,
-		};
 		
-		let dataMap = a.map((newItem: any) => {
-			newItem = newItem.replace(/,/g, '');
-			newItem = newItem.replace(/\//g, '');
-			newItem = newItem.replace(/%/g, '');
-			newItem = newItem.replace(/\-/g, '');
-			newItem = newItem.replace(/\(/g, '');
-			newItem = newItem.replace(/\)/g, '');
-			newItem = newItem.replace(/_/g, '');
-			newItem = newItem.replace(/  /g, '');
-			newItem = newItem.replace("Đ", '');
+
+		if(data) {
+			let orderObj = {
+				name: "",
+				node: '',
+				receiver_name: '',
+				receiver_email: '',
+				receiver_phone: '',
+				receiver_address: '',
+				code: '',
+				total_discount: 0,
+				payment_type: 0,
+				category_id: null,
+				status: "",
+				user_id: 0,
+				total_price: 0,
+			};
 			
-			return newItem.trim();
-
-		});
-		console.log('dataMap---------> ', dataMap);
-		
-
-		let regex = /^[a-z0-9A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\.\| ]+$/g
-		dataMap = dataMap.filter((item: any) => item.match(regex));
-		// console.log('dataMap sau khi lọc regex---------> ', dataMap);
-		dataMap = dataMap.filter((item: any) => checkTextOrder(item));
-		// console.log('dataMap sau khi lọc regexStartText---------> ', dataMap);
-		let valueDiscountOrTotal = 0;
-
-		let transactionData = dataMap?.reduce((newTrs: any, item: any, index: any) => {
-			console.log(item);
-			let arr = item.split(" ");
-			console.log(arr);
-			let numberArr = arr.filter((e: any) => e.match(/[\d]+/g));
-			let textArr = arr.filter((e: any) => !e.match(/[\d]+/g));
-			if(index < dataMap?.length - 2) {
-				let totalPrice = Number(numberArr[numberArr?.length - 1]?.replace('.', '') || 0);
-				let price = Number(numberArr[numberArr?.length - 2]?.replace('.', '') || 0);
-				let quantity = price && totalPrice/price;
-				let tranObj = {
-					...INIT_TRAN,
-					name: textArr.join(' ') || '',
-					quantity: quantity || '',
-					price: price || '',
-					total_price: totalPrice || '',
-				};
-				newTrs.push(tranObj);
+			let dataMap = data.map((newItem: any) => {
+				newItem = newItem.replace(/,/g, '');
+				newItem = newItem.replace(/\//g, '');
+				newItem = newItem.replace(/%/g, '');
+				newItem = newItem.replace(/\-/g, '');
+				newItem = newItem.replace(/\(/g, '');
+				newItem = newItem.replace(/\)/g, '');
+				newItem = newItem.replace(/_/g, '');
+				newItem = newItem.replace(/  /g, '');
+				newItem = newItem.replace("Đ", '');
+				
+				return newItem.trim();
+	
+			});
+			console.log('dataMap---------> ', dataMap);
+			
+	
+			let regex = /^[a-z0-9A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\.\| ]+$/g
+			dataMap = dataMap.filter((item: any) => item.match(regex));
+			// console.log('dataMap sau khi lọc regex---------> ', dataMap);
+			dataMap = dataMap.filter((item: any) => checkTextOrder(item));
+			// console.log('dataMap sau khi lọc regexStartText---------> ', dataMap);
+			let valueDiscountOrTotal = 0;
+	
+			let transactionData = dataMap?.reduce((newTrs: any, item: any, index: any) => {
+				console.log(item);
+				let arr = item.split(" ");
+				console.log(arr);
+				let numberArr = arr.filter((e: any) => e.match(/[\d]+/g));
+				let textArr = arr.filter((e: any) => !e.match(/[\d]+/g));
+				if(index < dataMap?.length - 2) {
+					let totalPrice = Number(numberArr[numberArr?.length - 1]?.replace('.', '') || 0);
+					let price = Number(numberArr[numberArr?.length - 2]?.replace('.', '') || 0);
+					let quantity = price && totalPrice/price;
+					let tranObj = {
+						...INIT_TRAN,
+						name: textArr.join(' ') || '',
+						quantity: quantity || '',
+						price: price || '',
+						total_price: totalPrice || '',
+					};
+					newTrs.push(tranObj);
+				} else {
+					if(index == dataMap?.length - 1) orderObj.total_price = Number(numberArr[numberArr?.length - 1] || 0);
+					else valueDiscountOrTotal = Number(numberArr[numberArr?.length - 1] || 0)
+				}
+				return newTrs;
+			}, []);
+	
+			console.log("new Trans--------> ", transactionData);
+			console.log("Sau build tran tính order-------> ",orderObj.total_price, valueDiscountOrTotal);
+			if(valueDiscountOrTotal > orderObj.total_price) {
+				orderObj.total_discount = valueDiscountOrTotal - orderObj.total_price
 			} else {
-				if(index == dataMap?.length - 1) orderObj.total_price = Number(numberArr[numberArr?.length - 1] || 0);
-				else valueDiscountOrTotal = Number(numberArr[numberArr?.length - 1] || 0)
+				orderObj.total_discount = valueDiscountOrTotal;
 			}
-			return newTrs;
-		}, []);
-
-		console.log("new Trans--------> ", transactionData);
-		console.log("Sau build tran tính order-------> ",orderObj.total_price, valueDiscountOrTotal);
-		if(valueDiscountOrTotal > orderObj.total_price) {
-			orderObj.total_discount = valueDiscountOrTotal - orderObj.total_price
-		} else {
-			orderObj.total_discount = valueDiscountOrTotal;
+	
+			setTransaction(transactionData);
+			setData(orderObj);
 		}
-
-		setTransaction(transactionData);
-		setData(orderObj);
 		// if (data) {
 		// 	let newData = data.split('\n');
 		// 	console.log("OCR------------> ", newData);
