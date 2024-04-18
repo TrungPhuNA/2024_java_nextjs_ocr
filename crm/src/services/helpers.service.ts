@@ -129,13 +129,13 @@ export const range = (start: any, end: any) => {
 	return Array.from({ length }, (_, idx) => idx + start);
 };
 
-import { URL, WEB_VALUE } from './constant';
+import {URL, WEB_VALUE, STATIC_URL_API} from './constant';
 
 
 
 export const buildImage = (img: any, is_user = false) => {
 	if (img) {
-		return `${WEB_VALUE}/api/v1/ocr/file/` + img;
+		return `${STATIC_URL_API}/` + img;
 
 	}
 	return null
