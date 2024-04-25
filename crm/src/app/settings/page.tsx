@@ -85,7 +85,11 @@ const Settings = () => {
 			return;
 		}
 		setLoading(true);
-		const response: any = await AUTH_SERVICE.update(1, form);
+		let formData = {
+			name: form.name,
+			phone: form.phone
+		}
+		const response: any = await AUTH_SERVICE.update(1, formData);
 		setLoading(false)
 		if (response?.status == 'success') {
 			let data = {
