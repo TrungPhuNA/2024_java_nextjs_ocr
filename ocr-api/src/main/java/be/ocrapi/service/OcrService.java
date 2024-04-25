@@ -23,6 +23,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -30,82 +34,37 @@ import java.util.List;
 public class OcrService {
     @Autowired
     private Tesseract tesseract;
-
-
-
-
-
+    private static final Path CURRENT_FOLDER = Paths.get(System.getProperty("user.dir"));
 
     public OcrResult ocr(MultipartFile file) throws IOException, TesseractException {
 
         try {
+            Path staticPath = Paths.get("static");
+            Path imagePath = Paths.get("images");
+
+            if (!Files.exists(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath))) {
+                Files.createDirectories(CURRENT_FOLDER.resolve(staticPath).resolve(imagePath));
+            }
+            Path image = CURRENT_FOLDER.resolve(staticPath)
+                    .resolve(imagePath).resolve(file.getOriginalFilename());
+            System.out.print("IMG: " +  image);
+            System.out.print("imagePath: " +  imagePath);
+            try (OutputStream os = Files.newOutputStream(image)) {
+                os.write(file.getBytes());
+            }
+
             tesseract.setLanguage("vie");
             File convFile = convert(file);
             String text = tesseract.doOCR(convFile);
             OcrResult ocrResult = new OcrResult();
             ocrResult.setResult(text.split("\n"));
-            ocrResult.setFileName("uploads/" + file.getOriginalFilename());
+            ocrResult.setFileName(imagePath.resolve(file.getOriginalFilename()).toString());
             System.out.print(ocrResult);
             return ocrResult;
         } catch (Exception e) {
             System.err.println("Failed to upload file. Status code: " + e.getMessage());
         }
             return null;
-    }
-
-
-    public OcrResult ocrV2(MultipartFile file) throws IOException, TesseractException {
-//        try {
-//            String uploadUrl = "https://testapi.cloudmersive.com/ocr/image/toText";
-//            System.out.println("token key----------> "+token);
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//            File newFile = convert(file);
-//
-//            headers.set("Apikey", token);
-//            headers.set("accept", "application/json");
-//
-//            // Create the request body with the file
-//            FileSystemResource resource = new FileSystemResource(newFile);
-//            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//            body.add("file", resource);
-//
-//            log.error("file--------> ", body);
-//
-//            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-//
-//            RestTemplate restTemplate = new RestTemplate();
-//            // Make the HTTP POST request
-//            ResponseEntity<String> response = restTemplate.postForEntity(uploadUrl, requestEntity, String.class);
-//            log.debug("response-------> ", response);
-////             Handle the response
-//            if (response.getStatusCode().is2xxSuccessful()) {
-//                String data = response.getBody();
-//                System.out.println("File uploaded successfully!");
-//                log.debug("response-------> ", data);
-//
-//                if(data != null) {
-//                    Gson gson = new Gson();
-//                    OcrResult myObject = gson.fromJson(data, OcrResult.class);
-//                    return myObject;
-//                }
-//
-//            } else {
-//                System.err.println("Failed to upload file. Status code: " + response.getStatusCode());
-//            }
-////
-////            String result = restTemplate.postForEntity( uploadUrl, requestEntity,
-////                    String.class).getBody().toString();
-//
-////            System.out.println(result);
-//
-////            o.setResult(result);
-//        } catch (Exception e) {
-//            System.err.println("error-----------> " + e.getMessage());
-//            e.printStackTrace();
-//        }
-        return null;
     }
 
     public static File convert(MultipartFile file) throws IOException {
