@@ -75,9 +75,9 @@ export const AUTH_SERVICE = {
 		await timeDelay(1000)
 		return await getMethod(`${URL_API.AUTH}/profile`, {});
 	},
-	async update(id: any, data: any) {
+	async update(id: any, dataForm: any) {
 		await timeDelay(1000)
-		return await putMethod(`${URL_API.AUTH}/profile/` + id, data);
+		return await putMethod(`${URL_API.AUTH}/profile/` + id, dataForm);
 	}
 };
 
