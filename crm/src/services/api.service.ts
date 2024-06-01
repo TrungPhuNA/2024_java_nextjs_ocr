@@ -81,6 +81,32 @@ export const AUTH_SERVICE = {
 	}
 };
 
+export const COMMON_API = {
+	async getList(url: any, filters: any) {
+		await timeDelay(1000)
+		const params = buildFilter(filters);
+		return await getMethod(`${url}/list`, params);
+	},
+	async store(url: any,data: any) {
+		await timeDelay(1000)
+
+		return await postMethod(`${url}/store`, data);
+	},
+	async show(url: any,id: any) {
+		await timeDelay(1000)
+
+		return await getMethod(`${url}/show/` + id, {});
+	},
+	async update(url: any,id: any, data: any) {
+		await timeDelay(1000)
+		return await putMethod(`${url}/update/` + id, data);
+	},
+	async delete(url: any,id: any) {
+		await timeDelay(1000)
+		return await deleteMethod(`${url}/delete/` + id);
+	},
+};
+
 export const UPLOAD_SERVICE = {
 	async upload(data: any) {
 		await timeDelay(1000)

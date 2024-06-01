@@ -10,6 +10,7 @@ import be.ocrapi.service.UserService;
 import be.ocrapi.service.UserServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.authentication.AuthenticationManager;
@@ -25,8 +26,6 @@ public class UserController {
     @Autowired
     private UserServiceInterface userService;
 
-//    private final JwtService jwtService;
-//    private final AuthenticationManager authenticationManager;
 
     @GetMapping("show/{id}")
     public BaseResponse<?> findOne(@PathVariable Integer id) {
@@ -44,15 +43,27 @@ public class UserController {
     @GetMapping("list")
     public BaseResponse<?> findAll(
             @RequestParam(name = "page", required = false, defaultValue = "1") String page,
-            @RequestParam(name = "page_size", required = false, defaultValue = "20") String page_size
+            @RequestParam(name = "page_size", required = false, defaultValue = "20") String page_size,
+            @RequestParam(name = "status", required = false, defaultValue = "") String status,
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "email", required = false, defaultValue = "") String email,
+            @RequestParam(name = "rank_id", required = false, defaultValue = "") String rank_id,
+            @RequestParam(name = "salary_id", required = false, defaultValue = "") String salary_id,
+            @RequestParam(name = "certificate_id", required = false, defaultValue = "") String certificate_id,
+            @RequestParam(name = "room_id", required = false, defaultValue = "") String room_id,
+            @RequestParam(name = "user_type", required = false, defaultValue = "") String user_type,
+            @RequestParam(name = "type_id", required = false, defaultValue = "") String type_id
     ) {
         try {
             int number_page = 0;
             if(Integer.parseInt(page) > 1) {
                 number_page = Integer.parseInt(page) - 1;
             }
-            var response = userService.findAll(number_page, Integer.parseInt(page_size));
-            return BaseResponse.ofSucceeded(response);
+//            var response = userService.findAll(number_page, Integer.parseInt(page_size));
+            var users = userService.findAndCount(page, page_size,status, name, email, salary_id, rank_id, room_id, certificate_id, user_type);
+            Integer total = userService.countTotalCondition(status, name, email, salary_id, rank_id, room_id, certificate_id, user_type);
+            BaseResponse.Metadata paging = new BaseResponse.Metadata("", number_page ,  Integer.parseInt(page_size), Long.parseLong(total + ""), "", null);
+            return BaseResponse.ofSucceeded().setData(users).setMeta(paging);
         } catch (Exception e) {
             log.debug("[USER CONTROLLER]------>error list", e);
             String message = e.getMessage();

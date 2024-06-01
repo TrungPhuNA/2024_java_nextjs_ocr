@@ -11,14 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.Integer.parseInt;
 
 @Service
 @Slf4j
@@ -47,13 +53,31 @@ public class UserService implements UserServiceInterface{
     @Autowired
     private  AuthenticationManager authenticationManager;
 
-
+    public static Date parseDate(String dateString, String pattern) {
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        try {
+            return formatter.parse(dateString);
+        } catch (ParseException e) {
+            System.err.println("Invalid date format: " + e.getMessage());
+            return null;
+        }
+    }
     private User setData(UserRequest u, User d) {
         if(d == null) {
             d = new User();
             d.setPassword(passwordEncoder.encode(u.getPassword()));
 
         }
+
+        if(u.getDob() != null && !u.getDob().isEmpty()) {
+            Date fromDate = this.parseDate(u.getDob(), "yyyy-MM-dd");
+            d.setDob(fromDate);
+        }
+        if(u.getCccdDate() != null && !u.getCccdDate() .isEmpty()) {
+            Date date = this.parseDate(u.getCccdDate() , "yyyy-MM-dd");
+            d.setCccdDate(date);
+        }
+
         d.setAvatar(u.getAvatar());
         d.setStatus(u.getStatus());
         d.setCode(u.getCode());
@@ -63,11 +87,9 @@ public class UserService implements UserServiceInterface{
         d.setUserType(u.getUserType());
         d.setGender(u.getGender());
         d.setAddress(u.getAddress());
-        d.setDob(u.getDob());
 
         d.setCccd(u.getCccd());
         d.setCccdAddress(u.getCccdAddress());
-        d.setCccdDate(u.getCccdDate());
         d.setRegion(u.getRegion());
 
         EmployerType e = d.getEmployerType();
@@ -140,6 +162,33 @@ public class UserService implements UserServiceInterface{
     public Page<User> findAll(int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
         return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<User> findAndCount(String page, String page_size,
+                                       String status, String name,
+                                       String email,
+                                       String salary_id,
+                                      String rank_id,
+                                        String room_id,
+                                       String certificate_id,
+                                       String user_type) {
+        List<User> data = this.userRepository.findAndCount((parseInt(page) - 1) * parseInt(page_size),
+                parseInt(page_size), status, name, email, salary_id, rank_id, room_id, certificate_id, user_type
+                );
+
+        return data;
+    }
+    @Override
+    public Integer countTotalCondition( String status, String name,
+                                        String email,
+                                        String salary_id,
+                                        String rank_id,
+                                        String room_id,
+                                        String certificate_id,
+                                        String user_type) {
+        return this.userRepository.countByConditions(status, name, email, salary_id,
+                rank_id, room_id, certificate_id, user_type);
     }
 
     @Override

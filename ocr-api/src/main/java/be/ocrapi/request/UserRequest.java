@@ -39,9 +39,9 @@ public class UserRequest {
     private String address;
     private String cccd;
     private String cccdAddress;
-    private Date cccdDate;
+    private String cccdDate;
     private String region;
-    private Date dob;
+    private String dob;
 
 
     private Integer employerTypeId;

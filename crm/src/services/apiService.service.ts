@@ -31,6 +31,7 @@ axiosClient.interceptors.response.use(
 		// 	window.location.href = `/auth`;
 		// }
 
+
 		return response?.data;
 	},
 	( error ) =>
@@ -75,7 +76,7 @@ export const getMethod = async ( path, params ) =>
 	return await axiosClient.get( `/${ path }`, { params: params } )
 		.then( response =>
 		{
-
+			console.log(typeof response);
 			return response;
 		} )
 		.catch( error =>
