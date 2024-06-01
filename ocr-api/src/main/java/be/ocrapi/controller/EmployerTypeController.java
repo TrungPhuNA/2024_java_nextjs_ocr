@@ -3,40 +3,31 @@ package be.ocrapi.controller;
 import be.ocrapi.common.BaseResponse;
 import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
-import be.ocrapi.model.Order;
-import be.ocrapi.model.User;
-import be.ocrapi.request.UserRequest;
-import be.ocrapi.service.UserService;
-import be.ocrapi.service.UserServiceInterface;
+import be.ocrapi.request.EmployerTypeRequest;
+import be.ocrapi.request.SalaryRequest;
+import be.ocrapi.service.EmployerType.EmployerTypeService;
+import be.ocrapi.service.Salary.SalaryServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-//import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 @CrossOrigin("*")
 @RestController
-@RequestMapping("api/v1/user")
+@RequestMapping("api/v1/employer-type")
 @Slf4j
-public class UserController {
+public class EmployerTypeController {
     @Autowired
-    private UserServiceInterface userService;
-
-//    private final JwtService jwtService;
-//    private final AuthenticationManager authenticationManager;
+    private EmployerTypeService service;
 
     @GetMapping("show/{id}")
     public BaseResponse<?> findOne(@PathVariable Integer id) {
         try {
-            return BaseResponse.ofSucceeded(userService.findById(id));
+            return BaseResponse.ofSucceeded(service.findById(id));
         } catch (Exception e) {
-            log.debug("[USER CONTROLLER]------>error findOne", e);
+            log.debug("[EmployerTypeRequest CONTROLLER]------>error findOne", e);
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
-            log.error("[USER CONTROLLER]------>findOne", error);
+            log.error("[EmployerTypeRequest CONTROLLER]------>findOne", error);
             return BaseResponse.ofFailed(error);
         }
     }
@@ -51,45 +42,46 @@ public class UserController {
             if(Integer.parseInt(page) > 1) {
                 number_page = Integer.parseInt(page) - 1;
             }
-            var response = userService.findAll(number_page, Integer.parseInt(page_size));
+            var response = service.findAll(number_page, Integer.parseInt(page_size));
             return BaseResponse.ofSucceeded(response);
         } catch (Exception e) {
-            log.debug("[USER CONTROLLER]------>error list", e);
+            log.debug("[EmployerTypeRequest CONTROLLER]------>error list", e);
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
-            log.error("[USER CONTROLLER]------>list", error);
+            log.error("[EmployerTypeRequest CONTROLLER]------>list", error);
             return BaseResponse.ofFailed(error);
         }
     }
 
     @PostMapping("store")
-    public BaseResponse<?> save(@RequestBody UserRequest data) {
+    public BaseResponse<?> save(@RequestBody EmployerTypeRequest data) {
         try {
-            return BaseResponse.ofSucceeded(userService.save(data));
+            var newData = service.save(data);
+            return BaseResponse.ofSucceeded(newData);
         } catch (Exception e) {
-            log.debug("[USER CONTROLLER]------>error create", e);
+            log.debug("[EmployerTypeRequest CONTROLLER]------>error create", e);
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, "Tạo mới thất bại", 400));
-            log.error("[USER CONTROLLER]------>create", error);
+            log.error("[EmployerTypeRequest CONTROLLER]------>create", error);
             return BaseResponse.ofFailed(error);
         }
     }
 
     @PutMapping("update/{id}")
-    public BaseResponse<?> update(@PathVariable Integer id,@RequestBody UserRequest data) {
+    public BaseResponse<?> update(@PathVariable Integer id, @RequestBody EmployerTypeRequest data) {
         try {
-            return BaseResponse.ofSucceeded(userService.update(id, data));
+            return BaseResponse.ofSucceeded(service.update(id, data));
         } catch (Exception e) {
-            log.debug("[USER CONTROLLER]------>error update", e);
+            log.debug("[EmployerTypeRequest CONTROLLER]------>error update", e);
             String message = e.getMessage();
             var error = new BusinessException(new BusinessErrorCode(400, message, "Cập nhật thất bại", 400));
-            log.error("[USER CONTROLLER]------>update", error);
+            log.error("[EmployerTypeRequest CONTROLLER]------>update", error);
             return BaseResponse.ofFailed(error);
         }
     }
 
-    @DeleteMapping
-    public void delete(@RequestBody User order) {
-        userService.delete(order);
+    @DeleteMapping("delete/{id}")
+    public void delete(@PathVariable Integer id) {
+        service.delete(id);
     }
 }

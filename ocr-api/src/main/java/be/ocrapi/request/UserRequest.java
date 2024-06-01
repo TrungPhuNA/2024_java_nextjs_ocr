@@ -1,6 +1,9 @@
 package be.ocrapi.request;
 
+import be.ocrapi.model.*;
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +18,10 @@ import java.util.Date;
 public class UserRequest {
 
     private String name;
+    private String status;
 
     private String email;
+    private String code;
 
     private String password;
 
@@ -26,8 +31,22 @@ public class UserRequest {
 
     private String avatar;
 
-    private String access_token;
+    private String accessToken;
 
-    private String refresh_token;
-    private String user_type;
+    private String refreshToken;
+
+    private String userType;
+    private String address;
+    private String cccd;
+    private String cccdAddress;
+    private Date cccdDate;
+    private String region;
+    private Date dob;
+
+
+    private Integer employerTypeId;
+    private Integer certificateId;
+    private Integer salaryId;
+    private Integer roomId;
+    private Integer userRankId;
 }

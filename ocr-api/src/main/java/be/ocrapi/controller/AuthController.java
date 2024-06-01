@@ -39,6 +39,7 @@ public class AuthController {
     @PostMapping("register")
     public BaseResponse<?> save(@RequestBody UserRequest data) {
         try {
+            data.setStatus("ACTIVE");
             return BaseResponse.ofSucceeded(userService.save(data));
         } catch (Exception e) {
             log.debug("[USER CONTROLLER]------>error create", e);

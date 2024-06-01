@@ -1,8 +1,7 @@
 package be.ocrapi.service;
 
-import be.ocrapi.model.Order;
-import be.ocrapi.model.User;
-import be.ocrapi.repository.UserRepository;
+import be.ocrapi.model.*;
+import be.ocrapi.repository.*;
 import be.ocrapi.request.UserRequest;
 import be.ocrapi.response.LoginResponse;
 import be.ocrapi.security.JwtService;
@@ -25,8 +24,20 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class UserService implements UserServiceInterface{
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RankRepository rankRepository;
+    @Autowired
+    private SalaryRepository salaryRepository;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private EmployerTypeRepository employerTypeRepository;
+    @Autowired
+    private CertificateRepository certificateRepository;
 
 
     @Autowired
@@ -41,13 +52,52 @@ public class UserService implements UserServiceInterface{
         if(d == null) {
             d = new User();
             d.setPassword(passwordEncoder.encode(u.getPassword()));
+
         }
         d.setAvatar(u.getAvatar());
+        d.setStatus(u.getStatus());
+        d.setCode(u.getCode());
         d.setName(u.getName());
         d.setEmail(u.getEmail());
         d.setPhone(u.getPhone());
-        d.setUser_type(u.getUser_type());
+        d.setUserType(u.getUserType());
         d.setGender(u.getGender());
+        d.setAddress(u.getAddress());
+        d.setDob(u.getDob());
+
+        d.setCccd(u.getCccd());
+        d.setCccdAddress(u.getCccdAddress());
+        d.setCccdDate(u.getCccdDate());
+        d.setRegion(u.getRegion());
+
+        EmployerType e = d.getEmployerType();
+        Rank r = d.getRank();
+        Salary s = d.getSalary();
+        Certificate c = d.getCertificate();
+        Room room = d.getRoom();
+
+        if(u.getEmployerTypeId() != null) {
+            e = employerTypeRepository.getById(u.getEmployerTypeId());
+        }
+        if(u.getUserRankId() != null) {
+            r = rankRepository.getById(u.getUserRankId());
+        }
+        if(u.getSalaryId() != null) {
+            s = salaryRepository.getById(u.getSalaryId());
+        }
+        if(u.getCertificateId() != null) {
+            c = certificateRepository.getById(u.getCertificateId());
+        }
+        if(u.getRoomId() != null) {
+            room = roomRepository.getById(u.getRoomId());
+        }
+
+        d.setEmployerType(e);
+        d.setRank(r);
+        d.setSalary(s);
+        d.setCertificate(c);
+        d.setRoom(room);
+
         return d;
     }
 
@@ -72,12 +122,14 @@ public class UserService implements UserServiceInterface{
         );
 
         var user = userRepository.findByEmail(data.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if(!user.getStatus().equals("ACTIVE")) {
+            throw new RuntimeException("USER not active");
+        }
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         user.setAccessToken(jwtToken);
-        user.setRefresh_token(refreshToken);
+        user.setRefreshToken(refreshToken);
         userRepository.save(user);
         log.debug("token=========> " + jwtToken);
 
@@ -91,15 +143,20 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
-    public User save(UserRequest user) {
-        User u = setData(user, null);
-        return userRepository.save(u);
+    public User save(UserRequest dataRequest) {
+        User u = setData(dataRequest, null);
+        User newData = userRepository.save(u);
+        if(dataRequest.getCode() == null) {
+            newData.setCode("MEMBER0000" + newData.getId());
+        }
+        userRepository.save(newData);
+        return newData;
     }
 
     @Override
-    public User update(int id, UserRequest user) {
+    public User update(int id, UserRequest dataRequest) {
         User u = userRepository.getById(id);
-        u = setData(user, u);
+        u = setData(dataRequest, u);
         return userRepository.save(u);
     }
 
