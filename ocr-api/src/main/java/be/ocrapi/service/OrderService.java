@@ -17,9 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,11 +26,6 @@ public class OrderService implements OrderServiceInterface {
     private OrderRepository orderRepository;
     @Autowired
     private CategoryRepository categoryRepository;
-
-//    private String genCode() {
-//
-//        return UUID.randomUUID().toString();
-//    }
 
     private String  makeCode(int length) {
         String result = "";
