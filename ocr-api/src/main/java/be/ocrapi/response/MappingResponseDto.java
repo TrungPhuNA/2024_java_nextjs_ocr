@@ -29,6 +29,7 @@ public class MappingResponseDto {
         newData.setStatus(data.getStatus());
         newData.setRegion(data.getRegion());
         newData.setDob(data.getDob());
+        newData.setEmail(data.getEmail());
         newData.setPhone(data.getPhone());
         newData.setUserType(data.getUserType());
         newData.setCccdAddress(data.getCccdAddress());
