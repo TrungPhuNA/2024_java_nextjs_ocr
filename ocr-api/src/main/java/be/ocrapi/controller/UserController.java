@@ -3,21 +3,14 @@ package be.ocrapi.controller;
 import be.ocrapi.common.BaseResponse;
 import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
-import be.ocrapi.model.Order;
 import be.ocrapi.model.User;
 import be.ocrapi.request.UserRequest;
-import be.ocrapi.service.UserService;
-import be.ocrapi.service.UserServiceInterface;
+import be.ocrapi.service.User.UserServiceInterface;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 //import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("api/v1/user")

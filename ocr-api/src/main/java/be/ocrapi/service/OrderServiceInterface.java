@@ -2,7 +2,7 @@ package be.ocrapi.service;
 
 import be.ocrapi.model.Order;
 import be.ocrapi.request.OrderRequest;
-import be.ocrapi.response.StatisticResponse;
+import be.ocrapi.response.Salary.StatisticResponse;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;

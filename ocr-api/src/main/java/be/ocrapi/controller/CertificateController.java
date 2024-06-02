@@ -43,7 +43,9 @@ public class CertificateController {
                 number_page = Integer.parseInt(page) - 1;
             }
             var response = service.findAll(number_page, Integer.parseInt(page_size));
-            return BaseResponse.ofSucceeded(response);
+            BaseResponse.Metadata paging = new BaseResponse.Metadata("", number_page ,  Integer.parseInt(page_size), response.getTotal(), "", null);
+
+            return BaseResponse.ofSucceeded().setMeta(paging).setData(response.getData());
         } catch (Exception e) {
             log.debug("[CertificateController CONTROLLER]------>error list", e);
             String message = e.getMessage();

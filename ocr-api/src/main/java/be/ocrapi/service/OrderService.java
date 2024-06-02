@@ -1,13 +1,11 @@
 package be.ocrapi.service;
 
 import be.ocrapi.model.Order;
-import be.ocrapi.model.Transaction;
 import be.ocrapi.repository.CategoryRepository;
 import be.ocrapi.repository.OrderRepository;
 import be.ocrapi.request.OrderRequest;
-import be.ocrapi.request.TransactionRequest;
 import be.ocrapi.response.OrderResponse;
-import be.ocrapi.response.StatisticResponse;
+import be.ocrapi.response.Salary.StatisticResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

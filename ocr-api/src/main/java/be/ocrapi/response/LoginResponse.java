@@ -1,6 +1,6 @@
 package be.ocrapi.response;
 
-import be.ocrapi.model.User;
+import be.ocrapi.response.User.UserResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +18,5 @@ public class LoginResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    private User user;
+    private UserResponse user;
 }

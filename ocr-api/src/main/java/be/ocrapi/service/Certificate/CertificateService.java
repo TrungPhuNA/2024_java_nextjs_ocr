@@ -1,15 +1,17 @@
 package be.ocrapi.service.Certificate;
 
-import be.ocrapi.model.Category;
-import be.ocrapi.model.Certificate;
-import be.ocrapi.model.Rank;
-import be.ocrapi.model.User;
+import be.ocrapi.model.*;
 import be.ocrapi.repository.CategoryRepository;
 import be.ocrapi.repository.CertificateRepository;
 import be.ocrapi.repository.UserRepository;
 import be.ocrapi.request.CategoryRequest;
 import be.ocrapi.request.CertificateRequest;
 import be.ocrapi.request.RankRequest;
+import be.ocrapi.response.Certificate.CertificateResponse;
+import be.ocrapi.response.Certificate.ListCertificateResponse;
+import be.ocrapi.response.MappingResponseDto;
+import be.ocrapi.response.Room.ListRoomResponse;
+import be.ocrapi.response.Room.RoomResponse;
 import be.ocrapi.service.CategoryServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,11 +29,8 @@ public class CertificateService implements CertificateServiceInterface {
     @Autowired
     private CertificateRepository repository;
 
-
-    @Override
-    public Optional<Certificate> findById(Integer id) {
-        return repository.findById(id);
-    }
+    @Autowired
+    private MappingResponseDto responseDto;
 
 
     @Autowired
@@ -54,9 +55,29 @@ public class CertificateService implements CertificateServiceInterface {
     }
 
     @Override
-    public Page<Certificate> findAll(int page, int page_size) {
+    public CertificateResponse findById(Integer id) {
+        return responseDto.getInfoCertificate(repository.getById(id));
+    }
+
+    @Override
+    public ListCertificateResponse findAll(int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
-        return repository.findAll(pageable);
+        Page<Certificate> results = repository.findAll(pageable);
+
+        ListCertificateResponse dataListResponse = new ListCertificateResponse();
+        dataListResponse.setTotal(results.getTotalElements());
+
+        if(results.isEmpty()) {
+            dataListResponse.setData(new ArrayList<>());
+            return dataListResponse;
+        }
+
+        List<CertificateResponse> data = new ArrayList<>();
+        for (Certificate item: results) {
+            data.add(responseDto.getInfoCertificate(item));
+        }
+        dataListResponse.setData(data);
+        return dataListResponse;
     }
 
     @Override

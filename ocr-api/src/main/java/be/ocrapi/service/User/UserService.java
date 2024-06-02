@@ -1,41 +1,41 @@
-package be.ocrapi.service;
+package be.ocrapi.service.User;
 
 import be.ocrapi.model.*;
 import be.ocrapi.repository.*;
 import be.ocrapi.request.UserRequest;
+import be.ocrapi.response.MappingResponseDto;
 import be.ocrapi.response.LoginResponse;
+import be.ocrapi.response.User.UserResponse;
 import be.ocrapi.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static java.lang.Integer.parseInt;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserService implements UserServiceInterface{
+public class UserService implements UserServiceInterface {
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private RankRepository rankRepository;
+
+    @Autowired
+    private MappingResponseDto responseDto;
     @Autowired
     private SalaryRepository salaryRepository;
     @Autowired
@@ -124,13 +124,18 @@ public class UserService implements UserServiceInterface{
     }
 
     @Override
-    public Optional<User> findById(Integer id) {
-        return userRepository.findById(id);
+    public UserResponse findById(Integer id) {
+        User u = userRepository.getById(id);
+        return responseDto.getUserInfo(u);
     }
 
     @Override
-    public Optional<User> findByAccessToken(String access_token) {
-        return userRepository.findUserByAccessToken(access_token);
+    public UserResponse findByAccessToken(String access_token) {
+        User u = userRepository.findUserByAccessToken(access_token);
+        if(u == null) {
+            return null;
+        }
+        return responseDto.getUserInfo(u);
     }
 
     @Override
@@ -148,36 +153,44 @@ public class UserService implements UserServiceInterface{
         if(!user.getStatus().equals("ACTIVE")) {
             throw new RuntimeException("USER not active");
         }
+
+
         String jwtToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         user.setAccessToken(jwtToken);
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
         log.debug("token=========> " + jwtToken);
-
-        return new LoginResponse(jwtToken, refreshToken, user);
+        return new LoginResponse(jwtToken, refreshToken, responseDto.getUserInfo(user));
     }
 
-    @Override
-    public Page<User> findAll(int page, int page_size) {
-        Pageable pageable = PageRequest.of(page, page_size);
-        return userRepository.findAll(pageable);
-    }
+//    @Override
+//    public Page<User> findAll(int page, int page_size) {
+//        Pageable pageable = PageRequest.of(page, page_size);
+//        return userRepository.findAll(pageable);
+//    }
 
     @Override
-    public List<User> findAndCount(String page, String page_size,
-                                       String status, String name,
-                                       String email,
-                                       String salary_id,
-                                      String rank_id,
-                                        String room_id,
-                                       String certificate_id,
-                                       String user_type) {
+    public List<UserResponse> findAndCount(String page, String page_size,
+                                           String status, String name,
+                                           String email,
+                                           String salary_id,
+                                           String rank_id,
+                                           String room_id,
+                                           String certificate_id,
+                                           String user_type) {
         List<User> data = this.userRepository.findAndCount((parseInt(page) - 1) * parseInt(page_size),
                 parseInt(page_size), status, name, email, salary_id, rank_id, room_id, certificate_id, user_type
                 );
+        List<UserResponse> users = new ArrayList<>();
+        if(!data.isEmpty()) {
+            for (User item: data) {
+                users.add(responseDto.getUserInfo(item));
+            }
+        }
 
-        return data;
+
+        return users;
     }
     @Override
     public Integer countTotalCondition( String status, String name,

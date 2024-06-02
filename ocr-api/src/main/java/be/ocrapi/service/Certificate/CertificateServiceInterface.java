@@ -5,13 +5,16 @@ import be.ocrapi.model.Certificate;
 import be.ocrapi.request.CategoryRequest;
 import be.ocrapi.request.CertificateRequest;
 import be.ocrapi.request.RankRequest;
+import be.ocrapi.response.Certificate.CertificateResponse;
+import be.ocrapi.response.Certificate.ListCertificateResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CertificateServiceInterface {
-    Optional<Certificate> findById(Integer id);
-    Page<Certificate> findAll(int page, int page_size);
+    CertificateResponse findById(Integer id);
+    ListCertificateResponse findAll(int page, int page_size);
     CertificateRequest save(CertificateRequest data);
     CertificateRequest update(int id, CertificateRequest data);
     void delete(int order);

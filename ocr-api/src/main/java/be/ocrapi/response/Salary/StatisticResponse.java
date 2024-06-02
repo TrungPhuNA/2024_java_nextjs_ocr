@@ -1,6 +1,7 @@
-package be.ocrapi.response;
+package be.ocrapi.response.Salary;
 
 import be.ocrapi.model.Order;
+import be.ocrapi.response.OrderResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

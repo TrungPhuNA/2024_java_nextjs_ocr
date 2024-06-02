@@ -1,9 +1,6 @@
 package be.ocrapi.service.BonusAndDiscipline;
 
-import be.ocrapi.model.BonusAndDiscipline;
-import be.ocrapi.model.Category;
-import be.ocrapi.model.EmployerType;
-import be.ocrapi.model.User;
+import be.ocrapi.model.*;
 import be.ocrapi.repository.BonusAndDisciplineRepository;
 import be.ocrapi.repository.CategoryRepository;
 import be.ocrapi.repository.EmployerTypeRepository;
@@ -11,6 +8,13 @@ import be.ocrapi.repository.UserRepository;
 import be.ocrapi.request.BonusAndDisciplineRequest;
 import be.ocrapi.request.CategoryRequest;
 import be.ocrapi.request.EmployerTypeRequest;
+import be.ocrapi.response.Bonus.BonusResponse;
+import be.ocrapi.response.Bonus.ListBonusResponse;
+import be.ocrapi.response.Certificate.CertificateResponse;
+import be.ocrapi.response.Certificate.ListCertificateResponse;
+import be.ocrapi.response.MappingResponseDto;
+import be.ocrapi.response.Room.ListRoomResponse;
+import be.ocrapi.response.Room.RoomResponse;
 import be.ocrapi.service.CategoryServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,10 +32,8 @@ public class BonusAndDisciplineService implements BonusAndDisciplineServiceInter
     @Autowired
     private BonusAndDisciplineRepository repository;
 
-    @Override
-    public Optional<BonusAndDiscipline> findById(Integer id) {
-        return repository.findById(id);
-    }
+    @Autowired
+    private MappingResponseDto responseDto;
 
 
     @Autowired
@@ -54,9 +58,29 @@ public class BonusAndDisciplineService implements BonusAndDisciplineServiceInter
     }
 
     @Override
-    public Page<BonusAndDiscipline> findAll(int page, int page_size) {
+    public BonusResponse findById(Integer id) {
+        return responseDto.getInfoBonus(repository.getById(id));
+    }
+
+    @Override
+    public ListBonusResponse findAll(int page, int page_size) {
         Pageable pageable = PageRequest.of(page, page_size);
-        return repository.findAll(pageable);
+        Page<BonusAndDiscipline> results = repository.findAll(pageable);
+
+        ListBonusResponse dataListResponse = new ListBonusResponse();
+        dataListResponse.setTotal(results.getTotalElements());
+
+        if(results.isEmpty()) {
+            dataListResponse.setData(new ArrayList<>());
+            return dataListResponse;
+        }
+
+        List<BonusResponse> data = new ArrayList<>();
+        for (BonusAndDiscipline item: results) {
+            data.add(responseDto.getInfoBonus(item));
+        }
+        dataListResponse.setData(data);
+        return dataListResponse;
     }
 
     @Override

@@ -1,26 +1,24 @@
-package be.ocrapi.service;
+package be.ocrapi.service.User;
 
-import be.ocrapi.model.Order;
 import be.ocrapi.model.User;
 import be.ocrapi.request.UserRequest;
 import be.ocrapi.response.LoginResponse;
-import org.springframework.data.domain.Page;
+import be.ocrapi.response.User.UserResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserServiceInterface {
-    Optional<User> findById(Integer id);
+    UserResponse findById(Integer id);
 
-    Optional<User> findByAccessToken(String access_token);
+    UserResponse findByAccessToken(String access_token);
     LoginResponse login(UserRequest data);
-    Page<User> findAll(int page, int page_size);
+//    Page<User> findAll(int page, int page_size);
 
     User save(UserRequest user);
     User update(int id, UserRequest user);
     void delete(User user);
 
-    List<User> findAndCount(
+    List<UserResponse> findAndCount(
             String page, String page_size,
             String status, String name,
             String email,
