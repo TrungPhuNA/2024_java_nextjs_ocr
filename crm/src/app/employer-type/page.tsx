@@ -97,7 +97,9 @@ const OrderList: React.FC = () => {
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												{item.description}
+												<div style={{ wordBreak: 'break-word' }} className="text-break" dangerouslySetInnerHTML={{ __html: item.description }}>
+
+												</div>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<p className={`dark:text-white ${item.status == "ACTIVE" ? 'text-success' : 'text-red'}`}>
@@ -117,16 +119,15 @@ const OrderList: React.FC = () => {
 
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
-													<button className="hover:text-primary"
+													{/* <button className="hover:text-primary"
 													// onClick={() => deleteData(item)}
 													>
 														<FaTrash />
-													</button>
-													<button className="hover:text-primary"
-													// onClick={() => updateData(item)}
+													</button> */}
+													<Link href={'/employer-type/form?id=' + item.id} className="hover:text-primary"
 													>
 														<FaPencil />
-													</button>
+													</Link>
 												</div>
 											</td>
 										</tr>

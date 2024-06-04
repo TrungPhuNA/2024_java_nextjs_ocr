@@ -1,5 +1,6 @@
 package be.ocrapi.response.Room;
 
+import be.ocrapi.response.User.UserRelationResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,5 @@ public class RoomResponse {
     private String status;
     private Date created_at;
     private Date updated_at;
-//    private UserRelationResponse user;
+    private UserRelationResponse user;
 }

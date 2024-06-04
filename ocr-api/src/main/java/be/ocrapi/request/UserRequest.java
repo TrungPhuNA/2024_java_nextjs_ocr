@@ -43,10 +43,8 @@ public class UserRequest {
     private String region;
     private String dob;
 
-
     private Integer employerTypeId;
     private Integer certificateId;
-    private Integer salaryId;
     private Integer roomId;
     private Integer userRankId;
 }

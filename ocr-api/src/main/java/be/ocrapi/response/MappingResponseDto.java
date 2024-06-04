@@ -35,7 +35,6 @@ public class MappingResponseDto {
         newData.setCccdAddress(data.getCccdAddress());
 
         newData.setCertificate(getInfoCertificate(data.getCertificate()));
-        newData.setSalary(getInfoSalary(data.getSalary()));
         newData.setRank(getInfoRank(data.getRank()));
         newData.setRoom(getInfoRoom(data.getRoom()));
         newData.setEmployerType(getInfoEmployerType(data.getEmployerType()));
@@ -51,9 +50,15 @@ public class MappingResponseDto {
             newData.setStatus(data.getStatus());
             newData.setCreated_at(data.getCreated_at());
             newData.setUpdated_at(data.getUpdated_at());
-            newData.setUser(new UserRelationResponse(data.getUser().getId(),
-                    data.getUser().getName(), data.getUser().getEmail(),
-                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+            UserRelationResponse u = new UserRelationResponse();
+            if(data.getUser() != null)  {
+                newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                        data.getUser().getName(), data.getUser().getEmail(),
+                        data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+            }
+            else {
+                newData.setUser(null);
+            }
             return newData;
         }
         return null;
@@ -72,9 +77,15 @@ public class MappingResponseDto {
         newData.setUser_id(data.getUser().getId());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
-        newData.setUser(new UserRelationResponse(data.getUser().getId(),
-                data.getUser().getName(), data.getUser().getEmail(),
-                data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        UserRelationResponse u = new UserRelationResponse();
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
         return newData;
     }
 
@@ -89,9 +100,16 @@ public class MappingResponseDto {
         newData.setStatus(data.getStatus());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
-        newData.setUser(new UserRelationResponse(data.getUser().getId(),
-                data.getUser().getName(), data.getUser().getEmail(),
-                data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+
+        UserRelationResponse u = new UserRelationResponse();
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
         return newData;
     }
 
@@ -106,9 +124,16 @@ public class MappingResponseDto {
         newData.setStatus(data.getStatus());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
-//        newData.setUser(new UserRelationResponse(data.getUser().getId(),
-//                data.getUser().getName(), data.getUser().getEmail(),
-//                data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+
+        UserRelationResponse u = new UserRelationResponse();
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
         return newData;
     }
 
@@ -118,13 +143,36 @@ public class MappingResponseDto {
         }
         SalaryResponse newData = new SalaryResponse();
         newData.setId(data.getId());
+
+        newData.setAllowance(data.getAllowance());
+        newData.setReceive_salary(data.getReceive_salary());
+        newData.setFrom_date(data.getFrom_date());
+        newData.setTo_date(data.getTo_date());
+        newData.setWorkday(data.getWorkday());
+
         newData.setSalary(data.getSalary());
         newData.setStatus(data.getStatus());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
-        newData.setUser(new UserRelationResponse(data.getUser().getId(),
-                data.getUser().getName(), data.getUser().getEmail(),
-                data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
+
+        if(data.getUpdatedBy() != null)  {
+            newData.setUpdated_by(new UserRelationResponse(data.getUpdatedBy().getId(),
+                    data.getUpdatedBy().getName(), data.getUpdatedBy().getEmail(),
+                    data.getUpdatedBy().getCode(), data.getUpdatedBy().getGender(), data.getUpdatedBy().getAvatar()));
+        }
+        else {
+            newData.setUpdated_by(null);
+        }
+
         return newData;
     }
 
@@ -138,9 +186,16 @@ public class MappingResponseDto {
         newData.setStatus(data.getStatus());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
-        newData.setUser(new UserRelationResponse(data.getUser().getId(),
-                data.getUser().getName(), data.getUser().getEmail(),
-                data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+
+        UserRelationResponse u = new UserRelationResponse();
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
         return newData;
     }
 
@@ -158,9 +213,16 @@ public class MappingResponseDto {
         newData.setFrom_date(data.getFrom_date());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
-        newData.setUser(new UserRelationResponse(data.getUser().getId(),
-                data.getUser().getName(), data.getUser().getEmail(),
-                data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+
+        UserRelationResponse u = new UserRelationResponse();
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
         return newData;
     }
 }

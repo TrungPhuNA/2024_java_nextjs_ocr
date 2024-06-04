@@ -125,16 +125,15 @@ const OrderList: React.FC = () => {
 
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
-													<button className="hover:text-primary"
+													{/* <button className="hover:text-primary"
 													// onClick={() => deleteData(item)}
 													>
 														<FaTrash />
-													</button>
-													<button className="hover:text-primary"
-													// onClick={() => updateData(item)}
+													</button> */}
+													<Link href={'/rank/form?id='+item.id} className="hover:text-primary"
 													>
 														<FaPencil />
-													</button>
+													</Link>
 												</div>
 											</td>
 										</tr>

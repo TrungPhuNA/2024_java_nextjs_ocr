@@ -1,0 +1,57 @@
+.ck-editor__editable {
+	min-height: 400px;
+}
+
+.form .avatar {
+	border: 1px solid;
+	height: 100px;
+	margin-bottom: 15px;
+	width: 100px;
+	border-radius: 10px;
+	overflow: hidden;
+  }
+  
+  .plus-image {
+	width: 100px;
+	height: 100px;
+	border: 1px solid;
+	border-radius: 4px;
+	margin-right: 20px;
+	cursor: pointer;
+	border: 1px dashed #cccccc;
+	font-size: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 10px;
+	position: relative;
+  }
+  .plus-image .avatar {
+	height: 100%;
+	width: 100%;
+	object-fit: contain;
+  }
+  .plus-image .delete-image {
+	position: absolute;
+	align-items: center;
+	justify-content: center;
+	display: none;
+	top: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #fff;
+	font-size: 20px;
+  }
+  .plus-image:hover .delete-image {
+	display: flex;
+  }
+  .plus-image .ti-plus {
+	font-size: 15px;
+	color: #3699FF;
+  }
+  .plus-image .icon-close,
+  .plus-image .icon-refresh {
+	font-size: 15px;
+  }

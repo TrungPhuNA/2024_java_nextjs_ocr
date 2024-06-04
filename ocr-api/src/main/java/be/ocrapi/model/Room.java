@@ -24,6 +24,10 @@ public class Room {
     @Column(name = "status")
     private String status;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user;
+
 
     @Column(name = "created_at", nullable = true)
     private Date created_at;

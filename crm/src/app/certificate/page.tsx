@@ -30,7 +30,7 @@ const OrderList: React.FC = () => {
 
 	const getDataList = async (filters: any) => {
 		setLoading(true);
-		const response: any = await COMMON_API.getList('certificate',filters);
+		const response: any = await COMMON_API.getList('certificate', filters);
 		setLoading(false);
 		if (response?.status == 'success') {
 			setDataList(response.data || []);
@@ -82,7 +82,7 @@ const OrderList: React.FC = () => {
 									</tr>
 								</thead>
 								<tbody>
-									{dataList?.length > 0 ?dataList.map((item: any, key: any) => (
+									{dataList?.length > 0 ? dataList.map((item: any, key: any) => (
 										<tr key={key}>
 											<td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark">
 												<p className="font-medium text-black dark:text-white cursor-pointer"
@@ -97,7 +97,9 @@ const OrderList: React.FC = () => {
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												{item.description}
+												<div style={{ wordBreak: 'break-word' }} className="text-break" dangerouslySetInnerHTML={{ __html: item.description }}>
+
+												</div>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<p className={`dark:text-white ${item.status == "ACTIVE" ? 'text-success' : 'text-red'}`}>
@@ -114,24 +116,23 @@ const OrderList: React.FC = () => {
 													{formatTime(item.created_at, 'DD/MM/yyyy')}
 												</p>
 											</td>
-											
+
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
-													<button className="hover:text-primary"
+													{/* <button className="hover:text-primary"
 													// onClick={() => deleteData(item)}
 													>
 														<FaTrash />
-													</button>
-													<button className="hover:text-primary"
-													// onClick={() => updateData(item)}
+													</button> */}
+													<Link href={'/certificate/form?id=' + item.id} className="hover:text-primary"
 													>
 														<FaPencil />
-													</button>
+													</Link>
 												</div>
 											</td>
 										</tr>
-									)) : 
-									
+									)) :
+
 										<tr>
 											<td colSpan={7} className="text-center mt-2">
 												<p className="mt-5">Không có dữ liệu</p>

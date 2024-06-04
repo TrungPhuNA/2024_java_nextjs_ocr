@@ -45,14 +45,14 @@ public class RoomService implements RoomServiceInterface {
             newData = new Room();
             newData.setCreated_at(new Date());
         }
-//        User user = newData.getUser();
-//        if(dataRequest.getUser_id() != null) {
-//            user = userRepository.getById(dataRequest.getUser_id());
-//        }
+        User user = newData.getUser();
+        if(dataRequest.getUser_id() != null) {
+            user = userRepository.getById(dataRequest.getUser_id());
+        }
         newData.setName(dataRequest.getName());
         newData.setStatus(dataRequest.getStatus());
         newData.setDescription(dataRequest.getDescription());
-//        newData.setUser(user);
+        newData.setUser(user);
         newData.setUpdated_at(dataRequest.getUpdated_at());
         return newData;
     }

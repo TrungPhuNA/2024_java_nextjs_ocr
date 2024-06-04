@@ -87,7 +87,7 @@ const OrderList: React.FC = () => {
 											Quốc tịch
 										</th>
 										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
-											Hộ khẩu
+											Thường trú
 										</th>
 										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
 											Chức vụ
@@ -189,16 +189,10 @@ const OrderList: React.FC = () => {
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
-													<button className="hover:text-primary"
-													// onClick={() => deleteData(item)}
-													>
-														<FaTrash />
-													</button>
-													<button className="hover:text-primary"
-													// onClick={() => updateData(item)}
+													<Link href={'/user/form?id=' + item.id} className="hover:text-primary"
 													>
 														<FaPencil />
-													</button>
+													</Link>
 												</div>
 											</td>
 										</tr>
@@ -207,7 +201,7 @@ const OrderList: React.FC = () => {
 							</table>
 						</div>
 					</div>
-					
+
 					<div className="mt-3 py-5">
 						<PagingPage paging={paging}
 							setPaging={setPaging}

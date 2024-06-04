@@ -14,15 +14,14 @@ public interface UserServiceInterface {
     LoginResponse login(UserRequest data);
 //    Page<User> findAll(int page, int page_size);
 
-    User save(UserRequest user);
-    User update(int id, UserRequest user);
+    UserRequest save(UserRequest user);
+    UserRequest update(int id, UserRequest user);
     void delete(User user);
 
     List<UserResponse> findAndCount(
             String page, String page_size,
             String status, String name,
             String email,
-            String salary_id,
             String rank_id,
             String room_id,
             String certificate_id,
@@ -31,7 +30,6 @@ public interface UserServiceInterface {
 
     Integer countTotalCondition(String status, String name,
                                 String email,
-                                String salary_id,
                                 String rank_id,
                                 String room_id,
                                 String certificate_id,

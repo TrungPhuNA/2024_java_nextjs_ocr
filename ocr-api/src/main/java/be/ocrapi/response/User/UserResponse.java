@@ -39,7 +39,6 @@ public class UserResponse {
 
     private CertificateResponse certificate;
 
-    private SalaryResponse salary;
 
     private RoomResponse room;
 

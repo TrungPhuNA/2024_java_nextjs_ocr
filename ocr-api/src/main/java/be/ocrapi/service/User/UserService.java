@@ -94,7 +94,6 @@ public class UserService implements UserServiceInterface {
 
         EmployerType e = d.getEmployerType();
         Rank r = d.getRank();
-        Salary s = d.getSalary();
         Certificate c = d.getCertificate();
         Room room = d.getRoom();
 
@@ -104,9 +103,7 @@ public class UserService implements UserServiceInterface {
         if(u.getUserRankId() != null) {
             r = rankRepository.getById(u.getUserRankId());
         }
-        if(u.getSalaryId() != null) {
-            s = salaryRepository.getById(u.getSalaryId());
-        }
+
         if(u.getCertificateId() != null) {
             c = certificateRepository.getById(u.getCertificateId());
         }
@@ -116,7 +113,6 @@ public class UserService implements UserServiceInterface {
 
         d.setEmployerType(e);
         d.setRank(r);
-        d.setSalary(s);
         d.setCertificate(c);
         d.setRoom(room);
 
@@ -174,13 +170,12 @@ public class UserService implements UserServiceInterface {
     public List<UserResponse> findAndCount(String page, String page_size,
                                            String status, String name,
                                            String email,
-                                           String salary_id,
                                            String rank_id,
                                            String room_id,
                                            String certificate_id,
                                            String user_type) {
         List<User> data = this.userRepository.findAndCount((parseInt(page) - 1) * parseInt(page_size),
-                parseInt(page_size), status, name, email, salary_id, rank_id, room_id, certificate_id, user_type
+                parseInt(page_size), status, name, email, rank_id, room_id, certificate_id, user_type
                 );
         List<UserResponse> users = new ArrayList<>();
         if(!data.isEmpty()) {
@@ -195,31 +190,31 @@ public class UserService implements UserServiceInterface {
     @Override
     public Integer countTotalCondition( String status, String name,
                                         String email,
-                                        String salary_id,
                                         String rank_id,
                                         String room_id,
                                         String certificate_id,
                                         String user_type) {
-        return this.userRepository.countByConditions(status, name, email, salary_id,
+        return this.userRepository.countByConditions(status, name, email,
                 rank_id, room_id, certificate_id, user_type);
     }
 
     @Override
-    public User save(UserRequest dataRequest) {
+    public UserRequest save(UserRequest dataRequest) {
         User u = setData(dataRequest, null);
         User newData = userRepository.save(u);
         if(dataRequest.getCode() == null) {
             newData.setCode("MEMBER0000" + newData.getId());
         }
         userRepository.save(newData);
-        return newData;
+        return dataRequest;
     }
 
     @Override
-    public User update(int id, UserRequest dataRequest) {
+    public UserRequest update(int id, UserRequest dataRequest) {
         User u = userRepository.getById(id);
         u = setData(dataRequest, u);
-        return userRepository.save(u);
+        userRepository.save(u);
+        return dataRequest;
     }
 
 

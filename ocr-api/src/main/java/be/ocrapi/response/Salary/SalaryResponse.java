@@ -19,7 +19,13 @@ public class SalaryResponse {
     private Double salary;
     private Integer user_id;
     private String status;
+    private Double workday;
+    private Integer allowance;
+    private Double receive_salary;
+    private Date from_date;
+    private Date to_date;
     private Date created_at;
     private Date updated_at;
     private UserRelationResponse user;
+    private UserRelationResponse updated_by;
 }

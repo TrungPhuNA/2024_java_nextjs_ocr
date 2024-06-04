@@ -135,6 +135,7 @@ import {URL, WEB_VALUE, STATIC_URL_API} from './constant';
 
 export const buildImage = (img: any, is_user = false) => {
 	if (img) {
+		if(img.startsWith("uploads\\")) img = img.replace("uploads\\", '')
 		return `${STATIC_URL_API}/` + img;
 
 	}
@@ -148,3 +149,19 @@ export const checkTextOrder = (text:any) => {
 	let end = text.substr(-3).trim();
 	return start.match(regex) && end.match(/^[\d ]+$/g) && true || false;
 }
+
+export const readFile = ( fileValues: any, setFile: any, setImgBase64: any ) =>
+	{
+		let fileValue = fileValues;
+		setFile( fileValues );
+		let fileReader = new FileReader();
+		fileReader.onload = ( e ) =>
+		{
+			const { result }: any = e.target;
+			if ( result )
+			{
+				setImgBase64( result )
+			}
+		}
+		fileReader.readAsDataURL( fileValue );
+	}

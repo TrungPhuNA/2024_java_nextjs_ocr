@@ -76,7 +76,6 @@ export const getMethod = async ( path, params ) =>
 	return await axiosClient.get( `/${ path }`, { params: params } )
 		.then( response =>
 		{
-			console.log(typeof response);
 			return response;
 		} )
 		.catch( error =>
@@ -129,8 +128,8 @@ export const uploadFile = async ( file ) =>
 	let avatar = null;
 	const formData = new FormData();
 	formData.append( 'file', file );
-	const res = await axios.post( `/upload/file`,
-		formData, { headers: { 'Accept': 'multipart/form-data' } } );
+	const res = await axios.post( `${WEB_VALUE}/upload/file`,
+		formData, { headers: { 'Accept': 'multipart/form-data,*' } } );
 	let data = res.data;
 	if ( data?.status === 'success' )
 	{

@@ -53,8 +53,8 @@ public class UserController {
                 number_page = Integer.parseInt(page) - 1;
             }
 //            var response = userService.findAll(number_page, Integer.parseInt(page_size));
-            var users = userService.findAndCount(page, page_size,status, name, email, salary_id, rank_id, room_id, certificate_id, user_type);
-            Integer total = userService.countTotalCondition(status, name, email, salary_id, rank_id, room_id, certificate_id, user_type);
+            var users = userService.findAndCount(page, page_size,status, name, email, rank_id, room_id, certificate_id, user_type);
+            Integer total = userService.countTotalCondition(status, name, email, rank_id, room_id, certificate_id, user_type);
             BaseResponse.Metadata paging = new BaseResponse.Metadata("", number_page ,  Integer.parseInt(page_size), Long.parseLong(total + ""), "", null);
             return BaseResponse.ofSucceeded().setData(users).setMeta(paging);
         } catch (Exception e) {

@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,9 +35,18 @@ public class SalaryService implements SalaryServiceInterface {
 
     @Autowired
     private UserRepository userRepository;
+
+    public static Date parseDate(String dateString, String pattern) {
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        try {
+            return formatter.parse(dateString);
+        } catch (ParseException e) {
+            System.err.println("Invalid date format: " + e.getMessage());
+            return null;
+        }
+    }
     public Salary createOrUpdateData(SalaryRequest dataRequest, Salary oldData) {
         Salary newData = oldData;
-
         if(oldData == null) {
             newData = new Salary();
             newData.setCreated_at(new Date());
@@ -44,9 +55,25 @@ public class SalaryService implements SalaryServiceInterface {
         if(dataRequest.getUser_id() != null) {
             user = userRepository.getById(dataRequest.getUser_id());
         }
+        User admin = newData.getUpdatedBy();
+        if(dataRequest.getUser_id() != null) {
+            admin = userRepository.getById(dataRequest.getUpdated_by());
+        }
+        if(dataRequest.getFrom_date() != null && !dataRequest.getFrom_date().isEmpty()) {
+            Date fromDate = this.parseDate(dataRequest.getFrom_date(), "yyyy-MM-dd");
+            newData.setFrom_date(fromDate);
+        }
+        if(dataRequest.getTo_date() != null && !dataRequest.getTo_date().isEmpty()) {
+            Date date = this.parseDate(dataRequest.getTo_date(), "yyyy-MM-dd");
+            newData.setTo_date(date);
+        }
         newData.setSalary(dataRequest.getSalary());
+        newData.setAllowance(dataRequest.getAllowance());
+        newData.setWorkday(dataRequest.getWorkday());
+        newData.setReceive_salary(dataRequest.getReceive_salary());
         newData.setStatus(dataRequest.getStatus());
         newData.setUser(user);
+        newData.setUpdatedBy(admin);
         newData.setUpdated_at(dataRequest.getUpdated_at());
         return newData;
     }

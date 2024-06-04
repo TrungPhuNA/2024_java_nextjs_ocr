@@ -83,10 +83,6 @@ public class User implements UserDetails {
     private Certificate certificate;
 
     @ManyToOne
-    @JoinColumn(name = "salary_id",referencedColumnName = "id")
-    private Salary salary;
-
-    @ManyToOne
     @JoinColumn(name = "room_id",referencedColumnName = "id")
     private Room room;
 

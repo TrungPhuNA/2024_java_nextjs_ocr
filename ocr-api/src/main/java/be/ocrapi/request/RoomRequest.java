@@ -15,5 +15,6 @@ public class RoomRequest {
     private String name;
     private String description;
     private String status;
+    private Integer user_id;
     private Date updated_at = new Date();
 }
