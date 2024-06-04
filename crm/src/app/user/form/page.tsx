@@ -8,7 +8,7 @@ import { Product } from "@/types/product";
 import Link from "next/link";
 import { CATEGORY_SERVICE, COMMON_API, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { checkTextOrder, formatMoney, formatTime, getItem, readFile, setField } from "@/services/helpers.service";
+import { buildImage, checkTextOrder, formatMoney, formatTime, getItem, readFile, setField } from "@/services/helpers.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 import Loader from "@/components/common/Loader";
 import CkeditorPage from "@/components/common/CkEditor";
@@ -43,7 +43,7 @@ const UserForm: React.FC = () => {
 
 	const [file, setFile] = useState(null);
 
-	const [imgBase64, setImgBase64] = useState(null);
+	const [imgBase64, setImgBase64]: any = useState(null);
 	let refFile = useRef(null);
 
 	const [loading, setLoading] = useState(false);
@@ -113,7 +113,7 @@ const UserForm: React.FC = () => {
 				roomId: response?.data?.room?.id,
 				userRankId: response?.data?.rank?.id
 			});
-			setImgBase64(response?.data?.avatar)
+			setImgBase64(buildImage(response?.data?.avatar))
 		}
 
 	}
