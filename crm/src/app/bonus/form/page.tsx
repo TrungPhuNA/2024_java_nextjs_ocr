@@ -1,82 +1,58 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
 
 import { Product } from "@/types/product";
 import Link from "next/link";
-import { CATEGORY_SERVICE, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
+import { CATEGORY_SERVICE, COMMON_API, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import {checkTextOrder, formatMoney, getItem, setField} from "@/services/helpers.service";
+import { buildImage, checkTextOrder, formatMoney, formatTime, getItem, readFile, setField, subTime } from "@/services/helpers.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 import Loader from "@/components/common/Loader";
+import CkeditorPage from "@/components/common/CkEditor";
+import '../../../assets/style.css'
+import moment from "moment";
 
-const INIT_TRAN: any = {
-	name: '',
-	price: '',
-	order_id: 0,
-	product_id: 0,
-	status: 2,
-	discount: 0,
-	user_id: 2,
-	quantity: '',
-	total_price: '',
-};
 
-const INIT_ORDER: any = {
-	name: '',
-	node: '',
-	receiver_name: '',
-	receiver_email: '',
-	receiver_phone: '',
-	receiver_address: '',
-	code: '',
-	total_discount: 0,
-	payment_type: 0,
-	category_id: null,
-	status: "",
-	image: null,
-	user_id: 0,
-	total_price: 0,
-	price: 0,
+const INIT_FORM: any = {
+	salary: '',
+	user_id: '',
+	updated_by: "",
+	workday: "",
+	allowance: "",
+	receive_salary: "",
+	from_date: "",
+	to_date: "",
+	status: ""
+
 };
 
 
 
-const OrderForm: React.FC = () => {
+const BonusForm: React.FC = () => {
 
 	const [file, setFile] = useState(null);
+
+	const [imgBase64, setImgBase64]: any = useState(null);
+	let refFile = useRef(null);
+	const user = getItem('user');
+
 	const [loading, setLoading] = useState(false);
-	const [data, setData]: any = useState(INIT_ORDER);
-	const [transaction, setTransaction]: any = useState([INIT_TRAN]);
-	const [categories, setCategories]: any = useState([
-		{
-			id: 1,
-			name: 'Xem phim',
-		},
 
-		{
-			id: 2,
-			name: 'Mua hàng hóa',
-		},
-
-		{
-			id: 3,
-			name: 'Đồ uống',
-		},
-
-	]);
+	const [data, setData]: any = useState({ ...INIT_FORM, updated_by: user?.id, updated_by_name: user?.name });
 
 	const [title, setTitle] = useState('Tạo mới');
+
+	const [users, setUsers] = useState([]);
+
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
 	const [errorFile, setErrorFile] = useState('');
-	const user = getItem('user');
 	const router = useRouter();
 	const [error, setError] = useState({
-		name: '',
-		category_id: '',
+		...INIT_FORM
 	});
 
 
@@ -87,204 +63,89 @@ const OrderForm: React.FC = () => {
 		if (id) {
 			setTitle('Cập nhật');
 			getData(id)
-		}
+		} else {
+			setData({ ...INIT_FORM, updated_by: user?.id, updated_by_name: user?.name })
 
-		getCategory();
+		}
+		getUsersList();
+
 
 	}, [params.get('id')]);
 
 
 	const getData = async (id: any) => {
 		setLoading(true);
-
-		const response: any = await ORDER_SERVICE.show(id);
+		const response: any = await COMMON_API.show('salary', id);
 		setLoading(false);
 
-		if (response?.status == 'success') {
-			setData(response.data || null);
-			let trans = response.data.transactions || [INIT_TRAN];
-			setTransaction(trans)
-		}
-	}
+		if (response?.status == "success") {
+			setData({
+				salary: response?.data?.salary,
+				user_id: response?.data?.user?.id,
+				updated_by: response?.data?.updated_by?.id || user?.id,
+				updated_by_name: response?.data?.updated_by?.name,
+				workday: response?.data?.workday,
+				allowance: response?.data?.allowance,
+				receive_salary: response?.data?.receive_salary,
+				from_date: formatTime(response?.data?.from_date, 'yyyy-MM-DD'),
+				to_date: formatTime(response?.data?.to_date, 'yyyy-MM-DD'),
+				status: response?.data?.status
 
-	const getCategory = async () => {
-		const response: any = await CATEGORY_SERVICE.getList({ page: 1, page_size: 100 });
-		if (response?.status == 'success') {
-			setCategories(response.data || null);
-		}
-	}
-
-	const check = async (data: any) => {
-		
-
-		if(data) {
-			let orderObj = {
-				name: "",
-				node: '',
-				receiver_name: '',
-				receiver_email: '',
-				receiver_phone: '',
-				receiver_address: '',
-				code: '',
-				total_discount: 0,
-				payment_type: 0,
-				category_id: null,
-				status: "",
-				user_id: 0,
-				total_price: 0,
-			};
-			
-			let dataMap = data.map((newItem: any) => {
-				newItem = newItem.replace(/,/g, '');
-				newItem = newItem.replace(/\//g, '');
-				newItem = newItem.replace(/%/g, '');
-				newItem = newItem.replace(/\-/g, '');
-				newItem = newItem.replace(/\(/g, '');
-				newItem = newItem.replace(/\)/g, '');
-				newItem = newItem.replace(/_/g, '');
-				newItem = newItem.replace(/  /g, '');
-				newItem = newItem.replace("Đ", '');
-				
-				return newItem.trim();
-	
 			});
-			console.log('dataMap---------> ', dataMap);
-			
-	
-			let regex = /^[a-z0-9A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\.\| ]+$/g
-			dataMap = dataMap.filter((item: any) => item.match(regex));
-			// console.log('dataMap sau khi lọc regex---------> ', dataMap);
-			dataMap = dataMap.filter((item: any) => checkTextOrder(item));
-			// console.log('dataMap sau khi lọc regexStartText---------> ', dataMap);
-			let valueDiscountOrTotal = 0;
-	
-			let transactionData = dataMap?.reduce((newTrs: any, item: any, index: any) => {
-				console.log(item);
-				let arr = item.split(" ");
-				console.log(arr);
-				let numberArr = arr.filter((e: any) => e.match(/[\d]+/g));
-				let textArr = arr.filter((e: any) => !e.match(/[\d]+/g));
-				if(index < dataMap?.length - 2) {
-					let totalPrice = Number(numberArr[numberArr?.length - 1]?.replace('.', '') || 0);
-					let price = Number(numberArr[numberArr?.length - 2]?.replace('.', '') || 0);
-					let quantity = price && totalPrice/price;
-					let tranObj = {
-						...INIT_TRAN,
-						name: textArr.join(' ') || '',
-						quantity: quantity || '',
-						price: price || '',
-						total_price: totalPrice || '',
-					};
-					newTrs.push(tranObj);
-				} else {
-					if(index == dataMap?.length - 1) orderObj.total_price = Number(numberArr[numberArr?.length - 1] || 0);
-					else valueDiscountOrTotal = Number(numberArr[numberArr?.length - 1] || 0)
-				}
-				return newTrs;
-			}, []);
-	
-			console.log("new Trans--------> ", transactionData);
-			console.log("Sau build tran tính order-------> ",orderObj.total_price, valueDiscountOrTotal);
-			if(valueDiscountOrTotal > orderObj.total_price) {
-				orderObj.total_discount = valueDiscountOrTotal - orderObj.total_price
-			} else {
-				orderObj.total_discount = valueDiscountOrTotal;
-			}
-	
-			setTransaction(transactionData);
-			setData(orderObj);
 		}
-		// if (data) {
-		// 	let newData = data.split('\n');
-		// 	console.log("OCR------------> ", newData);
-			
-		// 	let newIndexData = newData.reduce((newItem: any, item: any, index: any) => {
-		// 		if (item.includes(',')) item = item.replace(/,/g, '');
-		// 		if (item.match(/^\-?[0-9 ]+$/g) && index > 10) {
-		// 			if (item.includes(' ')) {
-		// 				item.split(' ')?.forEach((e: any) => {
-		// 					newItem.push({
-		// 						value: e,
-		// 						index: index
-		// 					});
-		// 				});
-		// 			} else {
-		// 				newItem.push({
-		// 					value: item,
-		// 					index: index
-		// 				})
-		// 			}
 
-		// 		}
-		// 		return newItem;
-		// 	}, []);
-		// 	console.log("Thông tin giá ocr------> ", newIndexData);
-		// 	if (newIndexData?.length > 0) {
-		// 		let lastValue = newIndexData[newIndexData?.length - 1]?.value;
-		// 		let discountValue = newIndexData.find((item: any) => item.value?.startsWith('-'))?.value || newIndexData[newIndexData?.length - 2]?.value || null;
-		// 		orderObj.total_price = Number(lastValue || 0);
-		// 		orderObj.total_discount = Number(discountValue?.replace("-", "") || 0);
-		// 		if (lastValue) {
-		// 			newIndexData = newIndexData.filter((item: any, index: any) => index < newIndexData?.length - 4);
-		// 		}
-		// 		console.log("Giá trị chi tiết đơn hàng------> ", newIndexData);
-
-		// 		let groupTransData = newIndexData.reduce((newItem: any, item: any, index: number) => {
-		// 			if (index > 0 && index % 3 == 0) {
-		// 				let indexQuantity = newIndexData[index - 3]?.index || null;
-		// 				newItem.push({
-		// 					...INIT_TRAN,
-		// 					name: indexQuantity != null && newData[indexQuantity - 1] || '',
-		// 					quantity: newIndexData[index - 3]?.value || '',
-		// 					price: newIndexData[index - 2]?.value || '',
-		// 					total_price: newIndexData[index - 1]?.value || '',
-		// 				});
-		// 			}
-		// 			return newItem
-		// 		}, []);
-
-		// 		console.log("newTransaction OCR----------> ", groupTransData);
-
-		// 		setTransaction(groupTransData);
-		// 	}
-		// 	setData(orderObj);
-		// }
 	}
 
-	const changeFile = async (e: any) => {
-		e.preventDefault();
-
-		if (e.target.files) {
-			setLoading(true)
-			const response: any = await UPLOAD_SERVICE.upload_ocr(e.target.files[0]);
-			setLoading(false);
-			if (response?.status == "success" && response?.data?.result) {
-				check(response?.data?.result);
-				setData({...data, image: response?.data?.fileName})
-			} else {
-				setErrorFile("Have an error to upload file")
-			}
+	const getUsersList = async () => {
+		const response: any = await COMMON_API.getList('user', { page: 1, page_size: 1000, user_type: 'USER' });
+		if (response?.status == "success") {
+			setUsers(response?.data)
 		}
+
 	}
+
+
 
 	const submit = async (e: any) => {
 		e.preventDefault();
 		let response: any;
 		let bodyData: any = data;
-		bodyData.transactions = transaction;
-		bodyData.total_price = transaction.reduce((newTotal: any, item: any) => {
-			newTotal += Number(item.total_price);
-			return newTotal;
-		}, 0);
+
 		let count = 0;
 		let objError = {
-			name: '',
-			category_id: ''
+			...INIT_FORM
 		}
-		if (!bodyData.name || bodyData.name == '') {
-			objError.name = 'Tên đơn hàng không được để trống.'
+		if (!bodyData.salary || bodyData.salary == '') {
+			objError.salary = 'Tiền lương không được để trống.'
 			count++;
 		}
+
+		if (!bodyData.status || bodyData.status?.trim() == '') {
+			objError.status = 'Trạng thái không được để trống.'
+			count++;
+		}
+
+		if (!bodyData.receive_salary || bodyData.receive_salary?.toString()?.trim() == '') {
+			objError.receive_salary = 'Lương thực nhận không được để trống.'
+			count++;
+		}
+
+		if (!bodyData.workday || bodyData.workday?.toString()?.trim() == '') {
+			objError.workday = 'Ngày công không được để trống.'
+			count++;
+		}
+
+		if ((!bodyData.from_date || bodyData.from_date?.trim() == '') || (!bodyData.to_date || bodyData.to_date?.trim() == '')) {
+			objError.from_date = 'Thời gian không được để trống.'
+			count++;
+		}
+
+
+		if (!bodyData.user_id || bodyData.user_id?.toString()?.trim() == '') {
+			objError.user_id = 'Nhân viên không được để trống.'
+			count++;
+		}
+
 
 
 		if (count > 0) {
@@ -292,64 +153,64 @@ const OrderForm: React.FC = () => {
 			return;
 		}
 
+
 		setLoading(true);
 
 		if (id) {
-			response = await ORDER_SERVICE.update(id, bodyData);
+			response = await COMMON_API.update('salary', id, bodyData);
 		} else {
-			response = await ORDER_SERVICE.store(bodyData);
+			response = await COMMON_API.store('salary', bodyData);
 		}
 		setLoading(false);
 
 		if (response?.status == 'success') {
 			resetForm()
-			router.push('/order');
+			router.push('/salary');
 		}
 	}
 
 	const resetForm = () => {
-		setData({
-			name: '',
-			node: '',
-			receiver_name: '',
-			receiver_email: '',
-			receiver_phone: '',
-			receiver_address: '',
-			code: '',
-			total_discount: 0,
-			payment_type: 0,
-			category_id: null,
-			status: "",
-			user_id: 0,
-			total_price: 0,
-		});
-		setTransaction([{
-			name: '',
-			price: '',
-			order_id: 0,
-			product_id: 0,
-			status: 2,
-			discount: 0,
-			user_id: 2,
-			quantity: '',
-			total_price: '',
-		}])
+		setData({ ...INIT_FORM });
 	}
 
-	const genTotalPrice: any = (index: any) => {
-		console.log(index);
-		return Number(transaction[index].quantity) * Number(transaction[index].price)
-	}
+	useEffect(() => {
+		if(data.salary && data?.salary.toString()?.trim() != "" && data.workday && data.workday?.toString().trim() != "") {
+			let salaryData = Number(data.salary);
+			let workday = Number(data.workday);
+			let allowance = Number(data.allowance);
+			let totalDayInMonth = moment().daysInMonth();
+			let totalSalary = salaryData * (workday/totalDayInMonth) + allowance;
+			setData({...data, receive_salary: totalSalary.toFixed(0)})
+		}
+	}, [data.salary, data.allowance, data.workday])
+
+	useEffect(() => {
+		if(data.from_date && data.to_date && data.from_date?.trim() != "" && data.to_date?.trim() != "") {
+			if(moment(data.from_date).month() != moment(data.to_date).month()) {
+				setError({...error, from_date: 'Vui lòng chọn lại thời gian trong cùng 1 tháng.'})
+			} else {
+				setError({...error, from_date: ''})
+				let workday = subTime(data.from_date, data.to_date);
+				if(workday < 0) {
+					setError({...error, from_date: 'Vui lòng chọn lại thời gian kỳ trả lương.'})
+				} else {
+					setData({...data, workday: workday + 1})
+				}
+			}
+			
+		}
+	}, [ data.from_date, data.to_date,])
+
 
 
 
 	return (
 		<DefaultLayout>
-			<Breadcrumb pageName={title} subName="Order" />
+			<Breadcrumb pageName={title} subName="Quản lý lương" />
 			<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 				<div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
 					<h3 className="font-medium text-black dark:text-white text-2xl">
-						{/* {title} */}
+						{title}
 					</h3>
 				</div>
 				{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
@@ -357,268 +218,149 @@ const OrderForm: React.FC = () => {
 				<div className="flex flex-col gap-5.5 p-6.5">
 					<form>
 						<div className="md:grid md:grid-cols-2 md:gap-4">
-							<div className="mb-5">
-								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Tên đơn hàng
-								</label>
-								<input
-									type="text"
-									placeholder="Tên đơn hàng"
-									defaultValue={data.name}
-									onChange={e => {
-										setField(e?.target?.value, 'name', data, setData);
-									}}
-									className={`w-full	 rounded-lg border-[1.5px] ${error.name != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
-								/>
-								{error.name != '' && <span className="text-red text-xl mt-3">{error.name}</span>}
 
-							</div>
 							<div className="mb-5">
 								<SelectGroupTwo
-									title={'Phân loại'}
-									options={categories}
-									key_obj={'category_id'}
-									value={data.category_id}
+									title={'Nhân viên'}
+									options={users}
+									key_obj={'user_id'}
+									value={data.user_id}
 									form={data}
 									setForm={setData}
 								/>
-							</div>
-						</div>
-						<div className="md:grid md:grid-cols-2 md:gap-4">
-							<div className="mb-5">
-								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Tên khách hàng
-								</label>
-								<input
-									type="text"
-									placeholder="Tên khách hàng"
-									defaultValue={data.receiver_name}
-									onChange={e => {
-										setField(e?.target?.value, 'receiver_name', data, setData);
-									}}
-									className="w-full rounded-lg border-[1.5px] border-primary
-									bg-transparent px-5 py-3 text-black outline-none transition
-									focus:border-primary active:border-primary disabled:cursor-default
-									disabled:bg-whiter dark:bg-form-input dark:text-white text-bold"
-								/>
+								{error.user_id != '' && <span className="text-red text-xl mt-3">{error.user_id}</span>}
 							</div>
 							<div className="mb-5">
 								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Số ĐT
+									Thời gian
 								</label>
-								<input
-									type="text"
-									placeholder="Số ĐT"
-									defaultValue={data.receiver_phone}
-									onChange={e => {
-										setField(e?.target?.value, 'receiver_phone', data, setData);
-									}}
-									className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
-								/>
-							</div>
-						</div>
-						<div className="md:grid md:grid-cols-2 md:gap-4">
-							{ user.user_type == 'QUANLY' && (
-								<div className="mb-5">
-									<SelectGroupTwo
-										title={'Trạng thái'}
-										options={[
-											{
-												id: 1,
-												name: 'Chưa thanh toán'
-											},
-											{
-												id: 2,
-												name: 'Đã thanh toán'
-											}
-										]}
-										key_obj={'status'}
-										value={data.status}
-										form={data}
-										setForm={setData}
+								<div className="md:flex">
+									<input
+										type="date"
+										placeholder=""
+										defaultValue={data.from_date}
+										onChange={e => {
+											setField(e?.target?.value, 'from_date', data, setData);
+										}}
+										className={`w-full	 rounded-lg border-[1.5px] ${error.from_date != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 									/>
-
+									<input
+										type="date"
+										placeholder=""
+										defaultValue={data.to_date}
+										onChange={e => {
+											setField(e?.target?.value, 'to_date', data, setData);
+										}}
+										className={`w-full mt-5 md:mt-0	 rounded-lg border-[1.5px] ${error.from_date != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+									/>
 								</div>
-							)}
+								{error.from_date != '' && <span className="text-red text-xl mt-3">{error.from_date}</span>}
+
+							</div>
+
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Mức Lương
+								</label>
+								<input
+									type="number"
+									placeholder="salary"
+									defaultValue={data.salary}
+									onChange={e => {
+										setField(e?.target?.value, 'salary', data, setData);
+									}}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.salary != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+								/>
+								{error.salary != '' && <span className="text-red text-xl mt-3">{error.salary}</span>}
+
+							</div>
+
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Ngày công
+								</label>
+								<input
+									type="number"
+									placeholder="workday"
+									defaultValue={data.workday}
+									onChange={e => {
+										setField(e?.target?.value, 'workday', data, setData);
+									}}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.workday != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+								/>
+								{error.workday != '' && <span className="text-red text-xl mt-3">{error.workday}</span>}
+							</div>
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Phụ cấp
+								</label>
+								<input
+									type="number"
+									placeholder="Tiền phụ cấp"
+									onChange={e => {
+										setField(e?.target?.value, 'allowance', data, setData);
+									}}
+									defaultValue={data.allowance}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.allowance != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+								/>
+								{error.allowance != '' && <span className="text-red text-xl mt-3">{error.allowance}</span>}
+							</div>
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Lương thực nhận
+								</label>
+								<input
+									type="number"
+									placeholder="Lương thực nhận"
+									defaultValue={data.receive_salary}
+									readOnly={true}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.receive_salary != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+								/>
+								{error.receive_salary != '' && <span className="text-red text-xl mt-3">{error.receive_salary}</span>}
+							</div>
 							<div className="mb-5">
 								<SelectGroupTwo
-									title={'Phương thức thanh toán'}
+									title={'Trạng thái'}
 									options={[
 										{
-											id: 1,
-											name: 'Online'
+											id: "PENDING",
+											name: 'Chờ duyệt'
 										},
 										{
-											id: 2,
-											name: 'Tiền mặt'
+											id: "APPROVED",
+											name: 'Đã duyệt'
 										}
 									]}
-									key_obj={'payment_type'}
-									value={data.payment_type}
+									key_obj={'status'}
+									value={data.status}
 									form={data}
 									setForm={setData}
 								/>
+								{error.status != '' && <span className="text-red text-xl mt-3">{error.status}</span>}
+							</div>
+
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Người tạo
+								</label>
+								<input
+									type="text"
+									placeholder="Người tạo"
+									defaultValue={data.updated_by_name}
+									readOnly
+									className={`w-full	 rounded-lg border-[1.5px]  border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+								/>
+								{error.updated_by_name != '' && <span className="text-red text-xl mt-3">{error.updated_by_name}</span>}
 							</div>
 						</div>
-						{!id && <div className="mb-5">
-							<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-								Choose file
-							</label>
-							<input
-								type="file"
-								className="w-full cursor-pointer rounded-lg border-[1.5px]
-								border-stroke bg-transparent outline-none transition
-								file:mr-5 file:border-collapse file:cursor-pointer
-								file:border-0 file:border-r file:border-solid
-								file:border-stroke file:bg-whiter file:px-5
-								file:py-3 file:hover:bg-primary file:hover:bg-opacity-10
-								focus:border-primary active:border-primary disabled:cursor-default
-								disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input
-								dark:file:border-form-strokedark dark:file:bg-white/30 dark:file:text-white
-								dark:focus:border-primary"
-								onChange={(e) => changeFile(e)}
-							/>
-								{errorFile != '' && <span className="text-red text-xl mt-3">{errorFile}</span>}
-						</div>}
-						<div className="mb-5">
-							<h3 className="font-medium text-xl text-black dark:text-white mb-3">
-								Hóa đơn thanh toán
-							</h3>
-							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-								<div className="col-span-3">
-									<p className="font-medium">Product Name</p>
-								</div>
-								<div className="col-span-2">
-									<p className="font-medium text-center">Quantity</p>
-								</div>
-								<div className="col-span-2">
-									<p className="font-medium text-center">Price</p>
-								</div>
-								<div className="col-span-1">
-									<p className="font-medium  text-center">Total</p>
-								</div>
-							</div>
-
-							{transaction?.length > 0 && transaction.map((product: any, key: any) => (
-								<div
-									className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
-									key={key}
-								>
-									<div className="col-span-3">
-										<input
-											type="text"
-											placeholder="Active Input"
-											defaultValue={product.name}
-											onChange={e => {
-												transaction[key].name = e?.target?.value;
-												setTransaction(transaction);
-											}}
-											className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
-										/>
-									</div>
-									<div className="col-span-2 px-2">
-										<input
-											type="text"
-											placeholder="Quantity"
-											defaultValue={product.quantity}
-											onChange={e => {
-												if (e?.target?.value) {
-													let newTransaction = [...transaction];
-													newTransaction[key].quantity = Number(e?.target?.value);
-													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].price || 0);
-													setTransaction(newTransaction);
-													let total_price = newTransaction.reduce((newTotal: any, item: any) => {
-														newTotal += item.total_price;
-														return newTotal
-													}, 0);
-													setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
-												}
-
-											}}
-											className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
-										/>
-									</div>
-									<div className="col-span-2 px-2">
-										<input
-											type="text"
-											placeholder="Active Input"
-											defaultValue={product.price}
-											onChange={e => {
-												if (e?.target?.value) {
-													let newTransaction = [...transaction];
-													newTransaction[key].price = Number(e?.target?.value);
-													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].quantity || 0);
-													let total_price = newTransaction.reduce((newTotal: any, item: any) => {
-														newTotal += item.total_price;
-													}, 0);
-													setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
-												}
-												setTransaction(transaction);
-											}}
-											className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
-										/>
-									</div>
-									<div className="col-span-1 flex items-center justify-center">
-										<p className="text-sm  text-center text-black dark:text-white">
-											<b>{formatMoney(transaction[key].total_price || 0)}</b>
-										</p>
-									</div>
-								</div>
-							))}
-
-							<div className="inline-flex items-center justify-center
-							rounded-md bg-success px-20 py-2 text-center
-							font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
-								onClick={(e) => {
-									let obj = {
-										name: '',
-										price: '',
-										order_id: 0,
-										product_id: 0,
-										status: 2,
-										discount: 0,
-										user_id: 2,
-										quantity: '',
-										total_price: '',
-									}
-									transaction.push(obj);
-									setTransaction([...transaction]);
-								}}
-							>Thêm</div>
-
-						</div>
-						<div className="mb-5">
-							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-								<div className="col-span-6">
-									<p className="font-medium text-xl">Tổng tiền</p>
-								</div>
-								<div className="col-span-2">
-									<p className="font-medium text-center text-xl">{formatMoney(data.total_price + (data?.total_discount || 0))}</p>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-								<div className="col-span-6">
-									<p className="font-medium text-xl">Discount</p>
-								</div>
-								<div className="col-span-2">
-									<p className="font-medium text-center text-xl">-{formatMoney(data.total_discount)}</p>
-								</div>
-							</div>
-
-							<div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-								<div className="col-span-6">
-									<p className="font-medium text-xl">Thanh toán</p>
-								</div>
-								<div className="col-span-2">
-									<p className="font-medium text-center text-xl">{formatMoney(data.total_price)}</p>
-								</div>
-							</div>
-						</div>
-						<div className="flex justify-center">
-							<Link href={'/order'} className="inline-flex items-center justify-center rounded-md bg-gray mr-3 px-10 py-4 text-center font-medium hover:bg-gray-900 lg:px-8 xl:px-10">Cancel</Link>
+						<div className="flex justify-center mt-5">
+							<Link href={'/salary'} className="inline-flex items-center justify-center 
+							rounded-md bg-gray mr-3 px-5 py-2 text-center 
+							font-medium hover:bg-gray-900 lg:px-8 xl:px-10">
+								Cancel
+							</Link>
 							<button className="inline-flex items-center justify-center
-							rounded-md bg-primary px-10 py-4 text-center
+							rounded-md bg-primary px-5 py-2 text-center
 							font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
 								onClick={(e) => submit(e)}
 							>Submit</button>
@@ -630,4 +372,4 @@ const OrderForm: React.FC = () => {
 	);
 };
 
-export default OrderForm;
+export default BonusForm;

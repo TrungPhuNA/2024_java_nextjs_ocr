@@ -6,11 +6,15 @@
 
 @layer base {
     body {
-        @apply relative z-1 bg-whiten font-satoshi text-base font-normal text-body;
+        @apply relative z-1 bg-whiten text-base font-normal text-body;
     }
 }
 
 @layer components {
+}
+
+body {
+	font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
 }
 
 @layer utilities {

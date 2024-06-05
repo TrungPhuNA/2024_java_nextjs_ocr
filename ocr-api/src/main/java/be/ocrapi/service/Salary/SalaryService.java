@@ -110,7 +110,6 @@ public class SalaryService implements SalaryServiceInterface {
         var c = repository.getById(id);
         if(c != null) {
             Salary o = this.createOrUpdateData(dataRequest, c);
-
             repository.save(o);
             return dataRequest;
         }

@@ -76,7 +76,7 @@ public class SalaryController {
         } catch (Exception e) {
             log.debug("[SalaryRequest CONTROLLER]------>error update", e);
             String message = e.getMessage();
-            var error = new BusinessException(new BusinessErrorCode(400, message, "Cập nhật thất bại", 400));
+            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
             log.error("[SalaryRequest CONTROLLER]------>update", error);
             return BaseResponse.ofFailed(error);
         }

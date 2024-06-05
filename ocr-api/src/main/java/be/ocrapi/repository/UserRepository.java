@@ -34,7 +34,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             " AND (:name is null or :name = '' or u.name LIKE %:name%) " +
             " AND (:email is null or :email = '' or u.email LIKE %:email%) " +
             " AND (:status is null or :status = '' or u.status= :status) " +
-            " AND (:user_type is null or :user_type = '' or u.status= :user_type) " +
+            " AND (:user_type is null or :user_type = '' or u.user_type= :user_type) " +
             " LIMIT :page_size OFFSET :page",nativeQuery = true)
     List<User> findAndCount(@Param("page") int page,
                            @Param("page_size")int page_size,

@@ -38,6 +38,15 @@ const OrderList: React.FC = () => {
 		}
 	}
 
+	const deleteData = async (idData: any) => {
+		setLoading(true);
+		const response: any = await COMMON_API.delete('salary', idData);
+		setLoading(false);
+		if (response?.status == 'success') {
+			getDataList({ page: 1, ...paging })
+		}
+	}
+
 	return (
 		<DefaultLayout>
 			<Breadcrumb pageName="Mức lương" />
@@ -59,18 +68,31 @@ const OrderList: React.FC = () => {
 										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
 											#
 										</th>
-										<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+										<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
 											Nhân viên
 										</th>
-										<th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
-											Lương
+										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
+											Kỳ trả lương
 										</th>
-										
+										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
+											Số ngày công
+										</th>
+										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
+											Mức lương
+										</th>
+										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
+											Phụ cấp
+										</th>
+										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
+											Lương thực nhận
+										</th>
 
 										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
 											Trạng thái
 										</th>
-										
+										<th className=" py-4 px-4 font-medium text-black dark:text-white xl:pl-11 text-nowrap">
+											Người tạo
+										</th>
 										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
 											Ngày tạo
 										</th>
@@ -94,34 +116,45 @@ const OrderList: React.FC = () => {
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark">
-												<p className="font-medium text-black dark:text-white cursor-pointer"
-												>
-													{formatMoney(item.salary)}
-												</p>
+											{item.from_date &&<p className="text-nowrap">Từ: {formatTime(item.from_date, 'DD/MM/yyyy')}</p>}
+												{item.to_date && <p className="text-nowrap">Đến: {formatTime(item.to_date, 'DD/MM/yyyy')}</p>}
 											</td>
-											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className={`dark:text-white ${item.status == "ACTIVE" ? 'text-success' : 'text-red'}`}>
-													{item.status == "ACTIVE" ? "Đang sử dụng" : "Ngừng sử dụng"}
-												</p>
+											<td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark text-nowrap">
+												{item.workday}
 											</td>
-											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className="text-black dark:text-white">
-													{formatTime(item.created_at, 'DD/MM/yyyy')}
-												</p>
+
+											<td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark text-nowrap">
+												{formatMoney(item.salary)}
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark ">
+												{formatMoney(item.allowance)}
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark">
+												{formatMoney(item.receive_salary)}
 											</td>
 
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+												<p className={`dark:text-white ${item.status == "APPROVED" ? 'text-success' : 'text-red'} text-nowrap`}>
+													{item.status == "APPROVED" ? "Đã duyệt" : "Chờ duyệt"}
+												</p>
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+												{item.updated_by?.name}
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+												{formatTime(item.created_at, 'DD/MM/yyyy')}
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
 													<button className="hover:text-primary"
-													// onClick={() => deleteData(item)}
+														onClick={() => deleteData(item)}
 													>
 														<FaTrash />
 													</button>
-													<button className="hover:text-primary"
-													// onClick={() => updateData(item)}
+													<Link href={'/salary/form?id=' + item.id} className="hover:text-primary"
 													>
 														<FaPencil />
-													</button>
+													</Link>
 												</div>
 											</td>
 										</tr>

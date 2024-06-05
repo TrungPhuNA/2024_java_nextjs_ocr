@@ -112,8 +112,14 @@ export const formatTime = (value: any, format: any): any => {
 		if (format) return moment(value).format(format);
 		return moment(value)
 	}
-
 	return null;
+}
+
+export const subTime = (from_value: any, to_value: any): any => {
+	if (from_value && to_value) {
+		return moment(to_value).diff(moment(from_value), 'days');
+	}
+	return 0;
 }
 
 export const formatMoney = (money: any) => {
