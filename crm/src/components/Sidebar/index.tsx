@@ -224,7 +224,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 									Khen thưởng - Kỷ luật
 								</Link>
 							</li>
-							<li>
+							{/* <li>
 								<Link
 									href="/working"
 									className={`group relative flex items-center 
@@ -236,7 +236,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Công tác
 								</Link>
-							</li>
+							</li> */}
 
 						</ul>
 					</div>

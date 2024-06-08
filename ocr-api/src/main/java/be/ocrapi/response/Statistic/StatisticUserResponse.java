@@ -1,21 +1,17 @@
-package be.ocrapi.request;
+package be.ocrapi.response.Statistic;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.Date;
-
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class RankRequest {
+public class StatisticUserResponse {
     private String name;
-    private Double salary;
-    private Integer user_id;
-    private String status;
-
-    private Date updated_at = new Date();
+    private Long total;
 }

@@ -40,7 +40,6 @@ public class BonusAndDisciplineService implements BonusAndDisciplineServiceInter
     private UserRepository userRepository;
     public BonusAndDiscipline createOrUpdateData(BonusAndDisciplineRequest dataRequest, BonusAndDiscipline oldData) {
         BonusAndDiscipline newData = oldData;
-
         if(oldData == null) {
             newData = new BonusAndDiscipline();
             newData.setCreated_at(new Date());
@@ -49,10 +48,17 @@ public class BonusAndDisciplineService implements BonusAndDisciplineServiceInter
         if(dataRequest.getUser_id() != null) {
             user = userRepository.getById(dataRequest.getUser_id());
         }
+        User updatedBy = newData.getUpdatedBy();
+        if(dataRequest.getUpdated_by() != null) {
+            updatedBy = userRepository.getById(dataRequest.getUpdated_by());
+        }
         newData.setContent(dataRequest.getContent());
         newData.setName(dataRequest.getName());
+        newData.setType(dataRequest.getType());
         newData.setStatus(dataRequest.getStatus());
+        newData.setDataValue(dataRequest.getData_value());
         newData.setUser(user);
+        newData.setUpdatedBy(updatedBy);
         newData.setUpdated_at(dataRequest.getUpdated_at());
         return newData;
     }

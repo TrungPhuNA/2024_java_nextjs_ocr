@@ -51,7 +51,6 @@ public class RankService implements RankServiceInterface {
         }
         newData.setName(dataRequest.getName());
         newData.setStatus(dataRequest.getStatus());
-        newData.setCode(dataRequest.getCode());
         newData.setSalary(dataRequest.getSalary());
         newData.setUser(user);
         newData.setUpdated_at(dataRequest.getUpdated_at());
@@ -89,6 +88,10 @@ public class RankService implements RankServiceInterface {
     public RankRequest save(RankRequest dataRequest) {
         Rank o = this.createOrUpdateData(dataRequest, null);
         Rank newRank = repository.save(o);
+        if(newRank.getCode() == null) {
+            newRank.setCode("RANK000" + newRank.getId());
+            repository.save(newRank);
+        }
         return dataRequest;
     }
 
@@ -98,6 +101,10 @@ public class RankService implements RankServiceInterface {
         if(c != null) {
             Rank o = this.createOrUpdateData(dataRequest, c);
             Rank newRank = repository.save(o);
+            if(newRank.getCode() == null) {
+                newRank.setCode("RANK000" + newRank.getId());
+                repository.save(newRank);
+            }
             return dataRequest;
         }
         throw new RuntimeException("Không tìm thấy dữ liệu");

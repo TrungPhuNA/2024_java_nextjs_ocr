@@ -18,7 +18,7 @@ public class Room {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(columnDefinition = "TEXT",name = "description")
     private String description;
 
     @Column(name = "status")

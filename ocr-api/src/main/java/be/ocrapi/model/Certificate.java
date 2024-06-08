@@ -21,7 +21,7 @@ public class Certificate {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "description")
+    @Column(columnDefinition = "TEXT",name = "description")
     private String description;
 
 

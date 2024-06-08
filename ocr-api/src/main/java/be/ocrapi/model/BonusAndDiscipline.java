@@ -15,7 +15,7 @@ public class BonusAndDiscipline {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "content")
+    @Column(columnDefinition = "TEXT",name = "content")
     private String content;
 
     @Column(name = "name")
@@ -27,6 +27,9 @@ public class BonusAndDiscipline {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "data_value")
+    private Float dataValue;
+
 
     @Column(name = "created_at", nullable = true)
     private Date created_at;
@@ -37,5 +40,9 @@ public class BonusAndDiscipline {
     @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "updated_by",referencedColumnName = "id")
+    private User UpdatedBy;
 
 }

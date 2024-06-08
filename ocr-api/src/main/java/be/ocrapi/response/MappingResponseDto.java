@@ -183,11 +183,13 @@ public class MappingResponseDto {
         BonusResponse newData = new BonusResponse();
         newData.setId(data.getId());
         newData.setType(data.getType());
+        newData.setName(data.getName());
+        newData.setContent(data.getContent());
         newData.setStatus(data.getStatus());
+        newData.setData_value(data.getDataValue());
         newData.setCreated_at(data.getCreated_at());
         newData.setUpdated_at(data.getUpdated_at());
 
-        UserRelationResponse u = new UserRelationResponse();
         if(data.getUser() != null)  {
             newData.setUser(new UserRelationResponse(data.getUser().getId(),
                     data.getUser().getName(), data.getUser().getEmail(),
@@ -195,6 +197,11 @@ public class MappingResponseDto {
         }
         else {
             newData.setUser(null);
+        }
+        if(data.getUpdatedBy() != null)  {
+            newData.setUpdated_by(new UserRelationResponse(data.getUpdatedBy().getId(),
+                    data.getUpdatedBy().getName(), data.getUpdatedBy().getEmail(),
+                    data.getUpdatedBy().getCode(), data.getUpdatedBy().getGender(), data.getUpdatedBy().getAvatar()));
         }
         return newData;
     }

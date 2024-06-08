@@ -15,7 +15,9 @@ public class BonusAndDisciplineRequest {
     private String name;
     private String content;
     private String type;
+    private Float data_value;
     private String status;
     private Integer user_id;
+    private Integer updated_by;
     private Date updated_at = new Date();
 }

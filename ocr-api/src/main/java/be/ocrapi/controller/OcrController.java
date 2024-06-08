@@ -5,6 +5,7 @@ import be.ocrapi.common.BusinessErrorCode;
 import be.ocrapi.common.BusinessException;
 import be.ocrapi.response.FileResponse;
 import be.ocrapi.service.OcrService;
+import be.ocrapi.service.Statistic.StatisticService;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,23 @@ import java.util.Arrays;
 public class OcrController {
     @Autowired
     private OcrService ocrService;
+
+    @Autowired
+    private StatisticService statisticService;
+
+    @GetMapping("statistic/list")
+    public BaseResponse<?> statistic(@RequestParam(name = "month", required = false) String month) {
+        try {
+            var data = statisticService.getStatistic(month);
+            return BaseResponse.ofSucceeded().setData(data);
+        } catch (Exception e) {
+            String message = e.getMessage();
+            log.error("[OCR CONTROLLER]------>create" + message);
+            var error = new BusinessException(new BusinessErrorCode(400, message, message, 400));
+            log.error("[OCR CONTROLLER]------>create" + message);
+            return BaseResponse.ofFailed(error);
+        }
+    }
 
     @PostMapping("upload/file")
     public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) throws IOException {

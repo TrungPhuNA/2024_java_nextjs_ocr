@@ -219,7 +219,7 @@ public class UserService implements UserServiceInterface {
 
 
     @Override
-    public void delete(User user) {
-        userRepository.delete(user);
+    public void delete(Integer id) {
+        userRepository.deleteById(id);;
     }
 }

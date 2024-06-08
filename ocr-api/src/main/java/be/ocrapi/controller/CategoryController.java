@@ -85,7 +85,16 @@ public class CategoryController {
     }
 
     @DeleteMapping("delete/{id}")
-    public void delete(@PathVariable Integer id) {
-        categoryService.delete(id);
+    public BaseResponse delete(@PathVariable Integer id) {
+        try {
+            categoryService.delete(id);
+            return BaseResponse.ofSucceeded();
+        } catch (Exception e) {
+            log.debug("[BonusAndDisciplineRequest CONTROLLER]------>error update", e);
+            String message = e.getMessage();
+            var error = new BusinessException(new BusinessErrorCode(400, message, "Cập nhật thất bại", 400));
+            log.error("[BonusAndDisciplineRequest CONTROLLER]------>update", error);
+            return BaseResponse.ofFailed(error);
+        }
     }
 }

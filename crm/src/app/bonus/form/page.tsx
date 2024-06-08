@@ -17,26 +17,21 @@ import moment from "moment";
 
 
 const INIT_FORM: any = {
-	salary: '',
+	name: '',
 	user_id: '',
 	updated_by: "",
-	workday: "",
-	allowance: "",
-	receive_salary: "",
-	from_date: "",
-	to_date: "",
-	status: ""
-
+	content: "",
+	type: "",
+	data_value: "",
+	status: "",
+	updated_by_name: ""
 };
 
 
 
 const BonusForm: React.FC = () => {
 
-	const [file, setFile] = useState(null);
 
-	const [imgBase64, setImgBase64]: any = useState(null);
-	let refFile = useRef(null);
 	const user = getItem('user');
 
 	const [loading, setLoading] = useState(false);
@@ -46,10 +41,8 @@ const BonusForm: React.FC = () => {
 	const [title, setTitle] = useState('Tạo mới');
 
 	const [users, setUsers] = useState([]);
-
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
-	const [errorFile, setErrorFile] = useState('');
 	const router = useRouter();
 	const [error, setError] = useState({
 		...INIT_FORM
@@ -75,7 +68,7 @@ const BonusForm: React.FC = () => {
 
 	const getData = async (id: any) => {
 		setLoading(true);
-		const response: any = await COMMON_API.show('salary', id);
+		const response: any = await COMMON_API.show('bonus', id);
 		setLoading(false);
 
 		if (response?.status == "success") {
@@ -115,8 +108,8 @@ const BonusForm: React.FC = () => {
 		let objError = {
 			...INIT_FORM
 		}
-		if (!bodyData.salary || bodyData.salary == '') {
-			objError.salary = 'Tiền lương không được để trống.'
+		if (!bodyData.name || bodyData.name == '') {
+			objError.name = 'Tiêu đề không được để trống.'
 			count++;
 		}
 
@@ -125,27 +118,15 @@ const BonusForm: React.FC = () => {
 			count++;
 		}
 
-		if (!bodyData.receive_salary || bodyData.receive_salary?.toString()?.trim() == '') {
-			objError.receive_salary = 'Lương thực nhận không được để trống.'
+		if (!bodyData.type || bodyData.type?.toString()?.trim() == '') {
+			objError.type = 'Phân loại không được để trống.'
 			count++;
 		}
-
-		if (!bodyData.workday || bodyData.workday?.toString()?.trim() == '') {
-			objError.workday = 'Ngày công không được để trống.'
-			count++;
-		}
-
-		if ((!bodyData.from_date || bodyData.from_date?.trim() == '') || (!bodyData.to_date || bodyData.to_date?.trim() == '')) {
-			objError.from_date = 'Thời gian không được để trống.'
-			count++;
-		}
-
 
 		if (!bodyData.user_id || bodyData.user_id?.toString()?.trim() == '') {
 			objError.user_id = 'Nhân viên không được để trống.'
 			count++;
 		}
-
 
 
 		if (count > 0) {
@@ -157,15 +138,15 @@ const BonusForm: React.FC = () => {
 		setLoading(true);
 
 		if (id) {
-			response = await COMMON_API.update('salary', id, bodyData);
+			response = await COMMON_API.update('bonus', id, bodyData);
 		} else {
-			response = await COMMON_API.store('salary', bodyData);
+			response = await COMMON_API.store('bonus', bodyData);
 		}
 		setLoading(false);
 
 		if (response?.status == 'success') {
 			resetForm()
-			router.push('/salary');
+			router.push('/bonus');
 		}
 	}
 
@@ -173,40 +154,12 @@ const BonusForm: React.FC = () => {
 		setData({ ...INIT_FORM });
 	}
 
-	useEffect(() => {
-		if(data.salary && data?.salary.toString()?.trim() != "" && data.workday && data.workday?.toString().trim() != "") {
-			let salaryData = Number(data.salary);
-			let workday = Number(data.workday);
-			let allowance = Number(data.allowance);
-			let totalDayInMonth = moment().daysInMonth();
-			let totalSalary = salaryData * (workday/totalDayInMonth) + allowance;
-			setData({...data, receive_salary: totalSalary.toFixed(0)})
-		}
-	}, [data.salary, data.allowance, data.workday])
-
-	useEffect(() => {
-		if(data.from_date && data.to_date && data.from_date?.trim() != "" && data.to_date?.trim() != "") {
-			if(moment(data.from_date).month() != moment(data.to_date).month()) {
-				setError({...error, from_date: 'Vui lòng chọn lại thời gian trong cùng 1 tháng.'})
-			} else {
-				setError({...error, from_date: ''})
-				let workday = subTime(data.from_date, data.to_date);
-				if(workday < 0) {
-					setError({...error, from_date: 'Vui lòng chọn lại thời gian kỳ trả lương.'})
-				} else {
-					setData({...data, workday: workday + 1})
-				}
-			}
-			
-		}
-	}, [ data.from_date, data.to_date,])
-
 
 
 
 	return (
 		<DefaultLayout>
-			<Breadcrumb pageName={title} subName="Quản lý lương" />
+			<Breadcrumb pageName={title} subName="Quản lý thưởng - kỷ luật" />
 			<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 				<div className="border-b border-stroke px-6.5 py-4 dark:border-strokedark">
 					<h3 className="font-medium text-black dark:text-white text-2xl">
@@ -218,7 +171,22 @@ const BonusForm: React.FC = () => {
 				<div className="flex flex-col gap-5.5 p-6.5">
 					<form>
 						<div className="md:grid md:grid-cols-2 md:gap-4">
+							<div className="mb-5">
+								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
+									Tiêu đề
+								</label>
+								<input
+									type="text"
+									placeholder="Tiêu đề"
+									defaultValue={data.name}
+									onChange={e => {
+										setField(e?.target?.value, 'name', data, setData);
+									}}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.name != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+								/>
+								{error.name != '' && <span className="text-red text-xl mt-3">{error.name}</span>}
 
+							</div>
 							<div className="mb-5">
 								<SelectGroupTwo
 									title={'Nhân viên'}
@@ -230,94 +198,56 @@ const BonusForm: React.FC = () => {
 								/>
 								{error.user_id != '' && <span className="text-red text-xl mt-3">{error.user_id}</span>}
 							</div>
-							<div className="mb-5">
-								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Thời gian
-								</label>
-								<div className="md:flex">
-									<input
-										type="date"
-										placeholder=""
-										defaultValue={data.from_date}
-										onChange={e => {
-											setField(e?.target?.value, 'from_date', data, setData);
-										}}
-										className={`w-full	 rounded-lg border-[1.5px] ${error.from_date != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
-									/>
-									<input
-										type="date"
-										placeholder=""
-										defaultValue={data.to_date}
-										onChange={e => {
-											setField(e?.target?.value, 'to_date', data, setData);
-										}}
-										className={`w-full mt-5 md:mt-0	 rounded-lg border-[1.5px] ${error.from_date != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
-									/>
-								</div>
-								{error.from_date != '' && <span className="text-red text-xl mt-3">{error.from_date}</span>}
+						</div>
 
+
+						<CkeditorPage
+							title={'Nội dung'}
+							key_obj={'content'}
+							value={data.content}
+							form={data}
+							setForm={setData}
+						/>
+						<div className="md:grid md:grid-cols-2 md:gap-4 mt-5">
+
+							<div className="mb-5">
+								<SelectGroupTwo
+									title={'Phân loại'}
+									options={[
+										{
+											id: "BONUS",
+											name: 'Thưởng'
+										},
+										{
+											id: "DISCIPLINE",
+											name: 'Kỷ luật'
+										}
+									]}
+									key_obj={'type'}
+									value={data.type}
+									form={data}
+									setForm={setData}
+								/>
+								{error.type != '' && <span className="text-red text-xl mt-3">{error.type}</span>}
 							</div>
 
 							<div className="mb-5">
 								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Mức Lương
+									Giá trị
 								</label>
 								<input
 									type="number"
-									placeholder="salary"
-									defaultValue={data.salary}
+									placeholder="data_value"
+									defaultValue={data.data_value}
 									onChange={e => {
-										setField(e?.target?.value, 'salary', data, setData);
+										setField(e?.target?.value, 'data_value', data, setData);
 									}}
-									className={`w-full	 rounded-lg border-[1.5px] ${error.salary != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
+									className={`w-full	 rounded-lg border-[1.5px] ${error.data_value != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 								/>
-								{error.salary != '' && <span className="text-red text-xl mt-3">{error.salary}</span>}
+								{error.data_value != '' && <span className="text-red text-xl mt-3">{error.data_value}</span>}
 
 							</div>
 
-							<div className="mb-5">
-								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Ngày công
-								</label>
-								<input
-									type="number"
-									placeholder="workday"
-									defaultValue={data.workday}
-									onChange={e => {
-										setField(e?.target?.value, 'workday', data, setData);
-									}}
-									className={`w-full	 rounded-lg border-[1.5px] ${error.workday != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
-								/>
-								{error.workday != '' && <span className="text-red text-xl mt-3">{error.workday}</span>}
-							</div>
-							<div className="mb-5">
-								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Phụ cấp
-								</label>
-								<input
-									type="number"
-									placeholder="Tiền phụ cấp"
-									onChange={e => {
-										setField(e?.target?.value, 'allowance', data, setData);
-									}}
-									defaultValue={data.allowance}
-									className={`w-full	 rounded-lg border-[1.5px] ${error.allowance != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
-								/>
-								{error.allowance != '' && <span className="text-red text-xl mt-3">{error.allowance}</span>}
-							</div>
-							<div className="mb-5">
-								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
-									Lương thực nhận
-								</label>
-								<input
-									type="number"
-									placeholder="Lương thực nhận"
-									defaultValue={data.receive_salary}
-									readOnly={true}
-									className={`w-full	 rounded-lg border-[1.5px] ${error.receive_salary != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
-								/>
-								{error.receive_salary != '' && <span className="text-red text-xl mt-3">{error.receive_salary}</span>}
-							</div>
 							<div className="mb-5">
 								<SelectGroupTwo
 									title={'Trạng thái'}

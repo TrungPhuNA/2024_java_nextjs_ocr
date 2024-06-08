@@ -21,6 +21,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findUserByAccessToken(String accessToken);
 
 
+
     @Query(value = "Select u.* " +
             " from users u " +
             " LEFT JOIN ranks r ON u.rank_id = r.id " +

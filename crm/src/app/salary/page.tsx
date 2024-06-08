@@ -43,7 +43,7 @@ const OrderList: React.FC = () => {
 		const response: any = await COMMON_API.delete('salary', idData);
 		setLoading(false);
 		if (response?.status == 'success') {
-			getDataList({ page: 1, ...paging })
+			getDataList({  ...paging, page: 1, })
 		}
 	}
 
@@ -147,7 +147,7 @@ const OrderList: React.FC = () => {
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
 													<button className="hover:text-primary"
-														onClick={() => deleteData(item)}
+														onClick={() => deleteData(item.id)}
 													>
 														<FaTrash />
 													</button>

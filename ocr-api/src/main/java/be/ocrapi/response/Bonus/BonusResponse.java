@@ -21,9 +21,11 @@ public class BonusResponse {
     private String name;
     private String content;
     private Integer user_id;
+    private Float data_value;
     private String status;
     private String type;
     private Date created_at;
     private Date updated_at;
     private UserRelationResponse user;
+    private UserRelationResponse updated_by;
 }

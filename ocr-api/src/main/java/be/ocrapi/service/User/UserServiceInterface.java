@@ -16,7 +16,7 @@ public interface UserServiceInterface {
 
     UserRequest save(UserRequest user);
     UserRequest update(int id, UserRequest user);
-    void delete(User user);
+    void delete(Integer user_id);
 
     List<UserResponse> findAndCount(
             String page, String page_size,

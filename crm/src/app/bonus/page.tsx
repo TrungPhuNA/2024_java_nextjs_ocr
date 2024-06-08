@@ -38,6 +38,15 @@ const OrderList: React.FC = () => {
 		}
 	}
 
+	const deleteData = async (idData: any) => {
+		setLoading(true);
+		const response: any = await COMMON_API.delete('bonus', idData);
+		setLoading(false);
+		if (response?.status == 'success') {
+			getDataList({ ...paging, page: 1  })
+		}
+	}
+
 	return (
 		<DefaultLayout>
 			<Breadcrumb pageName="Thưởng - Kỷ luật" />
@@ -65,6 +74,12 @@ const OrderList: React.FC = () => {
 										<th className=" py-4 px-4 font-medium text-nowrap
 									text-black dark:text-white xl:pl-11">
 											Mô tả
+										</th>
+										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
+											Giá trị
+										</th>
+										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
+											Nhân viên
 										</th>
 										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
 											Loại
@@ -99,9 +114,15 @@ const OrderList: React.FC = () => {
 												</p>
 											</td>
 											<td className="border-b border-[#eee]  py-5 px-4 dark:border-strokedark">
-												<p className="min-w-[120px] text-break">
-													{item.content}
-												</p>
+												<div style={{ wordBreak: 'break-word' }} className="text-break"
+													dangerouslySetInnerHTML={{ __html: item.content }}>
+												</div>
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+												{formatMoney(item.data_value || 0)}
+											</td>
+											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+												{item.user?.name}
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<p className={`dark:text-white ${item.status == "ACTIVE" ? 'text-success' : 'text-red'}`}>
@@ -109,33 +130,28 @@ const OrderList: React.FC = () => {
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className={`dark:text-white ${item.status == "ACTIVE" ? 'text-info' : 'text-warning'}`}>
+												<p className={`dark:text-white ${item.status == "BONUS" ? 'text-info' : 'text-warning'}`}>
 													{item.type == "BONUS" ? "Thưởng" : "Kỷ luật"}
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className="text-black dark:text-white">
-													{item.user?.name}
-												</p>
+												{item.updated_by?.name}
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className="text-black dark:text-white">
-													{formatTime(item.created_at, 'DD/MM/yyyy')}
-												</p>
+												{formatTime(item.created_at, 'DD/MM/yyyy')}
 											</td>
 
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
 													<button className="hover:text-primary"
-													// onClick={() => deleteData(item)}
+														onClick={() => deleteData(item.id)}
 													>
 														<FaTrash />
 													</button>
-													<button className="hover:text-primary"
-													// onClick={() => updateData(item)}
+													<Link href={'/bonus/form?id=' + item.id} className="hover:text-primary"
 													>
 														<FaPencil />
-													</button>
+													</Link>
 												</div>
 											</td>
 										</tr>

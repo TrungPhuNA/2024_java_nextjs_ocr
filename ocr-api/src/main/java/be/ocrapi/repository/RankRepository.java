@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface RankRepository extends JpaRepository<Rank, Integer> {
 
+    Long countRankByStatus(String status);
 
 
 }

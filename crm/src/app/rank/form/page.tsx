@@ -67,7 +67,7 @@ const RankForm: React.FC = () => {
 				name: response?.data?.name,
 				status: response?.data?.status ? response?.data?.status + "" : "",
 				description: response?.data?.description || "",
-				code: response?.data?.code || "",
+				code: response?.data?.code ,
 				salary: response?.data?.salary || "",
 				user_id: response?.data?.user?.id || user?.id,
 				user_name: response?.data?.user?.name || user?.name,
@@ -95,10 +95,10 @@ const RankForm: React.FC = () => {
 			count++;
 		}
 
-		if (!bodyData.code || bodyData.code?.trim() == '') {
-			objError.code = 'Mã chức vụ không được để trống.'
-			count++;
-		}
+		// if (!bodyData.code || bodyData.code?.trim() == '') {
+		// 	objError.code = 'Mã chức vụ không được để trống.'
+		// 	count++;
+		// }
 		if (!bodyData.salary || bodyData.salary?.toString().trim() == '') {
 			objError.salary = 'Mức lương không được để trống.'
 			count++;
@@ -162,7 +162,7 @@ const RankForm: React.FC = () => {
 								{error.name != '' && <span className="text-red text-xl mt-3">{error.name}</span>}
 
 							</div>
-							<div className="mb-5">
+							{id ? <div className="mb-5">
 								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
 									Mã chức vụ
 								</label>
@@ -170,17 +170,15 @@ const RankForm: React.FC = () => {
 									type="text"
 									placeholder="Mã chức vụ"
 									defaultValue={data.code}
-									onChange={e => {
-										setField(e?.target?.value, 'code', data, setData);
-									}}
+									readOnly
 									className={`w-full	 rounded-lg border-[1.5px] 
 									${error.code != '' ? ' border-red ' : ''} 
 									border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 								/>
 								{error.code != '' && <span className="text-red text-xl mt-3">{error.code}</span>}
 
-							</div>
-
+							</div> : ''
+							}
 							<div className="mb-5">
 								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
 									Mức lương

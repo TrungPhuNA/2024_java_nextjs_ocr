@@ -12,5 +12,6 @@ import java.util.Optional;
 @Repository
 public interface BonusAndDisciplineRepository extends JpaRepository<BonusAndDiscipline, Integer> {
 
+    Long countByType(String type);
 
 }
