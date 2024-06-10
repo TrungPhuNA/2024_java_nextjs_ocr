@@ -55,8 +55,8 @@ public class OcrController {
     public BaseResponse<?> upload(@RequestParam("file") MultipartFile file) throws IOException {
         try {
             var ocr = ocrService.convert(file);
-            FileResponse fileData = new FileResponse(ocr.getPath());
-            return BaseResponse.ofSucceeded().setData(fileData);
+//            FileResponse fileData = new FileResponse(ocr);
+            return BaseResponse.ofSucceeded().setData(ocr.getName());
         } catch (Exception e) {
             String message = e.getMessage();
             log.error("[OCR CONTROLLER]------>create" + message);
