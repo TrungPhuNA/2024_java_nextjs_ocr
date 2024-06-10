@@ -131,8 +131,8 @@ const OrderList: React.FC = () => {
 												{item.user?.name}
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className={`dark:text-white ${item.status == "ACTIVE" ? 'text-success' : 'text-red'}`}>
-													{item.status == "ACTIVE" ? "Active" : "Inactive"}
+												<p className={`dark:text-white ${item.status == "APPROVED" ? 'text-success' : 'text-red'}`}>
+													{item.status == "PENDING" ? "Chờ duyệt" : "Đã duyệt"}
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
