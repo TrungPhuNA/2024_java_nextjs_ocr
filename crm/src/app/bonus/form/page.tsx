@@ -73,16 +73,15 @@ const BonusForm: React.FC = () => {
 
 		if (response?.status == "success") {
 			setData({
-				salary: response?.data?.salary,
-				user_id: response?.data?.user?.id,
-				updated_by: response?.data?.updated_by?.id || user?.id,
+				name: response?.data?.name,
+
 				updated_by_name: response?.data?.updated_by?.name,
-				workday: response?.data?.workday,
-				allowance: response?.data?.allowance,
-				receive_salary: response?.data?.receive_salary,
-				from_date: formatTime(response?.data?.from_date, 'yyyy-MM-DD'),
-				to_date: formatTime(response?.data?.to_date, 'yyyy-MM-DD'),
-				status: response?.data?.status
+				user_id: response?.data?.user?.id,
+				updated_by: response?.data?.updated_by?.id,
+				content: response?.data?.content,
+				type: response?.data?.type,
+				data_value: response?.data?.data_value,
+				status: response?.data?.status,
 
 			});
 		}

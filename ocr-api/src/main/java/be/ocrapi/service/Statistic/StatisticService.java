@@ -45,8 +45,10 @@ public class StatisticService implements StatisticServiceInterface {
         Integer totalUser = userRepository.countByConditions("ACTIVE", "","", "", "", "", "USER");
         Long totalRoom = roomRepository.countRoomByStatus("ACTIVE");
         Long totalRank = rankRepository.countRankByStatus("ACTIVE");
-        Long totalBonus = rankRepository.countRankByStatus("BONUS");
-        Long totalDiscipline = rankRepository.countRankByStatus("DISCIPLINE");
+
+        Long totalBonus = bonusRepository.totalFilter("", "", "BONUS");
+        Long totalDiscipline = bonusRepository.totalFilter("", "", "DISCIPLINE");
+
         List<StatisticBonusResponse> bonusData = new ArrayList<>();
         bonusData.add(new StatisticBonusResponse("BONUS", totalBonus));
         bonusData.add(new StatisticBonusResponse("DISCIPLINE", totalDiscipline));

@@ -92,9 +92,9 @@ public class BonusAndDisciplineService implements BonusAndDisciplineServiceInter
     }
 
     @Override
-    public ListBonusResponse findAndCount(int page, int page_size, String status, String user_id) {
-        List<BonusAndDiscipline> salaries = repository.findAndCount(page, page_size, status, user_id);
-        Long total = repository.totalFilter(status, user_id);
+    public ListBonusResponse findAndCount(int page, int page_size, String status, String user_id, String type) {
+        List<BonusAndDiscipline> salaries = repository.findAndCount(page, page_size, status, user_id, type);
+        Long total = repository.totalFilter(status, user_id, type);
 
         ListBonusResponse dataListResponse = new ListBonusResponse();
         List<BonusResponse> data = new ArrayList<>();

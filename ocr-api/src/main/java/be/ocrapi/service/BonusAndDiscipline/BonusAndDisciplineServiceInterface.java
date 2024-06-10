@@ -16,7 +16,7 @@ public interface BonusAndDisciplineServiceInterface {
     BonusResponse findById(Integer id);
     ListBonusResponse findAll(int page, int page_size);
     BonusAndDisciplineRequest save(BonusAndDisciplineRequest data);
-    ListBonusResponse findAndCount(int page, int page_size, String status, String user_id);
+    ListBonusResponse findAndCount(int page, int page_size, String status, String user_id, String type);
 
     BonusAndDisciplineRequest update(int id, BonusAndDisciplineRequest data);
     void delete(int order);

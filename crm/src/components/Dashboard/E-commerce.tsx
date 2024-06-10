@@ -62,13 +62,13 @@ const ECommerce: React.FC = () => {
 			{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
 
 			<div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 2xl:gap-7.5">
-				<CardDataStats title="Nhân viên text-xl" total={(data?.total_user || 0) + ""}>
+				<CardDataStats title="Nhân viên " total={(data?.total_user || 0) + ""}>
 					<AiOutlineUser />
 				</CardDataStats>
-				<CardDataStats title="Chức vụ text-xl" total={(data?.total_rank || 0) + ""}>
+				<CardDataStats title="Chức vụ " total={(data?.total_rank || 0) + ""}>
 					<AiOutlineCluster />
 				</CardDataStats>
-				<CardDataStats title="Phòng ban text-xl" total={(data?.total_room || 0) + ""}>
+				<CardDataStats title="Phòng ban " total={(data?.total_room || 0) + ""}>
 					<AiFillHome />
 				</CardDataStats>
 				<CardDataStats title="Thưởng" total={(data?.data_bonus?.bonus?.total || 0) + ""}>

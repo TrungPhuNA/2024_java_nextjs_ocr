@@ -37,14 +37,15 @@ public class BonusController {
             @RequestParam(name = "page", required = false, defaultValue = "1") String page,
             @RequestParam(name = "page_size", required = false, defaultValue = "20") String page_size,
             @RequestParam(name = "user_id", required = false, defaultValue = "") String user_id,
-            @RequestParam(name = "status", required = false, defaultValue = "") String status
+            @RequestParam(name = "status", required = false, defaultValue = "") String status,
+            @RequestParam(name = "type", required = false, defaultValue = "") String type
     ) {
         try {
             int number_page = 0;
             if(Integer.parseInt(page) > 1) {
                 number_page = Integer.parseInt(page) - 1;
             }
-            var response = service.findAndCount(number_page, Integer.parseInt(page_size), status, user_id);
+            var response = service.findAndCount(number_page, Integer.parseInt(page_size), status, user_id, type);
 
             BaseResponse.Metadata paging = new BaseResponse.Metadata("", number_page ,  Integer.parseInt(page_size), response.getTotal(), "", null);
 
