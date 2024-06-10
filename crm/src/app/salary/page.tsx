@@ -140,7 +140,7 @@ const OrderList: React.FC = () => {
 											</td>
 
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className={`dark:text-white ${item.status == "APPROVED" ? 'text-success' : 'text-red'} text-nowrap`}>
+												<p className={`dark:text-white ${item.status == "APPROVED" ? 'text-success' : 'text-warning'} text-nowrap`}>
 													{item.status == "APPROVED" ? "Đã duyệt" : "Chờ duyệt"}
 												</p>
 											</td>

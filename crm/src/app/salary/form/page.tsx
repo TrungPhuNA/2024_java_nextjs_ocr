@@ -41,7 +41,11 @@ const SalaryForm: React.FC = () => {
 
 	const [loading, setLoading] = useState(false);
 
-	const [data, setData]: any = useState({ ...INIT_FORM, updated_by: user?.id, updated_by_name: user?.name });
+	const [data, setData]: any = useState({
+		...INIT_FORM,
+		updated_by: user?.id,
+		updated_by_name: user?.name
+	});
 
 	const [title, setTitle] = useState('Tạo mới');
 
@@ -52,7 +56,7 @@ const SalaryForm: React.FC = () => {
 	const [errorFile, setErrorFile] = useState('');
 	const router = useRouter();
 	const [error, setError] = useState({
-		...INIT_FORM
+		...INIT_FORM,
 	});
 
 
@@ -174,33 +178,39 @@ const SalaryForm: React.FC = () => {
 	}
 
 	useEffect(() => {
-		if(data.salary && data?.salary.toString()?.trim() != "" && data.workday && data.workday?.toString().trim() != "") {
+		if(data.user_id) {
+			let userData: any = users?.find((item: any) => item.id == data.user_id);
+			setData({...data, salary: userData?.rank?.salary || 0})
+		}
+	}, [data.user_id])
+
+	useEffect(() => {
+		if (data.salary && data?.salary.toString()?.trim() != "" && data.workday && data.workday?.toString().trim() != "") {
 			let salaryData = Number(data.salary);
 			let workday = Number(data.workday);
 			let allowance = Number(data.allowance);
 			let totalDayInMonth = moment().daysInMonth();
-			
-			let totalSalary = salaryData * (workday/totalDayInMonth) + allowance;
-			setData({...data, receive_salary: totalSalary.toFixed(0)})
+			let totalSalary = salaryData * (workday / totalDayInMonth) + allowance;
+			setData({ ...data, receive_salary: totalSalary.toFixed(0) })
 		}
 	}, [data.salary, data.allowance, data.workday])
 
 	useEffect(() => {
-		if(data.from_date && data.to_date && data.from_date?.trim() != "" && data.to_date?.trim() != "") {
-			if(moment(data.from_date).month() != moment(data.to_date).month()) {
-				setError({...error, from_date: 'Vui lòng chọn lại thời gian trong cùng 1 tháng.'})
+		if (data.from_date && data.to_date && data.from_date?.trim() != "" && data.to_date?.trim() != "") {
+			if (moment(data.from_date).month() != moment(data.to_date).month()) {
+				setError({ ...error, from_date: 'Vui lòng chọn lại thời gian trong cùng 1 tháng.' })
 			} else {
-				setError({...error, from_date: ''})
+				setError({ ...error, from_date: '' })
 				let workday = subTime(data.from_date, data.to_date);
-				if(workday < 0) {
-					setError({...error, from_date: 'Vui lòng chọn lại thời gian kỳ trả lương.'})
+				if (workday < 0) {
+					setError({ ...error, from_date: 'Vui lòng chọn lại thời gian kỳ trả lương.' })
 				} else {
-					setData({...data, workday: workday + 1})
+					setData({ ...data, workday: workday + 1 })
 				}
 			}
-			
+
 		}
-	}, [ data.from_date, data.to_date,])
+	}, [data.from_date, data.to_date,])
 
 
 
@@ -267,9 +277,10 @@ const SalaryForm: React.FC = () => {
 									type="number"
 									placeholder="salary"
 									defaultValue={data.salary}
-									onChange={e => {
-										setField(e?.target?.value, 'salary', data, setData);
-									}}
+									readOnly
+									// onChange={e => {
+									// 	setField(e?.target?.value, 'salary', data, setData);
+									// }}
 									className={`w-full	 rounded-lg border-[1.5px] ${error.salary != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 								/>
 								{error.salary != '' && <span className="text-red text-xl mt-3">{error.salary}</span>}

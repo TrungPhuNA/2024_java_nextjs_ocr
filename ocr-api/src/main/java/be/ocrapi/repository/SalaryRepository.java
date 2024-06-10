@@ -17,7 +17,7 @@ public interface SalaryRepository extends JpaRepository<Salary, Integer> {
             " WHERE TRUE " +
             "AND (:user_id is null or :user_id ='' or user_id =:user_id) " +
             " AND (:status is null or :status = '' or status= :status) " +
-            " LIMIT :page_size OFFSET :page",nativeQuery = true)
+            " ORDER BY id desc LIMIT :page_size OFFSET :page",nativeQuery = true)
     List<Salary> findAndCount(@Param("page") int page,
                             @Param("page_size")int page_size,
                             @Param("status") String status,
