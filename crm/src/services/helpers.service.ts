@@ -141,7 +141,8 @@ import {URL, WEB_VALUE, STATIC_URL_API} from './constant';
 
 export const buildImage = (img: any, is_user = false) => {
 	if (img) {
-		if(img.startsWith("uploads\\")) img = img.replace("uploads\\", '')
+		console.info("===========[] ===========[img] : ",img);
+		if(img.startsWith("uploads")) img = img.replace("uploads/", '')
 		return `${STATIC_URL_API}/` + img;
 
 	}
