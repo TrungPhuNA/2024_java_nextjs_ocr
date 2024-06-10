@@ -14,52 +14,78 @@ interface SidebarProps {
 
 const configRoute = [
 	{
-        name: "Dashboard",
-        route: "/",
-        role: ['ADMIN', 'USER']
-    },
+		name: "Dashboard",
+		route: "/",
+		role: ['ADMIN', 'USER']
+	},
 	{
-        name: "Nhân viên",
-        route: "/user",
-        role: ['ADMIN']
-    },
-    {
-        name: "Phòng ban",
-        route: "/room",
-        role: ['ADMIN']
-    },
-	
-    {
-        name: "Chức vụ",
-        route: "/rank",
-        role: ['ADMIN']
-    },
-    {
-        name: "Bằng cấp",
-        route: "/certificate",
-        role: ['ADMIN']
-    },
-    {
-        name: "Loại nhân viên",
-        route: "/employer-type",
-        role: ['ADMIN']
-    },
-    {
-        name: "Lương",
-        route: "/salary",
-        role: ['ADMIN','USER']
-    },
-    {
-        name: "Thưởng - Kỷ luật",
-        route: "/bonus",
-        role: ['ADMIN', 'USER']
-    }
-    
+		name: "Nhân viên",
+		route: "/user",
+		role: ['ADMIN']
+	},
+	{
+		name: "Phòng ban",
+		route: "/room",
+		role: ['ADMIN']
+	},
+
+	{
+		name: "Phòng ban",
+		route: "/room",
+		role: ['ADMIN']
+	},
+
+	{
+		name: "Chức vụ",
+		route: "/rank",
+		role: ['ADMIN']
+	},
+	{
+		name: "Bằng cấp",
+		route: "/certificate",
+		role: ['ADMIN']
+	},
+	{
+		name: "Loại nhân viên",
+		route: "/employer-type",
+		role: ['ADMIN']
+	},
+	{
+		name: "Lương",
+		route: "/salary",
+		role: ['ADMIN', 'USER']
+	},
+	{
+		name: "Thưởng - Kỷ luật",
+		route: "/bonus",
+		role: ['ADMIN', 'USER']
+	}
+
+];
+
+const ORDER_ROUTE = [
+	{
+		name: "Dashboard",
+		route: "/",
+		role: ['ADMIN', 'USER']
+	},
+	{
+		name: "Danh mục",
+		route: "/category",
+		role: ['ADMIN']
+	},
+	{
+		name: "Đơn hàng",
+		route: "/order",
+		role: ['ADMIN', "USER"]
+	},
+
 ]
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 	const pathname = usePathname();
 	const [user, setUser] = useState(getItem('user'));
+	const [view, setView] = useState(getItem('view'));
 
 
 	const trigger = useRef<any>(null);
@@ -107,9 +133,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 	}, [sidebarExpanded]);
 
 	const checkRole = (type: string, role: any) => {
-        if (role.includes(type)) return true;
-        return false;
-    }
+		if (role.includes(type)) return true;
+		return false;
+	}
 
 	return (
 		<aside
@@ -120,7 +146,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 			{/* <!-- SIDEBAR HEADER --> */}
 			<div className="flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5">
 				<Link href="/" className="text-3xl text-center text-bodydark1">
-					CRM System
+					{view == "ORDER" ? 'OCR System' : 'CRM System'}
 				</Link>
 
 				<button
@@ -155,127 +181,41 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 						</h3> */}
 
 						<ul className="mb-6 flex flex-col gap-1.5">
-
-							{/* <li>
-								<Link
-									href="/"
-									className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes("") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Dashboard
-								</Link>
-							</li> */}
-
-							
-							{/* <li>
-								<Link
-									href="/user"
-									className={`group relative flex items-center gap-2.5 
-									rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out 
-									hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes("user") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Nhân viên
-								</Link>
-							</li> */}
-							{/* <li>
-								<Link
-									href="/room"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("room") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Phòng ban
-								</Link>
-							</li> */}
-							{/* <li>
-								<Link
-									href="/rank"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("rank") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Chức vụ
-								</Link>
-							</li> */}
-							{/* <li>
-								<Link
-									href="/certificate"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("certificate") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Bằng cấp
-								</Link>
-							</li> */}
-							{/* <li>
-								<Link
-									href="/employer-type"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("employer-type") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Loại nhân viên
-								</Link>
-							</li> */}
-							{/* <li>
-								<Link
-									href="/salary"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("salary") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Quản lý lương
-								</Link>
-							</li> */}
-							{/* <li>
-								<Link
-									href="/bonus"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("bonus") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Khen thưởng - Kỷ luật
-								</Link>
-							</li> */}
-							{ configRoute.map((item: any, key: number) => {
-                                return (
-                                    (checkRole(user.userType, item.role) === true && (
-                                        <li key={key}>
-                                            <Link
-                                                href={`${item.route}`}
-                                                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                                                    pathname.includes(item.route) &&
-                                                    'bg-graydark dark:bg-meta-4'
-                                                }`}
-                                            >
-                                                {item.icon ? <item.icon/> : '  '}
-                                                {item.name}
-                                            </Link>
-                                        </li>
-                                    ))
-                                )
-                            })}
+							{view == "ORDER" ? ORDER_ROUTE.map((item: any, key: number) => {
+								return (
+									(checkRole(user?.userType, item.role) === true && (
+										<li key={key}>
+											<Link
+												href={`${item.route}`}
+												className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes(item.route) &&
+													'bg-graydark dark:bg-meta-4'
+													}`}
+											>
+												{item.icon ? <item.icon /> : '  '}
+												{item.name}
+											</Link>
+										</li>
+									))
+								)
+							}) :
+								configRoute.map((item: any, key: number) => {
+									return (
+										(checkRole(user?.userType, item.role) === true && (
+											<li key={key}>
+												<Link
+													href={`${item.route}`}
+													className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes(item.route) &&
+														'bg-graydark dark:bg-meta-4'
+														}`}
+												>
+													{item.icon ? <item.icon /> : '  '}
+													{item.name}
+												</Link>
+											</li>
+										))
+									)
+								})
+							}
 
 						</ul>
 					</div>

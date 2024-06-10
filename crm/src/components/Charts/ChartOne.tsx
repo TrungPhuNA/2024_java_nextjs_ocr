@@ -158,7 +158,6 @@ const ChartOne: React.FC = (props: any) => {
 	useEffect(() => {
 		if (props.loading) {
 			let optionsData: ApexOptions = { ...optionChart };
-			console.log(props.data);
 			if (props.data?.length > 0) {
 				optionsData.xaxis.categories = props.data?.map((item: any) => formatTime(item.date, 'DD/MM/yyyy'));
 				let stateData: ChartOneState = { ...state };
@@ -168,7 +167,6 @@ const ChartOne: React.FC = (props: any) => {
 				optionsData.yaxis.max = maxValue
 				stateData.series[0].name = "Total price order";
 				setOptionChart(optionsData);
-
 				setState(stateData)
 			}
 			props.setLoading(false)

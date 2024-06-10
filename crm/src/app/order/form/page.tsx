@@ -8,7 +8,7 @@ import { Product } from "@/types/product";
 import Link from "next/link";
 import { CATEGORY_SERVICE, ORDER_SERVICE, UPLOAD_SERVICE } from "@/services/api.service";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import {checkTextOrder, formatMoney, getItem, setField} from "@/services/helpers.service";
+import { checkTextOrder, formatMoney, getItem, setField } from "@/services/helpers.service";
 import SelectGroupTwo from "@/components/SelectGroup/SelectGroupTwo";
 import Loader from "@/components/common/Loader";
 
@@ -115,9 +115,9 @@ const OrderForm: React.FC = () => {
 	}
 
 	const check = async (data: any) => {
-		
 
-		if(data) {
+
+		if (data) {
 			let orderObj = {
 				name: "",
 				node: '',
@@ -133,7 +133,7 @@ const OrderForm: React.FC = () => {
 				user_id: 0,
 				total_price: 0,
 			};
-			
+
 			let dataMap = data.map((newItem: any) => {
 				newItem = newItem.replace(/,/g, '');
 				newItem = newItem.replace(/\//g, '');
@@ -144,30 +144,30 @@ const OrderForm: React.FC = () => {
 				newItem = newItem.replace(/_/g, '');
 				newItem = newItem.replace(/  /g, '');
 				newItem = newItem.replace("Đ", '');
-				
+
 				return newItem.trim();
-	
+
 			});
 			console.log('dataMap---------> ', dataMap);
-			
-	
+
+
 			let regex = /^[a-z0-9A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễếệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\.\| ]+$/g
 			dataMap = dataMap.filter((item: any) => item.match(regex));
 			// console.log('dataMap sau khi lọc regex---------> ', dataMap);
 			dataMap = dataMap.filter((item: any) => checkTextOrder(item));
 			// console.log('dataMap sau khi lọc regexStartText---------> ', dataMap);
 			let valueDiscountOrTotal = 0;
-	
+
 			let transactionData = dataMap?.reduce((newTrs: any, item: any, index: any) => {
 				console.log(item);
 				let arr = item.split(" ");
 				console.log(arr);
 				let numberArr = arr.filter((e: any) => e.match(/[\d]+/g));
 				let textArr = arr.filter((e: any) => !e.match(/[\d]+/g));
-				if(index < dataMap?.length - 2) {
+				if (index < dataMap?.length - 2) {
 					let totalPrice = Number(numberArr[numberArr?.length - 1]?.replace('.', '') || 0);
 					let price = Number(numberArr[numberArr?.length - 2]?.replace('.', '') || 0);
-					let quantity = price && totalPrice/price;
+					let quantity = price && totalPrice / price;
 					let tranObj = {
 						...INIT_TRAN,
 						name: textArr.join(' ') || '',
@@ -177,27 +177,27 @@ const OrderForm: React.FC = () => {
 					};
 					newTrs.push(tranObj);
 				} else {
-					if(index == dataMap?.length - 1) orderObj.total_price = Number(numberArr[numberArr?.length - 1] || 0);
+					if (index == dataMap?.length - 1) orderObj.total_price = Number(numberArr[numberArr?.length - 1] || 0);
 					else valueDiscountOrTotal = Number(numberArr[numberArr?.length - 1] || 0)
 				}
 				return newTrs;
 			}, []);
-	
+
 			console.log("new Trans--------> ", transactionData);
-			console.log("Sau build tran tính order-------> ",orderObj.total_price, valueDiscountOrTotal);
-			if(valueDiscountOrTotal > orderObj.total_price) {
+			console.log("Sau build tran tính order-------> ", orderObj.total_price, valueDiscountOrTotal);
+			if (valueDiscountOrTotal > orderObj.total_price) {
 				orderObj.total_discount = valueDiscountOrTotal - orderObj.total_price
 			} else {
 				orderObj.total_discount = valueDiscountOrTotal;
 			}
-	
+
 			setTransaction(transactionData);
 			setData(orderObj);
 		}
 		// if (data) {
 		// 	let newData = data.split('\n');
 		// 	console.log("OCR------------> ", newData);
-			
+
 		// 	let newIndexData = newData.reduce((newItem: any, item: any, index: any) => {
 		// 		if (item.includes(',')) item = item.replace(/,/g, '');
 		// 		if (item.match(/^\-?[0-9 ]+$/g) && index > 10) {
@@ -260,7 +260,7 @@ const OrderForm: React.FC = () => {
 			setLoading(false);
 			if (response?.status == "success" && response?.data?.result) {
 				check(response?.data?.result);
-				setData({...data, image: response?.data?.fileName})
+				setData({ ...data, image: response?.data?.fileName })
 			} else {
 				setErrorFile("Have an error to upload file")
 			}
@@ -336,10 +336,7 @@ const OrderForm: React.FC = () => {
 		}])
 	}
 
-	const genTotalPrice: any = (index: any) => {
-		console.log(index);
-		return Number(transaction[index].quantity) * Number(transaction[index].price)
-	}
+
 
 
 
@@ -418,7 +415,7 @@ const OrderForm: React.FC = () => {
 							</div>
 						</div>
 						<div className="md:grid md:grid-cols-2 md:gap-4">
-							{ user.user_type == 'QUANLY' && (
+							{user.userType == 'ADMIN' && (
 								<div className="mb-5">
 									<SelectGroupTwo
 										title={'Trạng thái'}
@@ -478,7 +475,7 @@ const OrderForm: React.FC = () => {
 								dark:focus:border-primary"
 								onChange={(e) => changeFile(e)}
 							/>
-								{errorFile != '' && <span className="text-red text-xl mt-3">{errorFile}</span>}
+							{errorFile != '' && <span className="text-red text-xl mt-3">{errorFile}</span>}
 						</div>}
 						<div className="mb-5">
 							<h3 className="font-medium text-xl text-black dark:text-white mb-3">
@@ -522,17 +519,19 @@ const OrderForm: React.FC = () => {
 											placeholder="Quantity"
 											defaultValue={product.quantity}
 											onChange={e => {
-												if (e?.target?.value) {
-													let newTransaction = [...transaction];
-													newTransaction[key].quantity = Number(e?.target?.value);
-													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].price || 0);
-													setTransaction(newTransaction);
-													let total_price = newTransaction.reduce((newTotal: any, item: any) => {
-														newTotal += item.total_price;
-														return newTotal
-													}, 0);
-													setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
-												}
+												// if (e?.target?.value) {
+
+												// }
+												let newTransaction = [...transaction];
+												newTransaction[key].quantity = Number(e?.target?.value);
+												newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].price || 0);
+												setTransaction(newTransaction);
+												let total_price = newTransaction.reduce((newTotal: any, item: any) => {
+													newTotal += item.total_price;
+													return newTotal
+												}, 0);
+												console.log(total_price, Number(""));
+												setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
 
 											}}
 											className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
@@ -544,16 +543,26 @@ const OrderForm: React.FC = () => {
 											placeholder="Active Input"
 											defaultValue={product.price}
 											onChange={e => {
-												if (e?.target?.value) {
-													let newTransaction = [...transaction];
-													newTransaction[key].price = Number(e?.target?.value);
-													newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].quantity || 0);
-													let total_price = newTransaction.reduce((newTotal: any, item: any) => {
-														newTotal += item.total_price;
-													}, 0);
-													setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
-												}
-												setTransaction(transaction);
+												// if (e?.target?.value) {
+
+												// }
+
+												let newTransaction = [...transaction];
+												console.log("==========Price===========");
+												console.log(newTransaction);
+												newTransaction[key].price = Number(e?.target?.value);
+												newTransaction[key].total_price = Number(e?.target?.value) * Number(newTransaction[key].quantity || 0);
+												console.log(newTransaction[key]);
+												setTransaction(newTransaction);
+												let total_price = newTransaction.reduce((newTotal: any, item: any) => {
+													newTotal += item.total_price;
+													return newTotal
+												}, 0);
+
+												console.log("price----->", total_price);
+
+												setData({ ...data, total_price: total_price - (Number(data?.discount) || 0) });
+												// setTransaction(transaction);
 											}}
 											className="w-full rounded-lg border-[1.5px] border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white"
 										/>

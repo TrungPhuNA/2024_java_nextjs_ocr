@@ -170,6 +170,7 @@ const DropdownUser = () => {
 					onClick={() => {
 						localStorage.removeItem("access_token");
 						localStorage.removeItem("user");
+						localStorage.removeItem("view");
 						window.location.href = '/auth/signin'
 					}}
 				>

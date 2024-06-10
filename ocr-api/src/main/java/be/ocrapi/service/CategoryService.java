@@ -44,6 +44,7 @@ public class CategoryService implements CategoryServiceInterface {
         var c = categoryRepository.getById(id);
         if(c != null) {
             c.setName(order.getName());
+            c.setStatus(order.getStatus());
             return categoryRepository.save(c);
         }
         throw new RuntimeException("Cập nhật thất bại");
