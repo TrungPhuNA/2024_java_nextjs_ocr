@@ -47,7 +47,7 @@ public class Salary {
     @JoinColumn(name = "updated_by",referencedColumnName = "id")
     private User updatedBy;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
 
