@@ -5,14 +5,62 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import SidebarLinkGroup from "./SidebarLinkGroup";
+import { getItem } from "@/services/helpers.service";
 
 interface SidebarProps {
 	sidebarOpen: boolean;
 	setSidebarOpen: (arg: boolean) => void;
 }
 
+const configRoute = [
+	{
+        name: "Dashboard",
+        route: "/",
+        role: ['ADMIN', 'USER']
+    },
+	{
+        name: "Nhân viên",
+        route: "/user",
+        role: ['ADMIN']
+    },
+    {
+        name: "Phòng ban",
+        route: "/room",
+        role: ['ADMIN']
+    },
+	
+    {
+        name: "Chức vụ",
+        route: "/rank",
+        role: ['ADMIN']
+    },
+    {
+        name: "Bằng cấp",
+        route: "/certificate",
+        role: ['ADMIN']
+    },
+    {
+        name: "Loại nhân viên",
+        route: "/employer-type",
+        role: ['ADMIN']
+    },
+    {
+        name: "Lương",
+        route: "/salary",
+        role: ['ADMIN','USER']
+    },
+    {
+        name: "Thưởng - Kỷ luật",
+        route: "/bonus",
+        role: ['ADMIN', 'USER']
+    }
+    
+]
+
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 	const pathname = usePathname();
+	const [user, setUser] = useState(getItem('user'));
+
 
 	const trigger = useRef<any>(null);
 	const sidebar = useRef<any>(null);
@@ -57,6 +105,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 			document.querySelector("body")?.classList.remove("sidebar-expanded");
 		}
 	}, [sidebarExpanded]);
+
+	const checkRole = (type: string, role: any) => {
+        if (role.includes(type)) return true;
+        return false;
+    }
 
 	return (
 		<aside
@@ -103,7 +156,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
 						<ul className="mb-6 flex flex-col gap-1.5">
 
-							<li>
+							{/* <li>
 								<Link
 									href="/"
 									className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes("") &&
@@ -112,29 +165,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Dashboard
 								</Link>
-							</li>
-
-							{/* <li>
-								<Link
-									href="/category"
-									className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes("calendar") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Category
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/order"
-									className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes("calendar") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Order
-								</Link>
 							</li> */}
-							<li>
+
+							
+							{/* <li>
 								<Link
 									href="/user"
 									className={`group relative flex items-center gap-2.5 
@@ -145,8 +179,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Nhân viên
 								</Link>
-							</li>
-							<li>
+							</li> */}
+							{/* <li>
 								<Link
 									href="/room"
 									className={`group relative flex items-center 
@@ -158,8 +192,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Phòng ban
 								</Link>
-							</li>
-							<li>
+							</li> */}
+							{/* <li>
 								<Link
 									href="/rank"
 									className={`group relative flex items-center 
@@ -171,8 +205,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Chức vụ
 								</Link>
-							</li>
-							<li>
+							</li> */}
+							{/* <li>
 								<Link
 									href="/certificate"
 									className={`group relative flex items-center 
@@ -184,8 +218,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Bằng cấp
 								</Link>
-							</li>
-							<li>
+							</li> */}
+							{/* <li>
 								<Link
 									href="/employer-type"
 									className={`group relative flex items-center 
@@ -197,8 +231,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Loại nhân viên
 								</Link>
-							</li>
-							<li>
+							</li> */}
+							{/* <li>
 								<Link
 									href="/salary"
 									className={`group relative flex items-center 
@@ -210,8 +244,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Quản lý lương
 								</Link>
-							</li>
-							<li>
+							</li> */}
+							{/* <li>
 								<Link
 									href="/bonus"
 									className={`group relative flex items-center 
@@ -223,20 +257,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 								>
 									Khen thưởng - Kỷ luật
 								</Link>
-							</li>
-							{/* <li>
-								<Link
-									href="/working"
-									className={`group relative flex items-center 
-									gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 
-									duration-300 ease-in-out hover:bg-graydark 
-									dark:hover:bg-meta-4 ${pathname.includes("working") &&
-										"bg-graydark dark:bg-meta-4"
-										}`}
-								>
-									Công tác
-								</Link>
 							</li> */}
+							{ configRoute.map((item: any, key: number) => {
+                                return (
+                                    (checkRole(user.userType, item.role) === true && (
+                                        <li key={key}>
+                                            <Link
+                                                href={`${item.route}`}
+                                                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                                                    pathname.includes(item.route) &&
+                                                    'bg-graydark dark:bg-meta-4'
+                                                }`}
+                                            >
+                                                {item.icon ? <item.icon/> : '  '}
+                                                {item.name}
+                                            </Link>
+                                        </li>
+                                    ))
+                                )
+                            })}
 
 						</ul>
 					</div>

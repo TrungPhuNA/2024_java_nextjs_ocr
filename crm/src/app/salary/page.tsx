@@ -23,6 +23,7 @@ const OrderList: React.FC = () => {
 	const [dataList, setDataList] = useState([]);
 	const [paging, setPaging] = useState(INIT_PAGING);
 	const [loading, setLoading] = useState(false);
+	const [user, setUser] = useState(getItem('user'));
 
 	useEffect(() => {
 		getDataList({ ...paging })
@@ -30,6 +31,9 @@ const OrderList: React.FC = () => {
 
 	const getDataList = async (filters: any) => {
 		setLoading(true);
+		if(user?.userType == 'USER') {
+			filters.user_id = user.id
+		}
 		const response: any = await COMMON_API.getList('salary', filters);
 		setLoading(false);
 		if (response?.status == 'success') {
@@ -57,7 +61,9 @@ const OrderList: React.FC = () => {
 						<h4 className="text-xl font-semibold text-black dark:text-white">
 							Danh sách
 						</h4>
-						<Link href={'/salary/form'} className="inline-flex items-center justify-center rounded-md bg-primary px-10 py-2 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10">Create</Link>
+						
+						{user?.userType == 'ADMIN' && <Link href={'/salary/form'} className="inline-flex items-center justify-center rounded-md bg-primary px-10 py-2 text-center font-medium 
+						text-white hover:bg-opacity-90 lg:px-8 xl:px-10">Create</Link>}
 					</div>
 					{loading && <Loader className={"bg-opacity-60 bg-white z-50 fixed top-0 left-0 w-full h-full"} />}
 					<div className="px-4">
@@ -96,9 +102,9 @@ const OrderList: React.FC = () => {
 										<th className=" py-4 px-4 font-medium text-black dark:text-white text-nowrap">
 											Ngày tạo
 										</th>
-										<th className="py-4 px-4 font-medium text-black dark:text-white text-nowrap">
+										{user?.userType == 'ADMIN' && <th className="py-4 px-4 font-medium text-black dark:text-white text-nowrap">
 											Thao tác
-										</th>
+										</th>}
 									</tr>
 								</thead>
 								<tbody>
@@ -144,7 +150,7 @@ const OrderList: React.FC = () => {
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												{formatTime(item.created_at, 'DD/MM/yyyy')}
 											</td>
-											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+											{user?.userType == 'ADMIN' && <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
 												<div className="flex items-center space-x-3.5">
 													<button className="hover:text-primary"
 														onClick={() => deleteData(item.id)}
@@ -156,7 +162,7 @@ const OrderList: React.FC = () => {
 														<FaPencil />
 													</Link>
 												</div>
-											</td>
+											</td>}
 										</tr>
 									)) :
 

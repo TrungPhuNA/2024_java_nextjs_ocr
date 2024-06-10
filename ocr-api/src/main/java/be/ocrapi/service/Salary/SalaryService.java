@@ -99,6 +99,25 @@ public class SalaryService implements SalaryServiceInterface {
     }
 
     @Override
+    public ListSalaryResponse findAndCount(int page, int page_size, String status, String user_id) {
+        List<Salary> salaries = repository.findAndCount(page, page_size, status, user_id);
+        Long total = repository.totalFilter(status, user_id);
+
+        ListSalaryResponse dataListResponse = new ListSalaryResponse();
+        List<SalaryResponse> data = new ArrayList<>();
+        dataListResponse.setTotal(total);
+        if(salaries.isEmpty()) {
+            dataListResponse.setData(new ArrayList<>());
+            return dataListResponse;
+        }
+        for (Salary item: salaries) {
+            data.add(responseDto.getInfoSalary(item));
+        }
+        dataListResponse.setData(data);
+        return dataListResponse;
+    }
+
+    @Override
     public SalaryRequest save(SalaryRequest dataRequest) {
         Salary o = this.createOrUpdateData(dataRequest, null);
         repository.save(o);

@@ -179,6 +179,7 @@ const SalaryForm: React.FC = () => {
 			let workday = Number(data.workday);
 			let allowance = Number(data.allowance);
 			let totalDayInMonth = moment().daysInMonth();
+			
 			let totalSalary = salaryData * (workday/totalDayInMonth) + allowance;
 			setData({...data, receive_salary: totalSalary.toFixed(0)})
 		}

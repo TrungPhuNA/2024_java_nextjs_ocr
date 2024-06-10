@@ -15,6 +15,8 @@ import be.ocrapi.response.Certificate.ListCertificateResponse;
 import be.ocrapi.response.MappingResponseDto;
 import be.ocrapi.response.Room.ListRoomResponse;
 import be.ocrapi.response.Room.RoomResponse;
+import be.ocrapi.response.Salary.ListSalaryResponse;
+import be.ocrapi.response.Salary.SalaryResponse;
 import be.ocrapi.service.CategoryServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -83,6 +85,25 @@ public class BonusAndDisciplineService implements BonusAndDisciplineServiceInter
 
         List<BonusResponse> data = new ArrayList<>();
         for (BonusAndDiscipline item: results) {
+            data.add(responseDto.getInfoBonus(item));
+        }
+        dataListResponse.setData(data);
+        return dataListResponse;
+    }
+
+    @Override
+    public ListBonusResponse findAndCount(int page, int page_size, String status, String user_id) {
+        List<BonusAndDiscipline> salaries = repository.findAndCount(page, page_size, status, user_id);
+        Long total = repository.totalFilter(status, user_id);
+
+        ListBonusResponse dataListResponse = new ListBonusResponse();
+        List<BonusResponse> data = new ArrayList<>();
+        dataListResponse.setTotal(total);
+        if(salaries.isEmpty()) {
+            dataListResponse.setData(new ArrayList<>());
+            return dataListResponse;
+        }
+        for (BonusAndDiscipline item: salaries) {
             data.add(responseDto.getInfoBonus(item));
         }
         dataListResponse.setData(data);
