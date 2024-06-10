@@ -202,10 +202,10 @@ public class UserService implements UserServiceInterface {
     public UserRequest save(UserRequest dataRequest) {
         User u = setData(dataRequest, null);
         User newData = userRepository.save(u);
-        if(dataRequest.getCode() == null) {
+        if(dataRequest.getCode() == null ) {
             newData.setCode("MEMBER0000" + newData.getId());
+            userRepository.save(newData);
         }
-        userRepository.save(newData);
         return dataRequest;
     }
 
@@ -213,6 +213,10 @@ public class UserService implements UserServiceInterface {
     public UserRequest update(int id, UserRequest dataRequest) {
         User u = userRepository.getById(id);
         u = setData(dataRequest, u);
+        if(dataRequest.getCode() == null && u.getCode() == null) {
+            u.setCode("MEMBER0000" + u.getId());
+            userRepository.save(u);
+        }
         userRepository.save(u);
         return dataRequest;
     }

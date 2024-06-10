@@ -19,7 +19,7 @@ const INIT_FORM: any = {
 	name: '',
 	email: '',
 	status: "",
-	code: "",
+	code: null,
 	password: "",
 	gender: "",
 	phone: "",
@@ -285,7 +285,7 @@ const UserForm: React.FC = () => {
 
 							</div>
 
-							{id && <div className="mb-5">
+							{id ? <div className="mb-5">
 								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
 									Mã nhân viên
 								</label>
@@ -297,7 +297,7 @@ const UserForm: React.FC = () => {
 									className={`w-full	 rounded-lg border-[1.5px] ${error.code != '' ? ' border-red ' : ''} border-primary bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:bg-form-input dark:text-white`}
 								/>
 
-							</div>}
+							</div> : ''}
 
 							<div className="mb-5">
 								<label className="mb-3 text-xl block text-sm font-medium text-black dark:text-white">
