@@ -136,7 +136,7 @@ const OrderList: React.FC = () => {
 												</p>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<p className={`dark:text-white ${item.status == "BONUS" ? 'text-info' : 'text-warning'}`}>
+												<p className={`dark:text-white ${item.status == "BONUS" ? 'text-sky-500' : 'text-warning'}`}>
 													{item.type == "BONUS" ? "Thưởng" : "Kỷ luật"}
 												</p>
 											</td>
