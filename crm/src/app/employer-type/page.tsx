@@ -40,7 +40,7 @@ const OrderList: React.FC = () => {
 
 	return (
 		<DefaultLayout>
-			<Breadcrumb pageName="Loại nhân viên" />
+			<Breadcrumb subName="Loại nhân viên" pageName="Danh sách" />
 
 			<div className="flex flex-col gap-10">
 				<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">

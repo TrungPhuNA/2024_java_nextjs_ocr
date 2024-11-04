@@ -89,7 +89,7 @@ export const onErrorImage = (e: any) => {
 }
 
 export const onErrorUser = (e: any) => {
-	// e.currentTarget.src = DEFAULT_IMG;
+	e.currentTarget.src = "/images/image_faildoad.png";
 }
 // }
 // export const onErrorUser = (e)=> {

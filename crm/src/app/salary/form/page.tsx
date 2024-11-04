@@ -14,6 +14,7 @@ import Loader from "@/components/common/Loader";
 import CkeditorPage from "@/components/common/CkEditor";
 import '../../../assets/style.css'
 import moment from "moment";
+import { ATTENDANCE_TYPE } from "@/services/constant";
 
 
 const INIT_FORM: any = {
@@ -50,6 +51,7 @@ const SalaryForm: React.FC = () => {
 	const [title, setTitle] = useState('Tạo mới');
 
 	const [users, setUsers] = useState([]);
+	const [attendances, setAttendances] = useState([]);
 
 	const [id, setId] = useState(0);
 	const params = useSearchParams();
@@ -107,8 +109,6 @@ const SalaryForm: React.FC = () => {
 		}
 
 	}
-
-
 
 	const submit = async (e: any) => {
 		e.preventDefault();
@@ -180,9 +180,28 @@ const SalaryForm: React.FC = () => {
 	useEffect(() => {
 		if(data.user_id) {
 			let userData: any = users?.find((item: any) => item.id == data.user_id);
-			setData({...data, salary: userData?.rank?.salary || 0})
+			setData({...data, salary: userData?.rank?.salary || 0});
 		}
-	}, [data.user_id])
+	}, [data.user_id]);
+
+	const getDataList = async (filters: any, workday: any) => {
+		setLoading(true);
+		const response: any = await COMMON_API.getList('attendance', filters);
+		setLoading(false);
+		let total = workday + 1;
+		if (response?.status == 'success') {
+			let data = response?.data?.map((item: any) => {
+				item.check_in = moment(item.check_in).format('yyyy-MM-DD')
+				item.attendance = ATTENDANCE_TYPE.find((e: any) => e?.value?.toLowerCase() == item.type?.toLowerCase());
+				return item;
+			});
+			
+			setAttendances(data || []);
+			total = data?.length || workday + 1;
+		}
+		setData({ ...data, workday: total});
+
+	}
 
 	useEffect(() => {
 		if (data.salary && data?.salary.toString()?.trim() != "" && data.workday && data.workday?.toString().trim() != "") {
@@ -195,6 +214,11 @@ const SalaryForm: React.FC = () => {
 		}
 	}, [data.salary, data.allowance, data.workday])
 
+	// useEffect(() => {
+		
+	// }, [data.from_date, data.to_date,]);
+
+
 	useEffect(() => {
 		if (data.from_date && data.to_date && data.from_date?.trim() != "" && data.to_date?.trim() != "") {
 			if (moment(data.from_date).month() != moment(data.to_date).month()) {
@@ -205,12 +229,22 @@ const SalaryForm: React.FC = () => {
 				if (workday < 0) {
 					setError({ ...error, from_date: 'Vui lòng chọn lại thời gian kỳ trả lương.' })
 				} else {
-					setData({ ...data, workday: workday + 1 })
+					
+					if(data?.user_id) {
+						getDataList({page: 1, page_size: 2000, ...{
+							from_date: data.from_date, 
+							to_date: data?.to_date,
+							user_id: data?.user_id
+						}}, workday);
+					}
 				}
 			}
 
 		}
-	}, [data.from_date, data.to_date,])
+		
+
+		
+	}, [data.from_date, data.to_date, data.user_id])
 
 
 

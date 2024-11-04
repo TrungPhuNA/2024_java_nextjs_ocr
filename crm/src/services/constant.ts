@@ -8,6 +8,7 @@ export const URL_API = {
 	AUTH: 'auth',
 	ORDER: 'order',
 	UPLOAD: 'upload',
+	ATTENDANCE: 'attendance',
 	CATEGORY: 'category'
 };
 
@@ -33,4 +34,31 @@ export const INIT_PAGING = {
 	page_size: 10,
 	total_page: 1,
 	total: 0
+};
+
+export const ATTENDANCE_TYPE = [
+	{
+		value: 'ALL',
+		name: 'Cả ngày'
+	},
+	{
+		value: 'MORNING',
+		name: 'Ca sáng'
+	},
+	{
+		value: 'AFTERNOON',
+		name: 'Ca chiều'
+	}
+];
+
+export const validateMessages = {
+	required: '${label} is required!',
+	types: {
+		email: '${label} is not a valid email!',
+		number: '${label} is not a valid number!',
+		regexp: '${label} is invalid!'
+	},
+	number: {
+		range: '${label} must be between ${min} and ${max}',
+	},
 };

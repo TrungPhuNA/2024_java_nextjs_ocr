@@ -9,7 +9,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLayout";
 import { Product } from "@/types/product";
 import { INIT_PAGING, WEB_VALUE } from "@/services/constant";
 import { COMMON_API, ORDER_SERVICE } from "@/services/api.service";
-import { buildImage, formatMoney, formatTime, getItem } from "@/services/helpers.service";
+import { buildImage, formatMoney, formatTime, getItem, onErrorUser } from "@/services/helpers.service";
 import { PagingPage } from "@/components/common/paging";
 import Loader from "@/components/common/Loader";
 import { FaTrash } from "react-icons/fa";
@@ -39,7 +39,7 @@ const OrderList: React.FC = () => {
 
 	return (
 		<DefaultLayout>
-			<Breadcrumb pageName="" />
+			<Breadcrumb pageName="Danh sách" subName="Nhân viên" />
 
 			<div className="flex flex-col gap-10">
 				<div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -124,7 +124,9 @@ const OrderList: React.FC = () => {
 												<span className="">Email: {item.email}</span>
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-												<img src={buildImage(item.avatar) || "/images/image_faildoad.png"} width={80} height={80} />
+												<img src={buildImage(item.avatar) || "/images/image_faildoad.png"} 
+												onError={(e) => onErrorUser(e)}
+												width={80} height={80} />
 
 											</td>
 											<td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

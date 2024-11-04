@@ -24,16 +24,16 @@ const configRoute = [
 		role: ['ADMIN']
 	},
 	{
-		name: "Phòng ban",
-		route: "/room",
+		name: "Chấm công",
+		route: "/attendance",
 		role: ['ADMIN']
 	},
-
 	{
 		name: "Phòng ban",
 		route: "/room",
 		role: ['ADMIN']
 	},
+
 
 	{
 		name: "Chức vụ",
@@ -86,7 +86,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 	const pathname = usePathname();
 	const [user, setUser] = useState(getItem('user'));
 	const [view, setView] = useState(getItem('view'));
-
+	console.log("pathName------> ", pathname);
 
 	const trigger = useRef<any>(null);
 	const sidebar = useRef<any>(null);
@@ -204,7 +204,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 											<li key={key}>
 												<Link
 													href={`${item.route}`}
-													className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes(item.route) &&
+													className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+														${pathname.includes(item.route) &&
 														'bg-graydark dark:bg-meta-4'
 														}`}
 												>

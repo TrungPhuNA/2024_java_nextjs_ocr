@@ -59,7 +59,9 @@ const SignIn: React.FC = () => {
 			setItem('access_token', response?.data?.access_token);
 			setErrorForm('');
 			// window.location.href = '/';
-			setOpenView(true);
+			setItem("view", "USER"); // USER: Qlys nhân sự  -- ORDER: Quản lý đơn hàng
+			window.location.href = '/'
+			// setOpenView(true);
 		} else {
 			setErrorForm(response?.message || 'Lỗi khi đăng nhập')
 		}
@@ -340,7 +342,7 @@ const SignIn: React.FC = () => {
 											setItem("view", "USER");
 											window.location.href = '/'
 										}}
-										>
+									>
 										<AiOutlineUser />Quản lý nhân sự
 									</button>
 									<button className="cursor-pointer rounded-lg border 
@@ -351,7 +353,7 @@ const SignIn: React.FC = () => {
 											setItem("view", "ORDER");
 											window.location.href = '/'
 										}}>
-										<AiOutlineShoppingCart/>Quản lý OCR
+										<AiOutlineShoppingCart />Quản lý OCR
 									</button>
 								</div>
 							</div>

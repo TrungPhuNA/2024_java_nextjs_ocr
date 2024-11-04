@@ -1,6 +1,7 @@
 package be.ocrapi.response;
 
 import be.ocrapi.model.*;
+import be.ocrapi.response.Attendance.AttendanceResponse;
 import be.ocrapi.response.Bonus.BonusResponse;
 import be.ocrapi.response.Certificate.CertificateResponse;
 import be.ocrapi.response.EmployerType.TypeResponse;
@@ -230,6 +231,36 @@ public class MappingResponseDto {
         else {
             newData.setUser(null);
         }
+        return newData;
+    }
+
+
+
+    public AttendanceResponse getInfoAttendance(TimeAttendance data) {
+        if(data == null) {
+            return null;
+        }
+        AttendanceResponse newData = new AttendanceResponse();
+        newData.setId(data.getId());
+        newData.setType(data.getType());
+        newData.setCheck_in(data.getCheck_in());
+        newData.setCheck_out(data.getCheck_out());
+        newData.setStatus(data.getStatus());
+        newData.setFull_name(data.getFull_name());
+        newData.setEmail(data.getEmail());
+        newData.setStatus(data.getStatus());
+        newData.setCreated_at(data.getCreated_at());
+        newData.setUpdated_at(data.getUpdated_at());
+
+        if(data.getUser() != null)  {
+            newData.setUser(new UserRelationResponse(data.getUser().getId(),
+                    data.getUser().getName(), data.getUser().getEmail(),
+                    data.getUser().getCode(), data.getUser().getGender(), data.getUser().getAvatar()));
+        }
+        else {
+            newData.setUser(null);
+        }
+
         return newData;
     }
 }

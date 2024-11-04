@@ -81,6 +81,33 @@ export const AUTH_SERVICE = {
 	}
 };
 
+export const ATTENDANCE_SERVICE = {
+	async getList(filters: any) {
+		await timeDelay(1000)
+
+		const params = buildFilter(filters);
+		return await getMethod(`${URL_API.ATTENDANCE}/list`, params);
+	},
+	async store(data: any) {
+		await timeDelay(1000)
+
+		return await postMethod(`${URL_API.ATTENDANCE}/store`, data);
+	},
+	async show(id: any) {
+		await timeDelay(1000)
+
+		return await getMethod(`${URL_API.ATTENDANCE}/show/` + id, {});
+	},
+	async update(id: any, data: any) {
+		await timeDelay(1000)
+		return await putMethod(`${URL_API.ATTENDANCE}/update/` + id, data);
+	},
+	async delete(id: any) {
+		await timeDelay(1000)
+		return await deleteMethod(`${URL_API.ATTENDANCE}/delete/` + id);
+	},
+};
+
 export const COMMON_API = {
 	async getList(url: any, filters: any) {
 		await timeDelay(1000)

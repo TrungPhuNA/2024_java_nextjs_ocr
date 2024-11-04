@@ -6,6 +6,7 @@ import DropdownUser from "./DropdownUser";
 import Image from "next/image";
 import { useState } from "react";
 import { getItem } from "@/services/helpers.service";
+import ModalCheckIn from "./ModalCheckIn";
 
 const Header = (props: {
 	sidebarOpen: string | boolean | undefined;
@@ -103,13 +104,14 @@ const Header = (props: {
 				</div> */}
 
 				<div className="flex items-center gap-3 2xsm:gap-7">
-					{/* <ul className="flex items-center gap-2 2xsm:gap-4">
+					<ul className="flex items-center gap-2 2xsm:gap-4">
 						<DarkModeSwitcher />
+						<ModalCheckIn/>
 
-						<DropdownNotification />
+						{/* <DropdownNotification /> */}
 
-						<DropdownMessage />
-					</ul> */}
+						{/* <DropdownMessage /> */}
+					</ul>
 
 					{/* <!-- User Area --> */}
 					<DropdownUser />
