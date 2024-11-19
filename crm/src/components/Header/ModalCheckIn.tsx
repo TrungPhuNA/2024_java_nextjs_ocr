@@ -46,12 +46,14 @@ const ModalCheckIn = () => {
 		const response: any = await ATTENDANCE_SERVICE.store(data);
 		setLoading(false);
 		if(response?.status == 'success') {
-			message.success('Châm công thanh công!');
-			form.resetFields();
-			setOpen(false);
-			if(window.location.pathname?.includes('attendance')) {
-				window.location.reload();
-			}
+			message.success('Châm công thanh công!', 500, () => {
+				form.resetFields();
+				setOpen(false);
+				if(window.location.pathname?.includes('attendance')) {
+					window.location.reload();
+				}
+			});
+			
 		} else {
 			message.error(response?.message);
 		}
